@@ -130,8 +130,6 @@ button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 
 .close-button { color: #aaa; position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; }
 .close-button:hover, .close-button:focus { color: white; }
 .modal-actions { margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;}
-
-/* Modal de Pagamento */
 .payment-summary { border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
 .payment-summary div { display: flex; justify-content: space-between; font-size: 1.1em; margin-bottom: 10px; }
 .payment-summary strong { font-size: 1.2em; color: #FF5F1F; }
@@ -167,19 +165,10 @@ button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 
 .pix-area-doc { text-align: center; border-left: 1px solid #ccc; padding-left: 20px; }
 .pix-area-doc img { max-width: 120px; }
 .pix-area-doc p { font-size: 11px; word-break: break-all; }
-
-/* NOVO ESTILO PARA A LINHA DE DESCONTO NO RECIBO */
-.doc-discount-line {
-    font-size: 11px !important;
-    font-style: italic !important;
-    color: #444 !important;
-    margin: 4px 0 !important; /* Mais compacto */
-    padding: 0 !important;
-    border: none !important;
-}
-.doc-discount-line strong {
-    font-weight: normal !important; /* Remove o negrito */
-}
+.doc-discount-line { font-size: 11px !important; font-style: italic !important; color: #444 !important; margin: 4px 0 !important; padding: 0 !important; border: none !important; }
+.doc-discount-line strong { font-weight: normal !important; }
+.doc-total-line { font-size: 14px !important; font-weight: bold !important; }
+.doc-total-line strong { font-weight: bold !important; }
 
 /* Regras de Impressão */
 @media print {
