@@ -1,0 +1,190 @@
+/* Configurações Globais e Cores */
+:root {
+    --bg-color: #121212;
+    --panel-color: #1E1E1E;
+    --text-color: #E0E0E0;
+    --primary-gradient: linear-gradient(90deg, #FF007A, #FF5F1F);
+    --border-color: #444;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Layout Principal */
+.pos-container {
+    display: grid;
+    grid-template-columns: 350px 1fr 350px;
+    grid-template-rows: 1fr;
+    gap: 20px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* Ajustes nos painéis para controle de altura e rolagem */
+.input-panel, .items-panel, .summary-panel {
+    background-color: var(--panel-color);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Área de conteúdo que deve rolar */
+.panel-content-scrollable {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 15px;
+    margin-right: -15px;
+}
+.table-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 15px;
+    margin-right: -15px;
+}
+
+/* Garante que os botões no final não encolham */
+.input-panel .goto-admin, .summary-panel .btn-primary {
+    flex-shrink: 0;
+    margin-top: 20px;
+}
+
+h1, h2 {
+    margin-top: 0;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    font-weight: 600;
+}
+.logo-header { text-align: center; margin-bottom: 20px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 8px; font-size: 0.9em; font-weight: 300; }
+.form-group input, .form-group select { width: 100%; padding: 12px; background-color: #333; border: 1px solid var(--border-color); border-radius: 5px; color: var(--text-color); font-size: 1em; box-sizing: border-box; }
+.form-group input:focus, .form-group select:focus { outline: none; border-color: #FF5F1F; }
+.goto-admin { display: block; width: 100%; margin-top: auto; padding: 12px; border-radius: 5px; border: 1px solid var(--border-color); background-color: #333; color: #aaa; text-align: center; text-decoration: none; font-weight: 600; box-sizing: border-box; transition: all 0.2s; }
+.goto-admin:hover { background-color: #444; color: white; border-color: #555; transform: translateY(-2px); }
+.product-entry-group { display: flex; gap: 10px; align-items: flex-end; }
+.product-search { flex-grow: 1; }
+.quantity-input { width: 80px; }
+.section-divider { font-size: 0.8em; text-transform: uppercase; color: #888; margin: 20px 0 10px; padding-bottom: 5px; border-bottom: 1px solid var(--border-color); }
+
+/* Painel de Itens */
+.items-panel { grid-column: 2 / 3; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+thead { position: sticky; top: 0; background-color: var(--panel-color); }
+th { font-weight: 600; }
+.remove-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 1.2em; }
+tr.discount-item td { color: var(--success-color); font-style: italic; }
+
+/* Painel de Resumo */
+.summary-panel { justify-content: space-between; }
+.summary-line, .summary-total { display: flex; justify-content: space-between; align-items: center; font-size: 1.1em; margin-bottom: 15px; }
+.summary-person { font-size: 0.9em; color: #ccc; }
+.summary-person span:last-child { font-weight: bold; }
+.summary-total { font-size: 1.8em; font-weight: 700; border-top: 2px solid var(--border-color); padding-top: 15px; }
+.summary-total span:last-child { color: #FF5F1F; }
+.cupom-group { display: flex; }
+.cupom-group input { border-radius: 5px 0 0 5px; }
+.cupom-group button { border: none; background: #555; color: white; padding: 0 15px; border-radius: 0 5px 5px 0; cursor: pointer; }
+.cupom-group button:hover { background: #666; }
+#cupom-status { font-size: 0.8em; margin-top: 5px; display: block; }
+#cupom-status.success { color: var(--success-color); }
+#cupom-status.error { color: var(--error-color); }
+
+/* Botões */
+.btn-primary, .btn-add, .btn-secondary { display: block; width: 100%; padding: 15px; border: none; border-radius: 5px; color: white; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.2s; box-sizing: border-box; }
+.btn-primary { padding: 20px; font-size: 1.3em; background: var(--primary-gradient); }
+.btn-add { background: var(--primary-gradient); margin-bottom: 10px; }
+.btn-secondary { background-color: #555; }
+.btn-primary:hover, .btn-add:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255, 95, 31, 0.4); }
+.btn-secondary:hover { transform: translateY(-3px); background-color: #666; }
+button#add-manual-desc-btn { background-color: var(--success-color); }
+button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4); }
+
+/* Barra de Rolagem */
+.panel-content-scrollable::-webkit-scrollbar, .table-container::-webkit-scrollbar { width: 10px; height: 10px; }
+.panel-content-scrollable::-webkit-scrollbar-track, .table-container::-webkit-scrollbar-track { background: #2a2a2a; border-radius: 5px; }
+.panel-content-scrollable::-webkit-scrollbar-thumb, .table-container::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; }
+.panel-content-scrollable::-webkit-scrollbar-thumb:hover, .table-container::-webkit-scrollbar-thumb:hover { background: #555; }
+.panel-content-scrollable, .table-container { scrollbar-width: thin; scrollbar-color: #444 #2a2a2a; }
+
+/* Modais */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.7); animation: fadeInModal 0.3s; }
+@keyframes fadeInModal { from { background-color: rgba(0, 0, 0, 0); } to { background-color: rgba(0, 0, 0, 0.7); } }
+.modal-content { background-color: var(--panel-color); margin: 10% auto; padding: 30px; border: 1px solid var(--border-color); width: 90%; max-width: 450px; border-radius: 8px; position: relative; animation: slideIn 0.3s; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+.close-button { color: #aaa; position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; }
+.close-button:hover, .close-button:focus { color: white; }
+.modal-actions { margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;}
+
+/* Modal de Pagamento */
+.payment-summary { border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
+.payment-summary div { display: flex; justify-content: space-between; font-size: 1.1em; margin-bottom: 10px; }
+.payment-summary strong { font-size: 1.2em; color: #FF5F1F; }
+#payment-input-area .form-group { margin-bottom: 20px; }
+#payment-input-area .form-group input { font-size: 1.5em; text-align: center; padding: 15px; }
+.troco-display { text-align: center; margin-top: 15px; padding: 20px; border-radius: 5px; background-color: #333; }
+.troco-display span { display: block; font-size: 1.1em; color: #ccc; }
+.troco-display strong { display: block; font-size: 2.5em; color: var(--success-color); margin-top: 5px; }
+.pix-area { text-align: center; }
+.pix-area img { max-width: 200px; border-radius: 5px; }
+.pix-area p { background-color: #333; padding: 10px; border-radius: 5px; font-family: monospace; word-break: break-all; margin-top: 15px; }
+
+/* Modal Pós-Venda e Impressão */
+#post-sale-modal .modal-content { text-align: center; }
+#post-sale-modal p { margin: 20px 0; font-size: 1.1em; }
+.post-sale-actions { justify-content: center; }
+.btn-link { background: none; border: none; color: #5aa1ff; text-decoration: underline; cursor: pointer; margin-top: 20px; font-size: 0.9em; padding: 0;}
+.document-preview { max-width: 800px; }
+.printable-area { background-color: white; color: black; padding: 40px; font-family: Arial, Helvetica, sans-serif; }
+.doc-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; }
+.doc-header h3 { margin: 0; font-size: 24px; color: black; border: none;}
+.doc-header p { margin: 5px 0 0; font-size: 12px; }
+.doc-section { margin-top: 20px; }
+.doc-section h4 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; font-size: 16px; color: black; border-color: #ccc;}
+.doc-section p { font-size: 12px; margin: 8px 0; }
+.doc-section strong { font-size: 12px; color: black; }
+.doc-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+.doc-table th, .doc-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+.doc-table th { background-color: #f2f2f2; }
+.doc-footer { margin-top: 30px; text-align: center; font-size: 12px; font-style: italic; }
+.payment-details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: flex-start; }
+.payment-summary-left hr { border: none; border-top: 1px solid #ccc; margin: 10px 0; }
+.pix-area-doc { text-align: center; border-left: 1px solid #ccc; padding-left: 20px; }
+.pix-area-doc img { max-width: 120px; }
+.pix-area-doc p { font-size: 11px; word-break: break-all; }
+
+/* NOVO ESTILO PARA A LINHA DE DESCONTO NO RECIBO */
+.doc-discount-line {
+    font-size: 11px !important;
+    font-style: italic !important;
+    color: #444 !important;
+    margin: 4px 0 !important; /* Mais compacto */
+    padding: 0 !important;
+    border: none !important;
+}
+.doc-discount-line strong {
+    font-weight: normal !important; /* Remove o negrito */
+}
+
+/* Regras de Impressão */
+@media print {
+  body * { visibility: hidden; }
+  .printable-area, .printable-area * { visibility: visible; }
+  .printable-area { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; border: none; }
+  .modal-actions { display: none !important; }
+}

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frente de Caixa - AmanditaGames Store</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="pos-container">
+        <div class="input-panel">
+            <div class="panel-content-scrollable">
+                <header class="logo-header">
+                    <h1>AmanditaGames PDV</h1>
+                </header>
+                <h2>Informações da Venda</h2>
+                <div class="form-group">
+                    <label for="cliente-input">Cliente (Código)</label>
+                    <input type="text" id="cliente-input" placeholder="Consumidor Padrão">
+                </div>
+                <div class="form-group">
+                    <label for="vendedor-input">Vendedor (Código)</label>
+                    <input type="text" id="vendedor-input" placeholder="Vendedor Padrão">
+                </div>
+                <div class="section-divider">Adicionar Produto</div>
+                <div class="product-entry-group">
+                    <div class="form-group product-search">
+                        <label for="produto-input">Produto (Código)</label>
+                        <input type="text" id="produto-input" placeholder="Ex: P001, P002...">
+                    </div>
+                    <div class="form-group quantity-input">
+                        <label for="quantidade-input">Qtd.</label>
+                        <input type="number" id="quantidade-input" value="1" min="1">
+                    </div>
+                </div>
+                <button id="add-product-btn" class="btn-add">Adicionar Item</button>
+
+                <div class="section-divider">Desconto Manual</div>
+                <div class="form-group">
+                    <label for="manual-desc-desc">Descrição do Desconto</label>
+                    <input type="text" id="manual-desc-desc" placeholder="Ex: Item com avaria">
+                </div>
+                <div class="form-group">
+                    <label for="manual-desc-valor">Valor do Desconto (R$)</label>
+                    <input type="text" id="manual-desc-valor" placeholder="Ex: 15,50">
+                </div>
+                <button id="add-manual-desc-btn" class="btn-secondary">Lançar Desconto</button>
+            </div>
+            <a href="../cadastro/admin.html" class="goto-admin">➔ Ir para Painel Admin</a>
+        </div>
+
+        <div class="items-panel">
+            <h2>Itens da Venda</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Produto</th>
+                            <th>Preço Unit.</th>
+                            <th>Quantidade</th>
+                            <th>Total</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="summary-panel">
+            <div class="panel-content-scrollable">
+                <h2>Resumo da Compra</h2>
+                <div class="summary-details">
+                    <div class="summary-line summary-person">
+                        <span>Cliente:</span>
+                        <span id="summary-cliente">Consumidor Padrão</span>
+                    </div>
+                    <div class="summary-line summary-person">
+                        <span>Vendedor:</span>
+                        <span id="summary-vendedor">Vendedor Padrão</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Subtotal</span>
+                        <span id="subtotal">R$ 0,00</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Descontos</span>
+                        <span id="descontos-total">R$ 0,00</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="cupom-input">Cupom de Desconto</label>
+                        <div class="cupom-group">
+                            <input type="text" id="cupom-input" placeholder="Ex: PROMO10">
+                            <button id="apply-cupom-btn">Aplicar</button>
+                        </div>
+                        <small id="cupom-status"></small>
+                    </div>
+                     <div class="form-group">
+                        <label for="payment-method">Forma de Pagamento</label>
+                        <select id="payment-method">
+                            <option value="dinheiro">Dinheiro</option>
+                            <option value="pix">PIX (5% de Desconto)</option>
+                            <option value="debito">Cartão de Débito</option>
+                            <option value="credito">Cartão de Crédito</option>
+                        </select>
+                    </div>
+                    <div class="summary-total">
+                        <span>TOTAL</span>
+                        <span id="total-geral">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+            <button id="finish-sale-btn" class="btn-primary">FINALIZAR VENDA</button>
+        </div>
+    </div>
+
+    <div id="payment-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Finalizar Pagamento</h2>
+            <div class="payment-summary">
+                <div>
+                    <span>Total da Venda:</span>
+                    <strong id="modal-total-venda">R$ 0,00</strong>
+                </div>
+                <div>
+                    <span>Forma de Pagamento:</span>
+                    <strong id="modal-payment-method">Dinheiro</strong>
+                </div>
+            </div>
+            <div id="payment-input-area"></div>
+            <div class="modal-actions">
+                <button id="btn-confirm-payment" class="btn-primary">Confirmar Pagamento</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="post-sale-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Venda Finalizada com Sucesso!</h2>
+            <p>O que você deseja fazer a seguir?</p>
+            <div class="modal-actions post-sale-actions">
+                <button id="btn-print-nf" class="btn-secondary">📄 Imprimir Nota Fiscal</button>
+                <button id="btn-print-garantia" class="btn-secondary">📜 Imprimir Garantia</button>
+            </div>
+            <button id="btn-new-sale" class="btn-link">Concluir (Nova Venda)</button>
+        </div>
+    </div>
+
+    <div id="document-preview-modal" class="modal">
+        <div class="modal-content document-preview">
+            <div id="document-content" class="printable-area">
+                </div>
+            <div class="modal-actions">
+                <button id="btn-close-preview" class="btn-secondary">Fechar</button>
+                <button id="btn-print-document" class="btn-primary">🖨️ Imprimir</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
