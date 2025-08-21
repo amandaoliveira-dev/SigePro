@@ -7,6 +7,7 @@
     --border-color: #444;
     --success-color: #28a745;
     --error-color: #dc3545;
+    --warning-color: #ffc107;
 }
 
 body {
@@ -37,6 +38,7 @@ body {
     padding: 10px;
     text-align: center;
     margin-bottom: 20px;
+    flex-shrink: 0;
 }
 .sidebar-header h1 {
     margin: 0;
@@ -49,11 +51,14 @@ body {
     font-size: 0.9em;
     color: #888;
 }
-.sidebar ul {
+.sidebar .nav-list {
     list-style: none;
-    padding: 0;
+    padding: 0 10px 0 0; /* Adiciona o respiro de 10px à direita */
     margin: 0;
     flex-grow: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #444 #2a2a2a;
 }
 .sidebar ul li a {
     display: block;
@@ -77,9 +82,26 @@ body {
 .goto-pos {
     text-align: center; color: #aaa; text-decoration: none;
     padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);
-    margin-top: auto;
+    margin-top: 20px;
+    flex-shrink: 0;
 }
 .goto-pos:hover { background-color: #333; color: white; }
+
+/* Estilo da Barra de Rolagem do Menu (para Chrome/Edge/Safari) */
+.sidebar .nav-list::-webkit-scrollbar {
+    width: 10px;
+}
+.sidebar .nav-list::-webkit-scrollbar-track {
+    background: #2a2a2a;
+    border-radius: 5px;
+}
+.sidebar .nav-list::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 5px;
+}
+.sidebar .nav-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
 
 /* Conteúdo Principal */
 .content {
@@ -141,6 +163,9 @@ h2 {
 }
 input[type="date"] {
     color-scheme: dark;
+}
+.uppercase-input {
+    text-transform: uppercase;
 }
 
 /* Cabeçalho da Tabela e Busca */
@@ -208,6 +233,101 @@ thead { background-color: #2a2a2a; }
     font-size: 1.1em; font-weight: 700; cursor: pointer;
 }
 
+/* Estilos do Dashboard de Relatórios */
+.summary-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+.summary-card {
+    background-color: var(--panel-color);
+    padding: 25px;
+    border-radius: 8px;
+    border-left: 5px solid var(--border-color);
+}
+.summary-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1em;
+    font-weight: 400;
+    color: #aaa;
+    text-transform: uppercase;
+    border: none;
+}
+.summary-card p {
+    margin: 0;
+    font-size: 2.2em;
+    font-weight: 600;
+    color: var(--text-color);
+}
+.summary-card:first-child p {
+    color: var(--success-color);
+}
+.reports-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 40px;
+}
+.report-widget {
+    background-color: var(--panel-color);
+    padding: 25px;
+    border-radius: 8px;
+}
+.report-widget h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+.report-widget ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.report-widget ul li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2a2a;
+    font-size: 0.9em;
+}
+.report-widget ul li:last-child {
+    border-bottom: none;
+}
+.report-widget ul li span:last-child {
+    font-weight: 600;
+}
+.report-widget.low-stock ul li {
+    color: var(--warning-color);
+}
+
+/* Estilos da tela de Histórico de Vendas */
+.filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    align-items: flex-end;
+    background-color: var(--panel-color);
+    padding: 20px 25px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.filters-container .form-group {
+    margin-bottom: 0;
+}
+.filters-container .search-input {
+    width: 350px;
+    margin: 0;
+}
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.date-range input {
+    width: 150px;
+}
+
 /* Estilização da Janela Modal */
 .modal {
     display: none;
@@ -254,45 +374,15 @@ thead { background-color: #2a2a2a; }
 #modal-body p:last-child { border-bottom: none; }
 #modal-body strong { color: #ccc; display: inline-block; width: 120px; }
 .detail-highlight { color: #ff8c5a; font-weight: 500; background-color: rgba(255, 140, 90, 0.1); padding: 2px 6px; border-radius: 4px; }
-
-/* Estilos para a Modal de Confirmação */
-#confirm-modal .modal-content {
-    text-align: center;
-    max-width: 450px;
-}
-#confirm-modal h2 {
-    border-bottom: none;
-}
-#confirm-modal-text {
-    font-size: 1.2em;
-    margin: 10px 0 30px 0;
-    line-height: 1.5;
-}
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-}
-.modal-actions button {
-    padding: 10px 25px;
-    border-radius: 5px;
-    border: none;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.btn-secondary {
-    background-color: #555;
-    color: white;
-}
-.btn-secondary:hover {
-    background-color: #666;
-}
-.btn-danger {
-    background-color: var(--error-color);
-    color: white;
-}
-.btn-danger:hover {
-    background-color: #c82333;
-}
+#confirm-modal .modal-content { text-align: center; max-width: 450px; }
+#confirm-modal h2 { border-bottom: none; }
+#confirm-modal-text { font-size: 1.2em; margin: 10px 0 30px 0; line-height: 1.5; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px; }
+.modal-actions button { padding: 10px 25px; border-radius: 5px; border: none; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-secondary { background-color: #555; color: white; }
+.btn-secondary:hover { background-color: #666; }
+.btn-danger { background-color: var(--error-color); color: white; }
+.btn-danger:hover { background-color: #c82333; }
+#post-sale-modal .modal-content { text-align: center; }
+#post-sale-modal .modal-actions { justify-content: center; }
+.document-preview { max-width: 800px; }

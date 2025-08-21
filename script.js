@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Adicionar esta função no início dos arquivos .js
+    function toTitleCase(str) {
+        if (!str) return '';
+        const smallWords = /^(a|e|o|um|uma|com|de|da|do|dos|em|por|para)$/i;
+        return str.toString().toLowerCase().split(' ').map((word, index) => {
+            if (index > 0 && smallWords.test(word)) {
+                return word;
+            }
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        }).join(' ');
+    }
     // BANCOS DE DADOS FALSOS (PARA SIMULAÇÃO)
     const mockDatabase = {
         "P001": { nome: "Jogo PS5 - God of War Ragnarök", preco: 349.90, serial: "N/A", garantia: "3 Meses" },
@@ -117,49 +128,49 @@ document.addEventListener('DOMContentLoaded', () => {
         postSaleModal.style.display = 'block';
     }
 
-    // ==================================================================
-    // FUNÇÃO generateDocumentHTML TOTALMENTE REESCRITA E CORRIGIDA
-    // ==================================================================
     function generateDocumentHTML(type) {
         const docNumber = Date.now().toString().slice(-6);
-
-        // --- SEÇÃO DO CLIENTE ---
         let clienteHtml = `<p><strong>CLIENTE:</strong> ${lastSaleData.cliente.nome}</p>`;
         if (lastSaleData.cliente.cpf) {
             clienteHtml += `<p><strong>CPF:</strong> ${lastSaleData.cliente.cpf}</p><p><strong>Telefone:</strong> ${lastSaleData.cliente.telefone}</p><p><strong>Endereço:</strong> ${lastSaleData.cliente.rua}, ${lastSaleData.cliente.numero} - ${lastSaleData.cliente.bairro}, ${lastSaleData.cliente.cidade}/${lastSaleData.cliente.uf}</p>`;
         }
 
-        // --- LÓGICA PARA RECIBO (NF) ---
         if (type === 'nf') {
             let itemsHtml = '';
-            lastSaleData.itens.forEach(item => { // Inclui descontos manuais na lista
-                const itemName = item.isDiscount ? `Desconto (${item.nome})` : item.nome;
-                const itemPrice = item.isDiscount ? formatCurrency(item.preco) : formatCurrency(item.preco);
-                const itemTotal = item.isDiscount ? formatCurrency(item.preco) : formatCurrency(item.preco * item.quantidade);
-                itemsHtml += `<tr><td>${item.codigo}</td><td>${itemName}</td><td>${item.quantidade}</td><td>${itemPrice}</td><td>${itemTotal}</td></tr>`;
+            lastSaleData.itens.filter(item => !item.isDiscount).forEach(item => {
+                itemsHtml += `<tr><td>${item.codigo}</td><td>${item.nome}</td><td>${item.quantidade}</td><td>${formatCurrency(item.preco)}</td><td>${formatCurrency(item.preco * item.quantidade)}</td></tr>`;
             });
-
-            const pixHtml = lastSaleData.paymentMethod.includes('PIX') ? `<div class="pix-area-doc"><img src="https://i.imgur.com/g8fG1v1.png" alt="QR Code"><p>amanda-games-pix@email.com</p></div>` : '';
-            
+            let discountsHtml = '';
+            lastSaleData.discounts.manualItems.forEach(item => {
+                discountsHtml += `<p class="doc-discount-line">${item.nome}: <strong>${formatCurrency(item.preco)}</strong></p>`;
+            });
+            if (lastSaleData.discounts.couponValue > 0) {
+                discountsHtml += `<p class="doc-discount-line">Cupom (${lastSaleData.discounts.couponCode}): <strong>${formatCurrency(-lastSaleData.discounts.couponValue)}</strong></p>`;
+            }
+            if (lastSaleData.discounts.paymentValue > 0) {
+                discountsHtml += `<p class="doc-discount-line">Desconto PIX (5%): <strong>${formatCurrency(-lastSaleData.discounts.paymentValue)}</strong></p>`;
+            }
+            const totalDiscountValue = lastSaleData.discounts.manualItems.reduce((acc, item) => acc + Math.abs(item.preco), 0) + lastSaleData.discounts.couponValue + lastSaleData.discounts.paymentValue;
             let paymentDetailsHtml = `<p><strong>Forma de Pagamento:</strong> ${lastSaleData.paymentMethod}</p>`;
             if (lastSaleData.paymentMethod === 'Dinheiro' && lastSaleData.valorRecebido > 0) {
                 paymentDetailsHtml += `<p><strong>Valor Recebido:</strong> ${formatCurrency(lastSaleData.valorRecebido)}</p><p><strong>Troco:</strong> ${formatCurrency(lastSaleData.troco)}</p>`;
             }
+            const pixHtml = lastSaleData.paymentMethod.includes('PIX') ? `<div class="pix-area-doc"><img src="https://i.imgur.com/g8fG1v1.png" alt="QR Code"><p>amanda-games-pix@email.com</p></div>` : '';
 
             return `<div class="doc-header"><h3>AmanditaGames Store</h3><p>Seu Endereço | Seu Contato</p></div>
                     <div class="doc-section"><h4>RECIBO DE VENDA - Nº ${docNumber}</h4><p><strong>Data:</strong> ${lastSaleData.date.toLocaleString('pt-BR')}</p></div>
                     <div class="doc-section"><h4>DADOS DO CLIENTE</h4>${clienteHtml}</div>
                     <div class="doc-section"><p><strong>Vendedor:</strong> ${lastSaleData.vendedor.nome}</p></div>
-                    <div class="doc-section"><h4>ITENS DA COMPRA</h4><table class="doc-table"><thead><tr><th>Cód.</th><th>Descrição</th><th>Qtd.</th><th>Vlr. Unit.</th><th>Total</th></tr></thead><tbody>${itemsHtml}</tbody></table></div>
+                    <div class="doc-section"><h4>ITENS DA COMPRA</h4><table class="doc-table"><thead><tr><th>Cód.</th><th>Produto</th><th>Qtd.</th><th>Vlr. Unit.</th><th>Total</th></tr></thead><tbody>${itemsHtml}</tbody></table></div>
                     <div class="doc-section"><h4>Pagamento</h4><div class="payment-details-grid"><div class="payment-summary-left">
                     <p><strong>Subtotal Produtos:</strong> ${formatCurrency(lastSaleData.subtotal)}</p>
-                    <p class="doc-total-line"><strong>TOTAL PAGO:</strong> ${formatCurrency(lastSaleData.total)}</p>
+                    ${totalDiscountValue > 0 ? `<p><strong>Valor Total Descontos:</strong> ${formatCurrency(-totalDiscountValue)}</p>${discountsHtml}` : ''}
+                    <hr><p class="doc-total-line"><strong>TOTAL PAGO:</strong> ${formatCurrency(lastSaleData.total)}</p>
                     ${paymentDetailsHtml}</div>
                     <div class="payment-summary-right">${pixHtml}</div></div></div>
                     <div class="doc-footer"><p>Obrigado pela preferência!</p></div>`;
         }
 
-        // --- LÓGICA PARA GARANTIA ---
         if (type === 'garantia') {
             let itemsGarantiaHtml = '';
             lastSaleData.itens.filter(item => !item.isDiscount).forEach(item => {
@@ -174,15 +185,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="doc-section"><h4>REFERENTE À VENDA</h4><p><strong>Recibo Nº:</strong> ${docNumber}</p><p><strong>Data da Compra:</strong> ${lastSaleData.date.toLocaleDateString('pt-BR')}</p></div>
                     <div class="doc-section"><h4>PRODUTOS COBERTOS PELA GARANTIA</h4><table class="doc-table"><thead><tr><th>Produto</th><th>Nº de Série</th><th>Garantia</th></tr></thead><tbody>${itemsGarantiaHtml}</tbody></table></div>
                     <div class="doc-section"><h4>TERMOS DE GARANTIA</h4>
-                    <p style="font-size: 11px; text-align: justify;">Este certificado é a prova da sua garantia e deve ser apresentado para que o serviço seja validado. O não cumprimento das condições estabelecidas abaixo anula a garantia.<br><br>
-                    <b>1. Prazos de Garantia</b><br>
-                    - Serviços Prestados: 3 (três) meses, a contar da data da conclusão. Cobre defeitos de mão de obra ou falhas relacionadas ao serviço.<br>
-                    - Produtos Adquiridos: Prazo conforme descrito na tabela acima, a contar da data da compra. Cobre defeitos de fabricação dos produtos.<br><br>
-                    <b>2. O que a Garantia Não Cobre</b><br>
-                    A garantia será invalidada se o defeito for causado por: Mau uso (quedas, batidas, exposição a umidade, etc.), reparos não autorizados por terceiros, ou desgaste natural de componentes.<br><br>
-                    <b>3. Procedimento para Acionamento</b><br>
-                    O cliente deve entrar em contato com a loja e apresentar este certificado. A loja tem o prazo de até 30 (trinta) dias para realizar o reparo ou a troca do produto/serviço, sem custos adicionais.<br><br>
-                    <b>4. Serviço de Suporte Técnico:</b> Para problemas não cobertos por esta garantia (ex: limpeza de consoles, otimizações, manutenção), a AmanditaGames Store oferece suporte técnico especializado. Estes serviços são orçados e cobrados separadamente.</p>
+                    <p style="font-size: 11px; text-align: justify; white-space: pre-wrap;">Este certificado é a prova da sua garantia e deve ser apresentado para que o serviço seja validado. O não cumprimento das condições estabelecidas abaixo anula a garantia.
+
+<b>1. Prazos de Garantia</b>
+   - Serviços Prestados: 3 (três) meses, a contar da data da conclusão. Cobre defeitos de mão de obra ou falhas relacionadas ao serviço.
+   - Produtos Adquiridos: Prazo conforme descrito na tabela acima, a contar da data da compra. Cobre defeitos de fabricação dos produtos.
+
+<b>2. O que a Garantia Não Cobre</b>
+   A garantia será invalidada se o defeito for causado por: Mau uso (quedas, batidas, exposição a umidade, etc.), reparos não autorizados por terceiros, ou desgaste natural de componentes.
+
+<b>3. Procedimento para Acionamento</b>
+   - O cliente deve entrar em contato com a loja e apresentar este certificado.
+   - A loja tem o prazo de até 30 (trinta) dias para realizar o reparo ou a troca do produto/serviço, sem custos adicionais.
+
+<b>4. Serviço de Suporte Técnico:</b> Para problemas não cobertos por esta garantia (ex: limpeza de consoles, otimizações, manutenção), a AmanditaGames Store oferece suporte técnico especializado. Estes serviços são orçados e cobrados separadamente.</p>
                     </div>
                     <div class="doc-footer" style="margin-top: 50px;"><p>_________________________<br>Assinatura do Responsável</p></div>`;
         }

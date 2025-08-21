@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Adicionar esta função no início dos arquivos .js
+    function toTitleCase(str) {
+        if (!str) return '';
+        const smallWords = /^(a|e|o|um|uma|com|de|da|do|dos|em|por|para)$/i;
+        return str.toString().toLowerCase().split(' ').map((word, index) => {
+            if (index > 0 && smallWords.test(word)) {
+                return word;
+            }
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        }).join(' ');
+    }
     // --- LÓGICA DE NAVEGAÇÃO DAS ABAS ---
     const navLinks = document.querySelectorAll('.nav-link');
     const contentPanels = document.querySelectorAll('.content-panel');
@@ -13,33 +24,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
             link.classList.add('active');
             document.getElementById(targetId).classList.add('active');
+
+            if (targetId === 'relatorios') {
+                renderReports();
+            }
+            if (targetId === 'historico') {
+                renderFunctions.historico();
+            }
         });
     });
 
     // --- BANCOS DE DADOS E CONTADORES ---
-    let dbCategorias = [], dbProdutos = [], dbClientes = [], dbVendedores = [], dbFornecedores = [], dbCupons = [];
-    let productCounter = 1, clientCounter = 1, sellerCounter = 1, supplierCounter = 1, categoryCounter = 1;
+    let dbCategorias = [{id: 1, nome: 'Jogos PS5'}, {id: 2, nome: 'Acessórios'}];
+    let dbProdutos = [
+        {codigo: 'P001', nome: 'Jogo PS5 - God of War', precoVenda: '350.00', estoque: 2, estoqueMinimo: 3, garantia: "3 Meses", serial: "N/A", barcode: "711719541189", categoriaId: 1, precoCusto: "280.00", fornecedorCodigo: "F001", plataforma: "PS5", tags: "Ação, Aventura"},
+        {codigo: 'P002', nome: 'Controle DualSense PS5', precoVenda: '450.00', estoque: 10, estoqueMinimo: 5, garantia: "1 Ano", serial: "AX123456789B", barcode: "711719540861", categoriaId: 2, precoCusto: "350.00", fornecedorCodigo: "F001", plataforma: "PS5", tags: "Acessório, Controle"},
+        {codigo: 'P003', nome: 'Cabo HDMI 8K', precoVenda: '90.00', estoque: 4, estoqueMinimo: 5, garantia: "3 Meses", serial: "N/A", barcode: "789000000003", categoriaId: 2, precoCusto: "50.00", fornecedorCodigo: "F001", plataforma: "N/A", tags: "Cabo, Acessório"}
+    ];
+    let dbVendedores = [ {codigo: 'V001', nome: 'Amanda', cpf: '111.111.111-11'}, {codigo: 'V002', nome: 'João', cpf: '222.222.222-22'} ];
+    let dbClientes = [{codigo: 'C001', nome: 'Cliente Fiel', cpf: "111.222.333-44", telefone: "99999-8888"}];
+    let dbFornecedores = [{codigo: 'F001', nome: "Sony Brasil", cnpj:"11.222.333/0001-44", telefone: "11-98765-4321"}];
+    let dbCupons = [];
+    let dbVendas = [
+        { recibo: '981542', date: new Date('2025-08-21T15:10:10'), cliente: dbClientes[0], vendedor: dbVendedores[1], itens: [{codigo: 'P002', nome: 'Controle DualSense PS5', preco: 450.00, quantidade: 2, serial: 'AX123456789B', garantia: '1 Ano'}], total: 899.00, paymentMethod: 'Cartão de Crédito' },
+        { recibo: '981513', date: new Date('2025-08-21T14:25:42'), cliente: { nome: 'Consumidor Padrão' }, vendedor: dbVendedores[0], itens: [{codigo: 'P001', nome: 'Jogo PS5 - God of War', preco: 349.90, quantidade: 1, serial: 'N/A', garantia: '3 Meses'}], total: 349.90, paymentMethod: 'PIX' },
+    ];
+    let productCounter = 4, clientCounter = 2, sellerCounter = 3, supplierCounter = 2, categoryCounter = 3;
     let currentlyEditing = { id: null, type: null };
+    let lastSaleData = {};
 
     // --- LÓGICA DAS MODAIS ---
     const detailsModal = document.getElementById('details-modal');
     const modalTitle = document.getElementById('modal-title');
     const modalBody = document.getElementById('modal-body');
     const detailsCloseButton = detailsModal.querySelector('.close-button');
-
     const confirmModal = document.getElementById('confirm-modal');
     const confirmModalText = document.getElementById('confirm-modal-text');
     const btnCancelDelete = document.getElementById('btn-cancel-delete');
     const btnConfirmDelete = document.getElementById('btn-confirm-delete');
     const confirmCloseButton = confirmModal.querySelector('.close-button');
+    const postSaleModal = document.getElementById('post-sale-modal');
+    const postSaleCloseButton = postSaleModal.querySelector('.close-button');
+    const docPreviewModal = document.getElementById('document-preview-modal');
 
-    detailsCloseButton.onclick = () => { detailsModal.style.display = "none"; }
-    btnCancelDelete.onclick = () => { confirmModal.style.display = "none"; }
+    if(detailsCloseButton) { detailsCloseButton.onclick = () => { detailsModal.style.display = "none"; } }
+    if(btnCancelDelete) { btnCancelDelete.onclick = () => { confirmModal.style.display = "none"; } }
     if(confirmCloseButton) { confirmCloseButton.onclick = () => { confirmModal.style.display = "none"; }}
+    if(postSaleCloseButton) { postSaleCloseButton.onclick = () => { postSaleModal.style.display = "none"; }}
     
     window.onclick = (event) => {
         if (event.target == detailsModal) { detailsModal.style.display = "none"; }
         if (event.target == confirmModal) { confirmModal.style.display = "none"; }
+        if (event.target == postSaleModal) { postSaleModal.style.display = "none"; }
+        if (event.target == docPreviewModal) { docPreviewModal.style.display = "none"; }
     }
     
     function showDetails(itemId, itemType) {
@@ -103,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LÓGICA DE AÇÕES (EVENT DELEGATION) ---
+    // --- LÓGICA DE AÇÕES ---
     const contentArea = document.querySelector('.content');
     contentArea.addEventListener('click', (e) => {
         const target = e.target;
@@ -114,6 +151,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (target.classList.contains('btn-view')) { showDetails(itemId, itemType); }
             if (target.classList.contains('btn-edit')) { editItem(itemId, itemType); }
             if (target.classList.contains('btn-delete')) { openConfirmModal(itemId, itemType); }
+        }
+        if (target.classList.contains('btn-reprint')) {
+            const vendaId = target.dataset.id;
+            const venda = dbVendas.find(v => v.recibo === vendaId);
+            if (venda) {
+                lastSaleData = venda;
+                if (postSaleModal) {
+                    const newSaleButton = postSaleModal.querySelector('.btn-link');
+                    if (newSaleButton) newSaleButton.style.display = 'none';
+                    postSaleModal.style.display = 'block';
+                }
+            }
         }
     });
 
@@ -190,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         contentArea.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
+    
     function resetEditState(form) {
         let buttonText = 'Salvar';
         switch(form.id) {
@@ -222,27 +271,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabelaProdutos = document.getElementById('tabela-produtos');
     const prodFornecedorCodigoInput = document.getElementById('prod-fornecedor-codigo');
     const prodFornecedorNomeSpan = document.getElementById('prod-fornecedor-nome');
-    prodFornecedorCodigoInput.addEventListener('input', () => { const codigo = prodFornecedorCodigoInput.value.toUpperCase(); if (!codigo) { prodFornecedorNomeSpan.textContent = ''; return; } const fornecedor = dbFornecedores.find(f => f.codigo === codigo); if (fornecedor) { prodFornecedorNomeSpan.textContent = fornecedor.nome; prodFornecedorNomeSpan.classList.remove('error'); } else { prodFornecedorNomeSpan.textContent = 'Código não encontrado'; prodFornecedorNomeSpan.classList.add('error'); } });
-    formProduto.addEventListener('submit', (e) => { e.preventDefault(); const prodData = { nome: document.getElementById('prod-nome').value, barcode: document.getElementById('prod-barcode').value, categoriaId: document.getElementById('prod-categoria').value, condicao: document.getElementById('prod-condicao').value, garantia: document.getElementById('prod-garantia').value, serial: document.getElementById('prod-serial').value, precoCusto: document.getElementById('prod-preco-custo').value, precoVenda: document.getElementById('prod-preco').value, fornecedorCodigo: prodFornecedorCodigoInput.value.toUpperCase(), estoque: document.getElementById('prod-estoque').value, estoqueMinimo: document.getElementById('prod-estoque-minimo').value, localizacao: document.getElementById('prod-localizacao').value, plataforma: document.getElementById('prod-plataforma').value, lancamento: document.getElementById('prod-lancamento').value, tags: document.getElementById('prod-tags').value, }; if (currentlyEditing.type === 'produto') { const item = dbProdutos.find(p => p.codigo === currentlyEditing.id); if (item) Object.assign(item, prodData); } else { const cod = 'P' + String(productCounter++).padStart(3, '0'); dbProdutos.push({ codigo: cod, ...prodData }); } renderFunctions.produtos(); resetEditState(formProduto); prodFornecedorNomeSpan.textContent = ''; });
-    renderFunctions.produtos = (data = dbProdutos) => { tabelaProdutos.innerHTML = ""; data.forEach(prod => { const fornecedor = dbFornecedores.find(f => f.codigo === prod.fornecedorCodigo); const nomeFornecedor = fornecedor ? fornecedor.nome : 'N/D'; tabelaProdutos.innerHTML += `<tr><td class="code-column">${prod.codigo}</td><td>${prod.nome}</td><td>${nomeFornecedor}</td><td>R$ ${prod.precoVenda}</td><td>${prod.estoque}</td><td class="actions"><button class="btn-view" data-id="${prod.codigo}" data-type="produto">Ver</button><button class="btn-edit" data-id="${prod.codigo}" data-type="produto">Editar</button><button class="btn-delete" data-id="${prod.codigo}" data-type="produto">Excluir</button></td></tr>`; }); }
-
+    prodFornecedorCodigoInput.addEventListener('input', () => { const codigo = prodFornecedorCodigoInput.value.toUpperCase(); if (!codigo) { prodFornecedorNomeSpan.textContent = ''; return; } const fornecedor = dbFornecedores.find(f => f.codigo === codigo); if (fornecedor) { prodFornecedorNomeSpan.textContent = toTitleCase(fornecedor.nome); prodFornecedorNomeSpan.classList.remove('error'); } else { prodFornecedorNomeSpan.textContent = 'Código não encontrado'; prodFornecedorNomeSpan.classList.add('error'); } });
+    formProduto.addEventListener('submit', (e) => { e.preventDefault(); const prodData = { nome: document.getElementById('prod-nome').value.toUpperCase(), barcode: document.getElementById('prod-barcode').value, categoriaId: document.getElementById('prod-categoria').value.toUpperCase(), condicao: document.getElementById('prod-condicao').value.toUpperCase(), garantia: document.getElementById('prod-garantia').value, serial: document.getElementById('prod-serial').value, precoCusto: document.getElementById('prod-preco-custo').value, precoVenda: document.getElementById('prod-preco').value, fornecedorCodigo: prodFornecedorCodigoInput.value.toUpperCase(), estoque: document.getElementById('prod-estoque').value, estoqueMinimo: document.getElementById('prod-estoque-minimo').value, localizacao: document.getElementById('prod-localizacao').value, plataforma: document.getElementById('prod-plataforma').value, lancamento: document.getElementById('prod-lancamento').value, tags: document.getElementById('prod-tags').value, }; if (currentlyEditing.type === 'produto') { const item = dbProdutos.find(p => p.codigo === currentlyEditing.id); if (item) Object.assign(item, prodData); } else { const cod = 'P' + String(productCounter++).padStart(3, '0'); dbProdutos.push({ codigo: cod, ...prodData }); } renderFunctions.produtos(); resetEditState(formProduto); prodFornecedorNomeSpan.textContent = ''; });
+    renderFunctions.produtos = (data = dbProdutos) => { tabelaProdutos.innerHTML = ""; data.forEach(prod => { const fornecedor = dbFornecedores.find(f => f.codigo === prod.fornecedorCodigo); const nomeFornecedor = fornecedor ? fornecedor.nome : 'N/D'; tabelaProdutos.innerHTML += `<tr><td class="code-column">${prod.codigo}</td><td>${toTitleCase(prod.nome)}</td><td>${nomeFornecedor}</td><td>R$ ${prod.precoVenda}</td><td>${prod.estoque}</td><td class="actions"><button class="btn-view" data-id="${prod.codigo}" data-type="produto">Ver</button><button class="btn-edit" data-id="${prod.codigo}" data-type="produto">Editar</button><button class="btn-delete" data-id="${prod.codigo}" data-type="produto">Excluir</button></td></tr>`; }); }
+  
     // CLIENTES
     const formCliente = document.getElementById('form-cliente');
     const tabelaClientes = document.getElementById('tabela-clientes');
-    formCliente.addEventListener('submit', (e) => { e.preventDefault(); const cliData = { nome: document.getElementById('cli-nome').value, cpf: document.getElementById('cli-cpf').value, telefone: document.getElementById('cli-telefone').value, email: document.getElementById('cli-email').value, cep: document.getElementById('cli-cep').value, rua: document.getElementById('cli-rua').value, numero: document.getElementById('cli-numero').value, bairro: document.getElementById('cli-bairro').value, cidade: document.getElementById('cli-cidade').value, uf: document.getElementById('cli-uf').value }; if(currentlyEditing.type === 'cliente'){ const item = dbClientes.find(c => c.codigo === currentlyEditing.id); if(item) Object.assign(item, cliData); } else { const cod = 'C' + String(clientCounter++).padStart(3, '0'); dbClientes.push({ codigo: cod, ...cliData }); } renderFunctions.clientes(); resetEditState(formCliente); });
-    renderFunctions.clientes = (data = dbClientes) => { tabelaClientes.innerHTML = ""; data.forEach(cliente => { tabelaClientes.innerHTML += `<tr><td class="code-column">${cliente.codigo}</td><td>${cliente.nome}</td><td>${cliente.cpf}</td><td>${cliente.telefone}</td><td class="actions"><button class="btn-view" data-id="${cliente.codigo}" data-type="cliente">Ver</button><button class="btn-edit" data-id="${cliente.codigo}" data-type="cliente">Editar</button><button class="btn-delete" data-id="${cliente.codigo}" data-type="cliente">Excluir</button></td></tr>`; }); }
-
+    formCliente.addEventListener('submit', (e) => { e.preventDefault(); const cliData = { nome: document.getElementById('cli-nome').value.toUpperCase(), cpf: document.getElementById('cli-cpf').value, telefone: document.getElementById('cli-telefone').value, email: document.getElementById('cli-email').value, cep: document.getElementById('cli-cep').value, rua: document.getElementById('cli-rua').value.toUpperCase(), numero: document.getElementById('cli-numero').value, bairro: document.getElementById('cli-bairro').value.toUpperCase(), cidade: document.getElementById('cli-cidade').value.toUpperCase(), uf: document.getElementById('cli-uf').value.toUpperCase() }; if(currentlyEditing.type === 'cliente'){ const item = dbClientes.find(c => c.codigo === currentlyEditing.id); if(item) Object.assign(item, cliData); } else { const cod = 'C' + String(clientCounter++).padStart(3, '0'); dbClientes.push({ codigo: cod, ...cliData }); } renderFunctions.clientes(); resetEditState(formCliente); });
+    renderFunctions.clientes = (data = dbClientes) => { tabelaClientes.innerHTML = ""; data.forEach(cliente => { tabelaClientes.innerHTML += `<tr><td class="code-column">${cliente.codigo}</td><td>${toTitleCase(cliente.nome)}</td><td>${cliente.cpf}</td><td>${cliente.telefone}</td><td class="actions"><button class="btn-view" data-id="${cliente.codigo}" data-type="cliente">Ver</button><button class="btn-edit" data-id="${cliente.codigo}" data-type="cliente">Editar</button><button class="btn-delete" data-id="${cliente.codigo}" data-type="cliente">Excluir</button></td></tr>`; }); }
     // VENDEDORES
     const formVendedor = document.getElementById('form-vendedor');
     const tabelaVendedores = document.getElementById('tabela-vendedores');
-    formVendedor.addEventListener('submit', (e) => { e.preventDefault(); const vendData = { nome: document.getElementById('vend-nome').value, cpf: document.getElementById('vend-cpf').value, telefone: document.getElementById('vend-telefone').value, email: document.getElementById('vend-email').value, cep: document.getElementById('vend-cep').value, rua: document.getElementById('vend-rua').value, numero: document.getElementById('vend-numero').value, bairro: document.getElementById('vend-bairro').value, cidade: document.getElementById('vend-cidade').value, uf: document.getElementById('vend-uf').value }; if(currentlyEditing.type === 'vendedor'){ const item = dbVendedores.find(v => v.codigo === currentlyEditing.id); if(item) Object.assign(item, vendData); } else { const cod = 'V' + String(sellerCounter++).padStart(3, '0'); dbVendedores.push({ codigo: cod, ...vendData }); } renderFunctions.vendedores(); resetEditState(formVendedor); });
-    renderFunctions.vendedores = (data = dbVendedores) => { tabelaVendedores.innerHTML = ""; data.forEach(vend => { tabelaVendedores.innerHTML += `<tr><td class="code-column">${vend.codigo}</td><td>${vend.nome}</td><td>${vend.cpf}</td><td>${vend.telefone}</td><td class="actions"><button class="btn-view" data-id="${vend.codigo}" data-type="vendedor">Ver</button><button class="btn-edit" data-id="${vend.codigo}" data-type="vendedor">Editar</button><button class="btn-delete" data-id="${vend.codigo}" data-type="vendedor">Excluir</button></td></tr>`; }); }
+    formVendedor.addEventListener('submit', (e) => { e.preventDefault(); const vendData = { nome: document.getElementById('vend-nome').value.toUpperCase(), cpf: document.getElementById('vend-cpf').value, telefone: document.getElementById('vend-telefone').value, email: document.getElementById('vend-email').value, cep: document.getElementById('vend-cep').value, rua: document.getElementById('vend-rua').value.toUpperCase(), numero: document.getElementById('vend-numero').value, bairro: document.getElementById('vend-bairro').value.toUpperCase(), cidade: document.getElementById('vend-cidade').value.toUpperCase(), uf: document.getElementById('vend-uf').value.toUpperCase() }; if(currentlyEditing.type === 'vendedor'){ const item = dbVendedores.find(v => v.codigo === currentlyEditing.id); if(item) Object.assign(item, vendData); } else { const cod = 'V' + String(sellerCounter++).padStart(3, '0'); dbVendedores.push({ codigo: cod, ...vendData }); } renderFunctions.vendedores(); resetEditState(formVendedor); });
+    renderFunctions.vendedores = (data = dbVendedores) => { tabelaVendedores.innerHTML = ""; data.forEach(vend => { tabelaVendedores.innerHTML += `<tr><td class="code-column">${vend.codigo}</td><td>${toTitleCase(vend.nome)}</td><td>${vend.cpf}</td><td>${vend.telefone}</td><td class="actions"><button class="btn-view" data-id="${vend.codigo}" data-type="vendedor">Ver</button><button class="btn-edit" data-id="${vend.codigo}" data-type="vendedor">Editar</button><button class="btn-delete" data-id="${vend.codigo}" data-type="vendedor">Excluir</button></td></tr>`; }); }
 
     // FORNECEDORES
     const formFornecedor = document.getElementById('form-fornecedor');
     const tabelaFornecedores = document.getElementById('tabela-fornecedores');
-    formFornecedor.addEventListener('submit', (e) => { e.preventDefault(); const fornData = { nome: document.getElementById('forn-nome').value, cnpj: document.getElementById('forn-cnpj').value, contato: document.getElementById('forn-contato').value, telefone: document.getElementById('forn-telefone').value, cep: document.getElementById('forn-cep').value, rua: document.getElementById('forn-rua').value, numero: document.getElementById('forn-numero').value, bairro: document.getElementById('forn-bairro').value, cidade: document.getElementById('forn-cidade').value, uf: document.getElementById('forn-uf').value }; if(currentlyEditing.type === 'fornecedor'){ const item = dbFornecedores.find(f => f.codigo === currentlyEditing.id); if(item) Object.assign(item, fornData); } else { const cod = 'F' + String(supplierCounter++).padStart(3, '0'); dbFornecedores.push({ codigo: cod, ...fornData }); } renderFunctions.fornecedores(); resetEditState(formFornecedor); });
-    renderFunctions.fornecedores = (data = dbFornecedores) => { tabelaFornecedores.innerHTML = ""; data.forEach(forn => { tabelaFornecedores.innerHTML += `<tr><td class="code-column">${forn.codigo}</td><td>${forn.nome}</td><td>${forn.cnpj}</td><td>${forn.telefone}</td><td class="actions"><button class="btn-view" data-id="${forn.codigo}" data-type="fornecedor">Ver</button><button class="btn-edit" data-id="${forn.codigo}" data-type="fornecedor">Editar</button><button class="btn-delete" data-id="${forn.codigo}" data-type="fornecedor">Excluir</button></td></tr>`; }); }
+    formFornecedor.addEventListener('submit', (e) => { e.preventDefault(); const fornData = { nome: document.getElementById('forn-nome').value.toUpperCase(), cnpj: document.getElementById('forn-cnpj').value, contato: document.getElementById('forn-contato').value.toUpperCase(), telefone: document.getElementById('forn-telefone').value, cep: document.getElementById('forn-cep').value, rua: document.getElementById('forn-rua').value.toUpperCase(), numero: document.getElementById('forn-numero').value, bairro: document.getElementById('forn-bairro').value.toUpperCase(), cidade: document.getElementById('forn-cidade').value.toUpperCase(), uf: document.getElementById('forn-uf').value.toUpperCase() }; if(currentlyEditing.type === 'fornecedor'){ const item = dbFornecedores.find(f => f.codigo === currentlyEditing.id); if(item) Object.assign(item, fornData); } else { const cod = 'F' + String(supplierCounter++).padStart(3, '0'); dbFornecedores.push({ codigo: cod, ...fornData }); } renderFunctions.fornecedores(); resetEditState(formFornecedor); });
+    renderFunctions.fornecedores = (data = dbFornecedores) => { tabelaFornecedores.innerHTML = ""; data.forEach(forn => { tabelaFornecedores.innerHTML += `<tr><td class="code-column">${forn.codigo}</td><td>${toTitleCase(forn.nome)}</td><td>${forn.cnpj}</td><td>${forn.telefone}</td><td class="actions"><button class="btn-view" data-id="${forn.codigo}" data-type="fornecedor">Ver</button><button class="btn-edit" data-id="${forn.codigo}" data-type="fornecedor">Editar</button><button class="btn-delete" data-id="${forn.codigo}" data-type="fornecedor">Excluir</button></td></tr>`; }); }
     
     // CUPONS
     const formCupom = document.getElementById('form-cupom');
@@ -276,6 +324,147 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSearch('search-fornecedores', 'fornecedores', dbFornecedores, ['nome', 'cnpj', 'codigo']);
     setupSearch('search-cupons', 'cupons', dbCupons, ['codigo']);
     
-    // INICIALIZAÇÃO GERAL
+    // --- LÓGICA DE RELATÓRIOS ---
+    function renderReports() {
+        const vendasDoDia = dbVendas; // Usando os dados simulados
+        const faturamentoDia = vendasDoDia.reduce((acc, venda) => acc + venda.total, 0);
+        const vendasDia = vendasDoDia.length;
+        const ticketMedio = vendasDia > 0 ? faturamentoDia / vendasDia : 0;
+        const itensVendidos = vendasDoDia.reduce((acc, venda) => acc + venda.itens.reduce((accItem, item) => accItem + item.quantidade, 0), 0);
+        
+        document.getElementById('report-faturamento-dia').textContent = formatCurrency(faturamentoDia);
+        document.getElementById('report-vendas-dia').textContent = vendasDia;
+        document.getElementById('report-ticket-medio').textContent = formatCurrency(ticketMedio);
+        document.getElementById('report-itens-vendidos').textContent = itensVendidos;
+
+        const produtosContagem = {};
+        vendasDoDia.forEach(venda => {
+            venda.itens.forEach(item => {
+                produtosContagem[item.codigo] = (produtosContagem[item.codigo] || 0) + item.quantidade;
+            });
+        });
+        const produtosMaisVendidos = Object.entries(produtosContagem).sort(([,a],[,b]) => b - a).slice(0, 5);
+        const listaProdutosVendidos = document.getElementById('lista-produtos-vendidos');
+        listaProdutosVendidos.innerHTML = '';
+        produtosMaisVendidos.forEach(([codigo, qtd]) => {
+            const produto = dbProdutos.find(p => p.codigo === codigo);
+            if (produto) { listaProdutosVendidos.innerHTML += `<li><span>${produto.nome}</span><span>${qtd} un.</span></li>`; }
+        });
+
+        const vendasPorVendedor = {};
+        vendasDoDia.forEach(venda => {
+            vendasPorVendedor[venda.vendedor.codigo] = (vendasPorVendedor[venda.vendedor.codigo] || 0) + venda.total;
+        });
+        const listaVendasVendedor = document.getElementById('lista-vendas-vendedor');
+        listaVendasVendedor.innerHTML = '';
+        for (const [codigo, total] of Object.entries(vendasPorVendedor)) {
+            const vendedor = dbVendedores.find(v => v.codigo === codigo);
+            if(vendedor) { listaVendasVendedor.innerHTML += `<li><span>${vendedor.nome}</span><span>${formatCurrency(total)}</span></li>`; }
+        }
+
+        const estoqueBaixo = dbProdutos.filter(p => p.estoque <= p.estoqueMinimo);
+        const listaEstoqueBaixo = document.getElementById('lista-estoque-baixo');
+        listaEstoqueBaixo.innerHTML = '';
+        if (estoqueBaixo.length > 0) {
+            estoqueBaixo.forEach(p => {
+                listaEstoqueBaixo.innerHTML += `<li><span>${p.nome}</span><span>${p.estoque} / ${p.estoqueMinimo}</span></li>`;
+            });
+        } else {
+            listaEstoqueBaixo.innerHTML = `<li><span>Nenhum item com estoque baixo!</span><span>🎉</span></li>`;
+        }
+
+        const ultimasVendas = vendasDoDia.slice(-3).reverse();
+        const listaUltimasVendas = document.getElementById('lista-ultimas-vendas');
+        listaUltimasVendas.innerHTML = '';
+        ultimasVendas.forEach(venda => {
+            listaUltimasVendas.innerHTML += `<li><span>${venda.cliente.nome}</span><span>${formatCurrency(venda.total)}</span></li>`;
+        });
+    }
+
+    // --- LÓGICA DE HISTÓRICO DE VENDAS ---
+    const tabelaHistorico = document.getElementById('tabela-historico');
+    renderFunctions.historico = (data = dbVendas) => {
+        tabelaHistorico.innerHTML = "";
+        data.forEach(venda => {
+            const totalItens = venda.itens.reduce((acc, item) => acc + item.quantidade, 0);
+            tabelaHistorico.innerHTML += `<tr><td class="code-column">${venda.recibo}</td><td>${venda.date.toLocaleString('pt-BR')}</td><td>${venda.cliente.nome}</td><td>${venda.vendedor.nome}</td><td>${totalItens}</td><td>${formatCurrency(venda.total)}</td><td class="actions"><button class="btn-view btn-reprint" data-id="${venda.recibo}" data-type="venda">Detalhes</button></td></tr>`;
+        });
+    }
+
+    // LÓGICA PARA MODAIS DE IMPRESSÃO
+    const btnPrintNf = document.getElementById('btn-print-nf');
+    const btnPrintGarantia = document.getElementById('btn-print-garantia');
+    const docContentEl = document.getElementById('document-content');
+    const btnClosePreview = document.getElementById('btn-close-preview');
+    const btnPrintDocument = document.getElementById('btn-print-document');
+
+    if (btnPrintNf) btnPrintNf.addEventListener('click', () => showPreview('nf'));
+    if (btnPrintGarantia) btnPrintGarantia.addEventListener('click', () => showPreview('garantia'));
+    if (btnClosePreview) btnClosePreview.addEventListener('click', () => { docPreviewModal.style.display = 'none'; if(postSaleModal) postSaleModal.style.display = 'block'; });
+    if (btnPrintDocument) btnPrintDocument.addEventListener('click', () => window.print());
+    window.addEventListener('afterprint', () => { if(docPreviewModal) { docPreviewModal.style.display = 'none'; if (postSaleModal && postSaleModal.style.display === 'block') { /* Não faz nada se a postSaleModal já estiver visível */ } } });
+    
+    function formatCurrency(value) { return typeof value === 'number' ? value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : String(value); }
+
+    function showPreview(type) {
+        docContentEl.innerHTML = generateDocumentHTML(type);
+        if (postSaleModal) postSaleModal.style.display = 'none';
+        if (docPreviewModal) docPreviewModal.style.display = 'block';
+    }
+
+    function generateDocumentHTML(type) {
+        const docNumber = lastSaleData.recibo;
+        let clienteHtml = `<p><strong>CLIENTE:</strong> ${lastSaleData.cliente.nome}</p>`;
+        if (lastSaleData.cliente.cpf) {
+            clienteHtml += `<p><strong>CPF:</strong> ${lastSaleData.cliente.cpf}</p>`;
+        }
+
+        if (type === 'nf') {
+            let itemsHtml = '';
+            lastSaleData.itens.forEach(item => {
+                itemsHtml += `<tr><td>${item.codigo || ''}</td><td>${item.nome}</td><td>${item.quantidade}</td><td>${formatCurrency(item.preco)}</td><td>${formatCurrency(item.preco * item.quantidade)}</td></tr>`;
+            });
+            return `<div class="doc-header"><h3>AmanditaGames Store</h3><p>Seu Endereço | Seu Contato</p></div>
+                    <div class="doc-section"><h4>RECIBO DE VENDA - Nº ${docNumber}</h4><p><strong>Data:</strong> ${lastSaleData.date.toLocaleString('pt-BR')}</p></div>
+                    <div class="doc-section"><h4>DADOS DO CLIENTE</h4>${clienteHtml}</div>
+                    <div class="doc-section"><p><strong>Vendedor:</strong> ${lastSaleData.vendedor.nome}</p></div>
+                    <div class="doc-section"><h4>ITENS DA COMPRA</h4><table class="doc-table"><thead><tr><th>Cód.</th><th>Descrição</th><th>Qtd.</th><th>Vlr. Unit.</th><th>Total</th></tr></thead><tbody>${itemsHtml}</tbody></table></div>
+                    <div class="doc-section"><h4>Pagamento</h4><p><strong>TOTAL PAGO:</strong> ${formatCurrency(lastSaleData.total)}</p><p><strong>Forma de Pagamento:</strong> ${lastSaleData.paymentMethod}</p></div>
+                    <div class="doc-footer"><p>Obrigado pela preferência!</p></div>`;
+        }
+
+        if (type === 'garantia') {
+            let itemsGarantiaHtml = '';
+            lastSaleData.itens.filter(item => !item.isDiscount).forEach(item => {
+                itemsGarantiaHtml += `<tr><td>${item.nome}</td><td>${item.serial || 'N/A'}</td><td>${item.garantia || 'N/A'}</td></tr>`;
+            });
+            return `<div class="doc-header"><h3>AmanditaGames Store</h3><p>Seu Endereço | Seu Contato</p></div>
+                    <div class="doc-section" style="text-align:center;"><h2>CERTIFICADO DE GARANTIA</h2></div>
+                    <div class="doc-section"><h4>DADOS DO CLIENTE</h4>${clienteHtml}</div>
+                    <div class="doc-section"><h4>REFERENTE À VENDA</h4><p><strong>Recibo Nº:</strong> ${docNumber}</p><p><strong>Data da Compra:</strong> ${lastSaleData.date.toLocaleDateString('pt-BR')}</p></div>
+                    <div class="doc-section"><h4>PRODUTOS COBERTOS PELA GARANTIA</h4><table class="doc-table"><thead><tr><th>Produto</th><th>Nº de Série</th><th>Garantia</th></tr></thead><tbody>${itemsGarantiaHtml}</tbody></table></div>
+                    <div class="doc-section"><h4>TERMOS DE GARANTIA</h4>
+                    <p style="font-size: 11px; text-align: justify; white-space: pre-wrap;">Este certificado é a prova da sua garantia e deve ser apresentado para que o serviço seja validado. O não cumprimento das condições estabelecidas abaixo anula a garantia.
+
+<b>1. Prazos de Garantia</b>
+   - Serviços Prestados: 3 (três) meses, a contar da data da conclusão. Cobre defeitos de mão de obra ou falhas relacionadas ao serviço.
+   - Produtos Adquiridos: Prazo conforme descrito na tabela acima, a contar da data da compra. Cobre defeitos de fabricação dos produtos.
+
+<b>2. O que a Garantia Não Cobre</b>
+   A garantia será invalidada se o defeito for causado por: Mau uso (quedas, batidas, exposição a umidade, etc.), reparos não autorizados por terceiros, ou desgaste natural de componentes.
+
+<b>3. Procedimento para Acionamento</b>
+   - O cliente deve entrar em contato com a loja e apresentar este certificado.
+   - A loja tem o prazo de até 30 (trinta) dias para realizar o reparo ou a troca do produto/serviço, sem custos adicionais.
+
+<b>4. Serviço de Suporte Técnico:</b> Para problemas não cobertos por esta garantia (ex: limpeza de consoles, otimizações, manutenção), a AmanditaGames Store oferece suporte técnico especializado. Estes serviços são orçados e cobrados separadamente.</p>
+                    </div>
+                    <div class="doc-footer" style="margin-top: 50px;"><p>_________________________<br>Assinatura do Responsável</p></div>`;
+        }
+    }
+    
+    // --- INICIALIZAÇÃO GERAL ---
     populateCategoryDropdown();
+    renderFunctions.historico();
+    renderReports();
 });

@@ -130,6 +130,8 @@ button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 
 .close-button { color: #aaa; position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; }
 .close-button:hover, .close-button:focus { color: white; }
 .modal-actions { margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;}
+
+/* Modal de Pagamento */
 .payment-summary { border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
 .payment-summary div { display: flex; justify-content: space-between; font-size: 1.1em; margin-bottom: 10px; }
 .payment-summary strong { font-size: 1.2em; color: #FF5F1F; }
