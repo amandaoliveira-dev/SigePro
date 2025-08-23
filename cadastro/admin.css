@@ -17,12 +17,15 @@ body {
     margin: 0;
     height: 100vh;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Estrutura Principal */
 .admin-container {
     display: flex;
-    height: 100%;
+    flex-grow: 1;
+    min-height: 0; /* Prevenção de overflow no flex container */
 }
 
 /* Menu Lateral (Sidebar) */
@@ -53,10 +56,10 @@ body {
 }
 .sidebar .nav-list {
     list-style: none;
-    padding: 0 10px 0 0; /* Adiciona o respiro de 10px à direita */
+    padding: 0 5px 0 0;
     margin: 0;
     flex-grow: 1;
-    overflow-y: auto;
+    overflow-y: auto; /* Faz APENAS a lista rolar se precisar */
     scrollbar-width: thin;
     scrollbar-color: #444 #2a2a2a;
 }
@@ -82,8 +85,8 @@ body {
 .goto-pos {
     text-align: center; color: #aaa; text-decoration: none;
     padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);
-    margin-top: 20px;
-    flex-shrink: 0;
+    margin-top: 20px; /* Garante espaço acima do botão */
+    flex-shrink: 0;   /* Impede que o botão seja espremido */
 }
 .goto-pos:hover { background-color: #333; color: white; }
 
@@ -92,12 +95,12 @@ body {
     width: 10px;
 }
 .sidebar .nav-list::-webkit-scrollbar-track {
-    background: #2a2a2a;
-    border-radius: 5px;
+    background: transparent;
 }
 .sidebar .nav-list::-webkit-scrollbar-thumb {
     background: #444;
     border-radius: 5px;
+    border: 3px solid var(--panel-color);
 }
 .sidebar .nav-list::-webkit-scrollbar-thumb:hover {
     background: #555;
@@ -231,6 +234,12 @@ thead { background-color: #2a2a2a; }
     margin-top: 10px; padding: 15px; border: none; border-radius: 5px;
     background: var(--primary-gradient); color: white;
     font-size: 1.1em; font-weight: 700; cursor: pointer;
+    transition: all 0.2s ease-in-out; /* Adicione esta linha */
+
+}
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 95, 31, 0.4); /* Sombra alaranjada para combinar com o gradiente */
 }
 
 /* Estilos do Dashboard de Relatórios */
@@ -360,15 +369,33 @@ thead { background-color: #2a2a2a; }
     from { opacity: 0; transform: translateY(-30px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
 .close-button {
-    color: #aaa;
     position: absolute;
-    top: 15px;
-    right: 25px;
-    font-size: 28px;
-    font-weight: bold;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #333;
+    color: #aaa;
+    border-radius: 50%;
+    border: none;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: all 0.2s ease-in-out;
 }
+
+.close-button:hover {
+    background-color: var(--error-color);
+    color: white;
+    transform: rotate(90deg);
+}
+
 .close-button:hover, .close-button:focus { color: white; }
 #modal-body p { margin: 10px 0; line-height: 1.6; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
 #modal-body p:last-child { border-bottom: none; }
@@ -377,12 +404,108 @@ thead { background-color: #2a2a2a; }
 #confirm-modal .modal-content { text-align: center; max-width: 450px; }
 #confirm-modal h2 { border-bottom: none; }
 #confirm-modal-text { font-size: 1.2em; margin: 10px 0 30px 0; line-height: 1.5; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px; }
-.modal-actions button { padding: 10px 25px; border-radius: 5px; border: none; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+
+/* NOVO CÓDIGO DEFINITIVO: */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    /* Adiciona esta propriedade para forçar os itens a esticarem e terem a mesma altura */
+    align-items: stretch;
+}
+
+
+.modal-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1em; /* Voltamos para o tamanho padrão */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    /* Novas propriedades para centralizar o conteúdo (ícone + texto) perfeitamente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Adiciona margem no botão secundário para alinhar com o primário no modal */
+.modal-actions .btn-secondary {
+    margin-top: 10px;
+}
+
 .btn-secondary { background-color: #555; color: white; }
 .btn-secondary:hover { background-color: #666; }
 .btn-danger { background-color: var(--error-color); color: white; }
 .btn-danger:hover { background-color: #c82333; }
 #post-sale-modal .modal-content { text-align: center; }
 #post-sale-modal .modal-actions { justify-content: center; }
-.document-preview { max-width: 800px; }
+
+/* --- SEÇÃO DE IMPRESSÃO CORRIGIDA --- */
+.document-preview {
+    max-width: 800px;
+}
+
+.printable-area {
+    background-color: white;
+    color: black;
+    padding: 40px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.printable-area p {
+    font-size: 12px;
+    margin: 8px 0;
+}
+
+.printable-area strong {
+    font-size: 12px;
+    color: black;
+    font-weight: bold; /* Garante que o strong seja sempre negrito */
+}
+
+.doc-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; }
+.doc-header h3 { margin: 0; font-size: 24px; color: black; border: none;}
+.doc-header p { margin: 5px 0 0; }
+.doc-section { margin-top: 20px; }
+.doc-section h4 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; font-size: 16px; color: black; border-color: #ccc;}
+.doc-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+.doc-table th, .doc-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+.doc-table th { background-color: #f2f2f2; }
+.doc-footer { margin-top: 30px; text-align: center; font-size: 12px; font-style: italic; }
+
+/* Estilos dos descontos */
+.doc-discount-line { font-size: 11px; color: #444; margin: 4px 0; padding: 0; border: none; }
+.doc-discount-line strong { font-weight: normal; font-size: 11px; }
+.doc-discount-total-line { color: var(--success-color); font-weight: bold; }
+.doc-discount-total-line strong { color: inherit; }
+
+/* CORREÇÃO FINAL PARA O TOTAL PAGO */
+.doc-total-line {
+    border-top: 2px solid #333;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+.doc-total-line strong {
+    font-size: 18px !important;
+    font-weight: 500 !important;
+}
+.doc-total-line strong:last-child {
+    font-weight: 700 !important;
+}
+
+.payment-details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: flex-start; }
+.payment-summary-left hr { border: none; border-top: 1px solid #ccc; margin: 10px 0; }
+.pix-area-doc { text-align: center; border-left: 1px solid #ccc; padding-left: 20px; }
+.pix-area-doc img { max-width: 120px; }
+.pix-area-doc p { font-size: 11px; word-break: break-all; }
+
+/* Regras de Impressão */
+@media print {
+  body * { visibility: hidden; }
+  .printable-area, .printable-area * { visibility: visible; }
+  .printable-area { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; border: none; }
+  .modal-actions { display: none !important; }
+}

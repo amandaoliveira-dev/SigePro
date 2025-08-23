@@ -127,8 +127,32 @@ button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 
 @keyframes fadeInModal { from { background-color: rgba(0, 0, 0, 0); } to { background-color: rgba(0, 0, 0, 0.7); } }
 .modal-content { background-color: var(--panel-color); margin: 10% auto; padding: 30px; border: 1px solid var(--border-color); width: 90%; max-width: 450px; border-radius: 8px; position: relative; animation: slideIn 0.3s; }
 @keyframes slideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-.close-button { color: #aaa; position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; }
-.close-button:hover, .close-button:focus { color: white; }
+/* POR ISTO (ESTILO ELEGANTE): */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #333;
+    color: #aaa;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: all 0.2s ease-in-out;
+}
+.close-button:hover, .close-button:focus {
+    background-color: var(--error-color); /* A cor vermelha de erro */
+    color: white;
+    transform: rotate(90deg);
+}
+
 .modal-actions { margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;}
 
 /* Modal de Pagamento */
@@ -144,7 +168,7 @@ button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 
 .pix-area img { max-width: 200px; border-radius: 5px; }
 .pix-area p { background-color: #333; padding: 10px; border-radius: 5px; font-family: monospace; word-break: break-all; margin-top: 15px; }
 
-/* Modal Pós-Venda e Impressão */
+/* --- SEÇÃO DE IMPRESSÃO CORRIGIDA --- */
 #post-sale-modal .modal-content { text-align: center; }
 #post-sale-modal p { margin: 20px 0; font-size: 1.1em; }
 .post-sale-actions { justify-content: center; }
@@ -157,7 +181,7 @@ button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 
 .doc-section { margin-top: 20px; }
 .doc-section h4 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; font-size: 16px; color: black; border-color: #ccc;}
 .doc-section p { font-size: 12px; margin: 8px 0; }
-.doc-section strong { font-size: 12px; color: black; }
+.doc-section strong { font-size: 12px; color: black; } /* ESTA É A LINHA QUE CAUSAVA O PROBLEMA */
 .doc-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
 .doc-table th, .doc-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
 .doc-table th { background-color: #f2f2f2; }
@@ -167,10 +191,26 @@ button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 
 .pix-area-doc { text-align: center; border-left: 1px solid #ccc; padding-left: 20px; }
 .pix-area-doc img { max-width: 120px; }
 .pix-area-doc p { font-size: 11px; word-break: break-all; }
-.doc-discount-line { font-size: 11px !important; font-style: italic !important; color: #444 !important; margin: 4px 0 !important; padding: 0 !important; border: none !important; }
-.doc-discount-line strong { font-weight: normal !important; }
-.doc-total-line { font-size: 14px !important; font-weight: bold !important; }
-.doc-total-line strong { font-weight: bold !important; }
+
+/* Estilos dos descontos */
+.doc-discount-line { font-size: 11px; color: #444; margin: 4px 0; padding: 0; border: none; }
+.doc-discount-line strong { font-size: 11px; }
+.doc-discount-total-line { color: var(--success-color); font-weight: bold; }
+.doc-discount-total-line strong { color: inherit; }
+
+/* CORREÇÃO FINAL PARA O TOTAL PAGO */
+.doc-total-line {
+    border-top: 2px solid #333;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+.doc-total-line strong {
+    font-size: 18px !important;
+    font-weight: 500 !important;
+}
+.doc-total-line strong:last-child {
+    font-weight: 700 !important;
+}
 
 /* Regras de Impressão */
 @media print {

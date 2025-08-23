@@ -6,7 +6,7 @@
     <title>Painel Administrativo - AmanditaGames Store</title>
     <link rel="stylesheet" href="admin.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -41,8 +41,8 @@
                     <div class="form-group"><label for="prod-garantia">Período de Garantia</label><select id="prod-garantia"><option value="3 Meses">3 Meses</option><option value="1 Ano">1 Ano</option></select></div>
                     <div class="form-group"><label for="prod-serial">Número de Série</label><input type="text" id="prod-serial" placeholder="Para consoles e acessórios"></div>
                     <div class="section-divider">Valores e Fornecedor</div>
-                    <div class="form-group"><label for="prod-preco-custo">Preço de Custo (R$)</label><input type="text" id="prod-preco-custo" placeholder="99,90" required></div>
-                    <div class="form-group"><label for="prod-preco">Preço de Venda (R$)</label><input type="text" id="prod-preco" placeholder="199,90" required></div>
+                    <div class="form-group"><label for="prod-preco-custo">Preço de Custo (R$)</label><input type="number" id="prod-preco-custo" placeholder="99.90" step="0.01" required></div>
+                    <div class="form-group"><label for="prod-preco">Preço de Venda (R$)</label><input type="number" id="prod-preco" placeholder="199.90" step="0.01" required></div>
                     <div class="form-group"><label for="prod-fornecedor-codigo">Código do Fornecedor</label><input type="text" id="prod-fornecedor-codigo" placeholder="Ex: F001"><small id="prod-fornecedor-nome" class="lookup-status"></small></div>
                     <div class="section-divider">Controle de Estoque (Opcional)</div>
                     <div class="form-group"><label for="prod-estoque">Estoque Atual</label><input type="number" id="prod-estoque" value="0" min="0"></div>
@@ -171,9 +171,9 @@
             <div id="cupons" class="content-panel">
                 <h2>Cadastro de Cupons de Desconto</h2>
                 <form id="form-cupom" class="form-container">
-                    <div class="form-group"><label for="cupom-codigo">Código (ex: PROMO10)</label><input type="text" id="cupom-codigo" required class="uppercase-input"></div>
+                    <div class="form-group"><label for="cupom-codigo">Código (ex: PROMO10)</label><input type="text" id="cupom-codigo" class="uppercase-input" required></div>
                     <div class="form-group"><label for="cupom-tipo">Tipo de Desconto</label><select id="cupom-tipo"><option value="fixed">Valor Fixo (R$)</option><option value="percent">Porcentagem (%)</option></select></div>
-                    <div class="form-group"><label for="cupom-valor">Valor</label><input type="text" id="cupom-valor" placeholder="10,00" required></div>
+                    <div class="form-group"><label for="cupom-valor">Valor</label><input type="number" id="cupom-valor" placeholder="10.00" step="0.01" required></div>
                     <div class="form-group"><label for="cupom-usos">Quantidade de Usos</label><input type="number" id="cupom-usos" value="1" min="1"></div>
                     <button type="submit" id="btn-salvar-cupom" class="btn-primary">Salvar Cupom</button>
                 </form>
@@ -207,7 +207,7 @@
                 </div>
             </div>
             
-            <div id="historico" class="content-panel active">
+            <div id="historico" class="content-panel">
                 <h2>Histórico de Vendas</h2>
                 <div class="filters-container">
                     <div class="form-group">
@@ -235,7 +235,7 @@
 
     <div id="details-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <button class="close-button" aria-label="Fechar">&times;</button>
             <h2 id="modal-title">Detalhes do Item</h2>
             <div id="modal-body"></div>
         </div>
@@ -243,7 +243,7 @@
 
     <div id="confirm-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <button class="close-button" aria-label="Fechar">&times;</button>
             <h2>Confirmação</h2>
             <p id="confirm-modal-text">Tem certeza que deseja excluir o item do cadastro?</p>
             <div class="modal-actions">
@@ -255,20 +255,22 @@
 
     <div id="post-sale-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <button class="close-button" aria-label="Fechar">&times;</button>
             <h2>Opções de Impressão</h2>
+            <p>Selecione o documento para visualizar e imprimir.</p>
             <div class="modal-actions post-sale-actions">
-                <button id="btn-print-nf" class="btn-secondary">📄 2ª Via Recibo</button>
-                <button id="btn-print-garantia" class="btn-secondary">📜 2ª Via Garantia</button>
+                <button id="btn-reprint-nf" class="btn-secondary">📄 2ª Via Recibo</button>
+                <button id="btn-reprint-garantia" class="btn-secondary">📜 2ª Via Garantia</button>
             </div>
         </div>
     </div>
 
     <div id="document-preview-modal" class="modal">
         <div class="modal-content document-preview">
+            <button class="close-button" aria-label="Fechar">&times;</button>
             <div id="document-content" class="printable-area"></div>
             <div class="modal-actions">
-                <button id="btn-close-preview" class="btn-secondary">Fechar</button>
+                <button id="btn-close-preview" class="btn-secondary">❌ Fechar</button>
                 <button id="btn-print-document" class="btn-primary">🖨️ Imprimir</button>
             </div>
         </div>

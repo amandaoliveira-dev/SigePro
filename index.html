@@ -6,7 +6,7 @@
     <title>Frente de Caixa - AmanditaGames Store</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -45,7 +45,7 @@
                 </div>
                 <div class="form-group">
                     <label for="manual-desc-valor">Valor do Desconto (R$)</label>
-                    <input type="text" id="manual-desc-valor" placeholder="Ex: 15,50">
+                    <input type="number" id="manual-desc-valor" placeholder="15.50" step="0.01" min="0">
                 </div>
                 <button id="add-manual-desc-btn" class="btn-secondary">Lançar Desconto</button>
             </div>
@@ -121,7 +121,7 @@
 
     <div id="payment-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <button class="close-button" aria-label="Fechar">&times;</button>
             <h2>Finalizar Pagamento</h2>
             <div class="payment-summary">
                 <div>
@@ -142,12 +142,12 @@
 
     <div id="post-sale-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <button class="close-button" aria-label="Fechar">&times;</button>
             <h2>Venda Finalizada com Sucesso!</h2>
             <p>O que você deseja fazer a seguir?</p>
             <div class="modal-actions post-sale-actions">
-                <button id="btn-print-nf" class="btn-secondary">📄 2ª Via Recibo</button>
-                <button id="btn-print-garantia" class="btn-secondary">📜 2ª Via Garantia</button>
+                <button id="btn-print-nf" class="btn-secondary">📄 Imprimir Recibo</button>
+                <button id="btn-print-garantia" class="btn-secondary">📜 Imprimir Garantia</button>
             </div>
             <button id="btn-new-sale" class="btn-link">Concluir (Nova Venda)</button>
         </div>
@@ -155,10 +155,11 @@
 
     <div id="document-preview-modal" class="modal">
         <div class="modal-content document-preview">
+            <button class="close-button" aria-label="Fechar">&times;</button>
             <div id="document-content" class="printable-area">
-                </div>
+            </div>
             <div class="modal-actions">
-                <button id="btn-close-preview" class="btn-secondary">Fechar</button>
+                <button id="btn-close-preview" class="btn-secondary">❌ Fechar</button>
                 <button id="btn-print-document" class="btn-primary">🖨️ Imprimir</button>
             </div>
         </div>
