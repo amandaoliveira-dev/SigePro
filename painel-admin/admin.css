@@ -162,13 +162,28 @@ thead { background-color: #2a2a2a; }
 /* Botões */
 .btn-primary {
     grid-column: 1 / -1; margin-top: 10px; padding: 15px; border: none; border-radius: 5px;
-    background: var(--primary-gradient); /* Gradiente padrão */
+    background: var(--primary-gradient);
     color: white; font-size: 1.1em; font-weight: 700; cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
 .btn-primary:hover {
-    transform: translateY(-3px); /* Efeito de levantar */
-    box-shadow: 0 6px 20px rgba(255, 95, 31, 0.4); /* Sombra/brilho laranja */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 95, 31, 0.4);
+}
+.btn-secondary {
+    background-color: #555;
+    border: none;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+.btn-secondary:hover {
+    background-color: #666;
+    transform: translateY(-3px);
 }
 
 /* Estilos do Dashboard de Relatórios e Histórico */
@@ -214,41 +229,21 @@ thead { background-color: #2a2a2a; }
     justify-content: flex-end;
     gap: 15px;
     margin-top: 30px;
-    align-items: stretch; /* Força a mesma altura */
+    align-items: stretch;
 }
 .modal-actions button {
-    flex: 1; /* Força o mesmo tamanho */
+    flex: 1;
     padding: 12px;
     border-radius: 5px;
-    border: none;
     font-size: 1em;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
-/* Botão Secundário */
-.btn-secondary {
-    background-color: #555; /* Fundo cinza sólido */
-    border: none; /* Garante que não tenha borda */
-    color: white;
-    padding: 15px;
-    border-radius: 5px;
-    font-size: 1.1em;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-}
-.btn-secondary:hover {
-    background-color: #666; /* Cinza um pouco mais claro */
-    transform: translateY(-3px); /* Efeito de levantar sutil */
-}
-.btn-danger { background-color: var(--error-color); color: white; }
+.btn-danger { background-color: var(--error-color); color: white; border: none; }
 .btn-danger:hover { background-color: #c82333; }
-.modal-actions .btn-secondary { margin-top: 10px; }
 #post-sale-modal .modal-content { text-align: center; }
 #post-sale-modal .modal-actions { justify-content: center; }
 .document-preview .close-button { color: #999; }
@@ -319,12 +314,10 @@ thead { background-color: #2a2a2a; }
 .sub-panel.active {
     display: block;
 }
-/* Zera a margem do botão primário APENAS dentro do modal */
+
 .modal-actions .btn-primary {
     margin-top: 0;
 }
-
-/* Garante que o botão secundário não tenha margem extra */
 .modal-actions .btn-secondary {
     margin-top: 0;
 }

@@ -11,15 +11,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join(' ');
     }
 
-    // BANCOS DE DADOS FALSOS (PARA SIMULAÇÃO)
-    const mockDatabase = {
-        "P001": { nome: "JOGO PS5 - GOD OF WAR RAGNARÖK", preco: 349.90, serial: "N/A", garantia: "3 Meses" },
-        "P002": { nome: "CONTROLE DUALSENSE PS5 - BRANCO", preco: 449.50, serial: "AX123456789B", garantia: "1 Ano" },
-        "P003": { nome: "HEADSET PULSE 3D - PS5", preco: 599.00, serial: "HY987654321C", garantia: "1 Ano" },
+    // --- CARREGANDO DADOS DO LOCALSTORAGE ---
+    function loadData(key) {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : null;
+    }
+
+    const STORAGE_KEYS = {
+        products: 'amanditaGames_products',
+        clients: 'amanditaGames_clients', // Adicionado
     };
-    const mockCoupons = { "PROMO10": { type: 'fixed', value: 10.00, uses: 5, remaining: 5 }, "GAMER20": { type: 'fixed', value: 20.00, uses: 1, remaining: 1 }, };
-    const mockClients = { "C001": { nome: "AMANDA ROCKS", cpf: "123.456.789-00", telefone: "(85) 91234-5678", rua: "RUA DAS FLORES", numero: "123", bairro: "CENTRO", cidade: "FORTALEZA", uf: "CE", cep: "60000-000" }, };
-    const mockSellers = { "V001": { nome: "JOÃO VENDEDOR" }, };
+
+    // BANCOS DE DADOS
+    // Carrega os produtos salvos pelo admin
+    const dbProdutosArray = loadData(STORAGE_KEYS.products) || [];
+    const mockDatabase = dbProdutosArray.reduce((obj, item) => {
+        obj[item.codigo.toUpperCase()] = {
+            nome: item.nome,
+            preco: parseFloat(item.precoVenda),
+            serial: item.serial,
+            garantia: item.garantia
+        };
+        return obj;
+    }, {});
+
+    // ATUALIZADO: Carrega os clientes salvos pelo admin
+    const dbClientesArray = loadData(STORAGE_KEYS.clients) || [];
+    const mockClients = dbClientesArray.reduce((obj, item) => {
+        obj[item.codigo.toUpperCase()] = item;
+        return obj;
+    }, {});
+
+    // Vendedores e cupons continuam como exemplo por enquanto
+    const mockCoupons = { "PROMO10": { type: 'fixed', value: 10.00, uses: 5, remaining: 5 }, "GAMER20": { type: 'fixed', value: 20.00, uses: 1, remaining: 1 } };
+    const mockSellers = { "V001": { nome: "JOÃO VENDEDOR" } };
 
     // ELEMENTOS DO DOM (PDV)
     const clienteInput = document.getElementById('cliente-input');
@@ -96,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
         summaryVendedorEl.textContent = currentSeller ? toTitleCase(currentSeller.nome) : "Vendedor Padrão";
     };
 
-    // --- LÓGICA DAS MODAIS ---
     function openPaymentModal() { if (cart.length === 0) { alert("Nenhum item no carrinho!"); return; } updateUI(); const paymentMethod = paymentMethodEl.options[paymentMethodEl.selectedIndex].text; modalTotalVendaEl.textContent = formatCurrency(finalTotal); modalPaymentMethodEl.textContent = paymentMethod; paymentInputArea.innerHTML = ''; switch (paymentMethodEl.value) { case 'dinheiro': paymentInputArea.innerHTML = `<div class="form-group"><label for="valor-recebido">Valor Recebido (R$)</label><input type="number" id="valor-recebido" placeholder="50.00" step="0.01" min="0"></div><div class="troco-display"><span>Troco</span><strong id="troco-valor">R$ 0,00</strong></div>`; document.getElementById('valor-recebido').addEventListener('input', calculateChange); break; case 'pix': paymentInputArea.innerHTML = `<div class="pix-area"><p>Escaneie o QR Code para pagar</p><img src="https://i.imgur.com/g8fG1v1.png" alt="QR Code Falso"><p>amanda-games-pix@email.com</p></div>`; break; default: paymentInputArea.innerHTML = `<p style="text-align:center; font-size: 1.1em;">Por favor, insira o cartão na maquininha.</p>`; break; } paymentModal.style.display = 'block'; }
     function calculateChange() { const valorRecebidoInput = document.getElementById('valor-recebido'); const trocoValorEl = document.getElementById('troco-valor'); const valorRecebido = parseFloat(valorRecebidoInput.value.replace(',', '.')) || 0; const finalTotalInCents = Math.round(finalTotal * 100); const valorRecebidoInCents = Math.round(valorRecebido * 100); if (valorRecebidoInCents >= finalTotalInCents) { const trocoInCents = valorRecebidoInCents - finalTotalInCents; trocoValorEl.textContent = formatCurrency(trocoInCents / 100); } else { trocoValorEl.textContent = formatCurrency(0); } }
 
@@ -168,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong>Subtotal Produtos:</strong> ${formatCurrency(lastSaleData.subtotal)}</p>
                     ${totalDiscountValue > 0 ? `<p class="doc-discount-total-line"><strong>Valor Total Descontos:</strong> ${formatCurrency(-totalDiscountValue)}</p>${discountsHtml}` : ''}
                     <hr>
-                    <!-- CORREÇÃO FINAL AQUI: HTML simplificado para facilitar o CSS -->
                     <p class="doc-total-line"><strong>TOTAL PAGO:</strong> <strong>${formatCurrency(lastSaleData.total)}</strong></p>
                     ${paymentDetailsHtml}</div>
                     <div class="payment-summary-right">${pixHtml}</div></div></div>
@@ -229,7 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- EVENT LISTENERS ---
-    
     addProductBtn.addEventListener('click', addProductToCart);
     produtoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') quantidadeInput.focus(); });
     quantidadeInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addProductToCart(); });
@@ -244,13 +266,13 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmPayment.addEventListener('click', confirmPayment);
     paymentModalCloseButton.onclick = () => { paymentModal.style.display = 'none'; };
     postSaleModalCloseButton.onclick = () => { resetForNextSale(); };
-    docPreviewModalCloseButton.onclick = () => { docPreviewModal.style.display = 'none'; };
 
     btnPrintNf.addEventListener('click', () => showPreview('nf'));
     btnPrintGarantia.addEventListener('click', () => showPreview('garantia'));
     btnNewSale.addEventListener('click', resetForNextSale);
     btnClosePreview.addEventListener('click', () => { docPreviewModal.style.display = 'none'; postSaleModal.style.display = 'block'; });
     btnPrintDocument.addEventListener('click', () => window.print());
+    docPreviewModalCloseButton.onclick = () => { docPreviewModal.style.display = 'none'; };
     
     window.addEventListener('afterprint', () => {
         docPreviewModal.style.display = 'none';

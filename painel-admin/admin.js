@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join(' ');
     }
 
-    // --- NOVA LÓGICA DE NAVEGAÇÃO EM DOIS NÍVEIS ---
+    // --- LÓGICA DE NAVEGAÇÃO EM DOIS NÍVEIS ---
     const mainNavLinks = document.querySelectorAll('.sidebar .nav-link');
     const mainContentPanels = document.querySelectorAll('.content > .content-panel');
     const subNavLinks = document.querySelectorAll('.sub-nav-link');
@@ -31,7 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (targetId === 'cadastros') {
                 const firstSubNavLink = document.querySelector('.sub-nav-link');
-                if(firstSubNavLink && !document.querySelector('.sub-nav-link.active')) {
+                const activeSubNavLink = document.querySelector('.sub-nav-link.active');
+                if(firstSubNavLink && !activeSubNavLink) {
                     firstSubNavLink.click();
                 }
             }
@@ -53,21 +54,52 @@ document.addEventListener('DOMContentLoaded', () => {
             if(activeSubPanel) activeSubPanel.classList.add('active');
         });
     });
+    
+    const STORAGE_KEYS = {
+        products: 'amanditaGames_products',
+        categories: 'amanditaGames_categories',
+        clients: 'amanditaGames_clients',
+        sellers: 'amanditaGames_sellers',
+        suppliers: 'amanditaGames_suppliers',
+        coupons: 'amanditaGames_coupons',
+        sales: 'amanditaGames_sales'
+    };
 
+    function saveData(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    function loadData(key) {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : null;
+    }
+    // NOVO: Impede que a tecla "Enter" envie os formulários prematuramente
+    document.querySelectorAll('.form-container').forEach(form => {
+        form.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+                e.preventDefault();
+            }
+        });
+    });
 
     // --- BANCOS DE DADOS E CONTADORES ---
-    let dbCategorias = [{id: 1, nome: 'JOGOS PS5'}, {id: 2, nome: 'ACESSÓRIOS'}];
-    let dbProdutos = [ {codigo: 'P001', nome: 'JOGO PS5 - GOD OF WAR', precoVenda: '350.00', estoque: 2, estoqueMinimo: 3, garantia: "3 Meses", serial: "N/A", barcode: "711719541189", categoriaId: 1, precoCusto: "280.00", fornecedorCodigo: "F001", plataforma: "PS5", tags: "AÇÃO, AVENTURA"}, {codigo: 'P002', nome: 'CONTROLE DUALSENSE PS5', precoVenda: '450.00', estoque: 10, estoqueMinimo: 5, garantia: "1 Ano", serial: "AX123456789B", barcode: "711719540861", categoriaId: 2, precoCusto: "350.00", fornecedorCodigo: "F001", plataforma: "PS5", tags: "ACESSÓRIO, CONTROLE"}, {codigo: 'P003', nome: 'CABO HDMI 8K', precoVenda: '90.00', estoque: 4, estoqueMinimo: 5, garantia: "3 Meses", serial: "N/A", barcode: "789000000003", categoriaId: 2, precoCusto: "50.00", fornecedorCodigo: "F001", plataforma: "N/A", tags: "CABO, ACESSÓRIO"} ];
-    let dbVendedores = [ {codigo: 'V001', nome: 'AMANDA', cpf: '111.111.111-11'}, {codigo: 'V002', nome: 'JOÃO', cpf: '222.222.222-22'} ];
-    let dbClientes = [{codigo: 'C001', nome: 'CLIENTE FIEL', cpf: "111.222.333-44", telefone: "(85) 99999-8888", rua: "RUA DAS FLORES", numero: "123", bairro: "CENTRO", cidade: "FORTALEZA", uf: "CE"}];
-    let dbFornecedores = [{codigo: 'F001', nome: "SONY BRASIL", cnpj:"11.222.333/0001-44", telefone: "11-98765-4321", contato: "CARLOS"}];
-    let dbCupons = [];
-    let dbVendas = [ { recibo: '981542', date: new Date('2025-08-21T15:10:10'), cliente: dbClientes[0], vendedor: dbVendedores[1], itens: [{codigo: 'P002', nome: 'CONTROLE DUALSENSE PS5', preco: 450.00, quantidade: 2, serial: 'AX123456789B', garantia: '1 Ano'}], total: 899.00, subtotal: 900.00, paymentMethod: 'Cartão de Crédito', valorRecebido: 0, troco: 0, discounts: { manualItems: [], couponCode: 'PROMO10', couponValue: 1.00, paymentValue: 0 } }, { recibo: '981513', date: new Date(), cliente: { nome: 'CONSUMIDOR PADRÃO' }, vendedor: dbVendedores[0], itens: [{codigo: 'P001', nome: 'JOGO PS5 - GOD OF WAR', preco: 349.90, quantidade: 1, serial: 'N/A', garantia: '3 Meses'}], total: 332.41, subtotal: 349.90, paymentMethod: 'PIX (5% de Desconto)', valorRecebido: 0, troco: 0, discounts: { manualItems: [], couponCode: null, couponValue: 0, paymentValue: 17.49 } }, ];
-    let productCounter = 4, clientCounter = 2, sellerCounter = 3, supplierCounter = 2, categoryCounter = 3;
+    let dbCategorias = loadData(STORAGE_KEYS.categories) || [{id: 1, nome: 'JOGOS PS5'}, {id: 2, nome: 'ACESSÓRIOS'}];
+    let dbProdutos = loadData(STORAGE_KEYS.products) || [ {codigo: 'P001', nome: 'JOGO PS5 - GOD OF WAR', precoVenda: '350.00', estoque: 2, estoqueMinimo: 3, garantia: "3 Meses", serial: "N/A", barcode: "711719541189", categoriaId: 1, precoCusto: "280.00", fornecedorCodigo: "F001", plataforma: "PS5", tags: "AÇÃO, AVENTURA"}, {codigo: 'P002', nome: 'CONTROLE DUALSENSE PS5', precoVenda: '450.00', estoque: 10, estoqueMinimo: 5, garantia: "1 Ano", serial: "AX123456789B", barcode: "711719540861", categoriaId: 2, precoCusto: "350.00", fornecedorCodigo: "F001", plataforma: "PS5", tags: "ACESSÓRIO, CONTROLE"} ];
+    let dbVendedores = loadData(STORAGE_KEYS.sellers) || [ {codigo: 'V001', nome: 'AMANDA', cpf: '111.111.111-11'}, {codigo: 'V002', nome: 'JOÃO', cpf: '222.222.222-22'} ];
+    let dbClientes = loadData(STORAGE_KEYS.clients) || [{codigo: 'C001', nome: 'CLIENTE FIEL', cpf: "111.222.333-44", telefone: "(85) 99999-8888", rua: "RUA DAS FLORES", numero: "123", bairro: "CENTRO", cidade: "FORTALEZA", uf: "CE"}];
+    let dbFornecedores = loadData(STORAGE_KEYS.suppliers) || [{codigo: 'F001', nome: "SONY BRASIL", cnpj:"11.222.333/0001-44", telefone: "11-98765-4321", contato: "CARLOS"}];
+    let dbCupons = loadData(STORAGE_KEYS.coupons) || [];
+    let dbVendas = loadData(STORAGE_KEYS.sales) || [ { recibo: '981542', date: new Date('2025-08-21T15:10:10'), cliente: dbClientes[0], vendedor: dbVendedores[0], itens: [{codigo: 'P002', nome: 'CONTROLE DUALSENSE PS5', preco: 450.00, quantidade: 2, serial: 'AX123456789B', garantia: '1 Ano'}], total: 899.00, subtotal: 900.00, paymentMethod: 'Cartão de Crédito', valorRecebido: 0, troco: 0, discounts: { manualItems: [], couponCode: 'PROMO10', couponValue: 1.00, paymentValue: 0 } }];
+    
+    let productCounter = dbProdutos.length ? Math.max(0, ...dbProdutos.map(p => parseInt(p.codigo.replace('P', '')))) + 1 : 1;
+    let categoryCounter = dbCategorias.length ? Math.max(0, ...dbCategorias.map(c => c.id)) + 1 : 1;
+    let clientCounter = dbClientes.length ? Math.max(0, ...dbClientes.map(c => parseInt(c.codigo.replace('C', '')))) + 1 : 1;
+    let sellerCounter = dbVendedores.length ? Math.max(0, ...dbVendedores.map(v => parseInt(v.codigo.replace('V', '')))) + 1 : 1;
+    let supplierCounter = dbFornecedores.length ? Math.max(0, ...dbFornecedores.map(f => parseInt(f.codigo.replace('F', '')))) + 1 : 1;
+
     let currentlyEditing = { id: null, type: null };
     let lastSaleData = {};
-
-    // --- LÓGICA DE MODAIS ---
+    
     const detailsModal = document.getElementById('details-modal');
     const modalTitle = document.getElementById('modal-title');
     const modalBody = document.getElementById('modal-body');
@@ -156,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LÓGICA DE AÇÕES ---
     const contentArea = document.querySelector('.content');
     contentArea.addEventListener('click', (e) => {
         const target = e.target;
@@ -189,19 +220,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function deleteItem(itemId, itemType) {
-        let db, renderFn, key;
+        let db, renderFn, key, storageKey;
         switch (itemType) {
-            case 'produto': db = dbProdutos; renderFn = renderFunctions.produtos; key = 'codigo'; break;
-            case 'categoria': db = dbCategorias; renderFn = renderFunctions.categorias; key = 'id'; break;
-            case 'cliente': db = dbClientes; renderFn = renderFunctions.clientes; key = 'codigo'; break;
-            case 'vendedor': db = dbVendedores; renderFn = renderFunctions.vendedores; key = 'codigo'; break;
-            case 'fornecedor': db = dbFornecedores; renderFn = renderFunctions.fornecedores; key = 'codigo'; break;
-            case 'cupom': db = dbCupons; renderFn = renderFunctions.cupons; key = 'codigo'; break;
+            case 'produto': db = dbProdutos; renderFn = renderFunctions.produtos; key = 'codigo'; storageKey = STORAGE_KEYS.products; break;
+            case 'categoria': db = dbCategorias; renderFn = renderFunctions.categorias; key = 'id'; storageKey = STORAGE_KEYS.categories; break;
+            case 'cliente': db = dbClientes; renderFn = renderFunctions.clientes; key = 'codigo'; storageKey = STORAGE_KEYS.clients; break;
+            case 'vendedor': db = dbVendedores; renderFn = renderFunctions.vendedores; key = 'codigo'; storageKey = STORAGE_KEYS.sellers; break;
+            case 'fornecedor': db = dbFornecedores; renderFn = renderFunctions.fornecedores; key = 'codigo'; storageKey = STORAGE_KEYS.suppliers; break;
+            case 'cupom': db = dbCupons; renderFn = renderFunctions.cupons; key = 'codigo'; storageKey = STORAGE_KEYS.coupons; break;
         }
+        if(!db) return;
         const itemIndex = db.findIndex(item => String(item[key]) === String(itemId));
         if (itemIndex > -1) {
             db.splice(itemIndex, 1);
-            if(renderFn) renderFn();
+            if (storageKey) saveData(storageKey, db);
+            if(renderFn) renderFn(db); // Passa os dados atualizados para a função de renderização
         }
     }
 
@@ -222,22 +255,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 item = dbProdutos.find(p => p.codigo === itemId);
                 form = document.getElementById('form-produto');
                 button = document.getElementById('btn-salvar-produto');
-                if (item) {
-                    form.elements['prod-nome'].value = item.nome; 
-                    form.elements['prod-barcode'].value = item.barcode; 
-                    form.elements['prod-categoria'].value = item.categoriaId; 
-                    form.elements['prod-condicao'].value = item.condicao; 
-                    form.elements['prod-garantia'].value = item.garantia; 
-                    form.elements['prod-serial'].value = item.serial; 
-                    form.elements['prod-preco-custo'].value = item.precoCusto; 
-                    form.elements['prod-preco'].value = item.precoVenda; 
-                    form.elements['prod-fornecedor-codigo'].value = item.fornecedorCodigo; 
-                    form.elements['prod-estoque'].value = item.estoque; 
-                    form.elements['prod-estoque-minimo'].value = item.estoqueMinimo; 
-                    form.elements['prod-localizacao'].value = item.localizacao; 
-                    form.elements['prod-plataforma'].value = item.plataforma; 
-                    form.elements['prod-lancamento'].value = item.lancamento; 
-                    form.elements['prod-tags'].value = item.tags;
+                if (item && form) {
+                    form.elements['prod-nome'].value = item.nome || ''; 
+                    form.elements['prod-barcode'].value = item.barcode || ''; 
+                    form.elements['prod-categoria'].value = item.categoriaId || ''; 
+                    form.elements['prod-condicao'].value = item.condicao || 'Novo'; 
+                    form.elements['prod-garantia'].value = item.garantia || '3 Meses'; 
+                    form.elements['prod-serial'].value = item.serial || ''; 
+                    form.elements['prod-preco-custo'].value = item.precoCusto || ''; 
+                    form.elements['prod-preco'].value = item.precoVenda || ''; 
+                    form.elements['prod-fornecedor-codigo'].value = item.fornecedorCodigo || ''; 
+                    form.elements['prod-estoque'].value = item.estoque || 0; 
+                    form.elements['prod-estoque-minimo'].value = item.estoqueMinimo || 0; 
+                    form.elements['prod-localizacao'].value = item.localizacao || ''; 
+                    form.elements['prod-plataforma'].value = item.plataforma || ''; 
+                    form.elements['prod-lancamento'].value = item.lancamento || ''; 
+                    form.elements['prod-tags'].value = item.tags || '';
                     document.getElementById('prod-fornecedor-codigo').dispatchEvent(new Event('input'));
                     button.textContent = 'Atualizar Produto';
                 }
@@ -246,23 +279,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 item = dbCategorias.find(c => c.id == itemId);
                 form = document.getElementById('form-categoria');
                 button = document.getElementById('btn-salvar-categoria');
-                if(item) { form.elements['cat-nome'].value = item.nome; button.textContent = 'Atualizar Categoria'; }
+                if(item && form) { form.elements['cat-nome'].value = item.nome; button.textContent = 'Atualizar Categoria'; }
                 break;
             case 'cliente':
                  item = dbClientes.find(c => c.codigo === itemId);
                  form = document.getElementById('form-cliente');
                  button = document.getElementById('btn-salvar-cliente');
-                 if(item) { 
-                     form.elements['cli-nome'].value = item.nome; 
-                     form.elements['cli-cpf'].value = item.cpf; 
-                     form.elements['cli-email'].value = item.email; 
-                     form.elements['cli-telefone'].value = item.telefone; 
-                     form.elements['cli-cep'].value = item.cep; 
-                     form.elements['cli-rua'].value = item.rua; 
-                     form.elements['cli-numero'].value = item.numero; 
-                     form.elements['cli-bairro'].value = item.bairro; 
-                     form.elements['cli-cidade'].value = item.cidade; 
-                     form.elements['cli-uf'].value = item.uf; 
+                 if(item && form) { 
+                     form.elements['cli-nome'].value = item.nome || ''; 
+                     form.elements['cli-cpf'].value = item.cpf || ''; 
+                     form.elements['cli-email'].value = item.email || ''; 
+                     form.elements['cli-telefone'].value = item.telefone || ''; 
+                     form.elements['cli-cep'].value = item.cep || ''; 
+                     form.elements['cli-rua'].value = item.rua || ''; 
+                     form.elements['cli-numero'].value = item.numero || ''; 
+                     form.elements['cli-bairro'].value = item.bairro || ''; 
+                     form.elements['cli-cidade'].value = item.cidade || ''; 
+                     form.elements['cli-uf'].value = item.uf || ''; 
                      button.textContent = 'Atualizar Cliente'; 
                  }
                 break;
@@ -270,17 +303,17 @@ document.addEventListener('DOMContentLoaded', () => {
                  item = dbVendedores.find(v => v.codigo === itemId);
                  form = document.getElementById('form-vendedor');
                  button = document.getElementById('btn-salvar-vendedor');
-                 if(item) { 
-                     form.elements['vend-nome'].value = item.nome; 
-                     form.elements['vend-cpf'].value = item.cpf; 
-                     form.elements['vend-telefone'].value = item.telefone; 
-                     form.elements['vend-email'].value = item.email; 
-                     form.elements['vend-cep'].value = item.cep; 
-                     form.elements['vend-rua'].value = item.rua; 
-                     form.elements['vend-numero'].value = item.numero; 
-                     form.elements['vend-bairro'].value = item.bairro; 
-                     form.elements['vend-cidade'].value = item.cidade; 
-                     form.elements['vend-uf'].value = item.uf; 
+                 if(item && form) { 
+                     form.elements['vend-nome'].value = item.nome || ''; 
+                     form.elements['vend-cpf'].value = item.cpf || ''; 
+                     form.elements['vend-telefone'].value = item.telefone || ''; 
+                     form.elements['vend-email'].value = item.email || ''; 
+                     form.elements['vend-cep'].value = item.cep || ''; 
+                     form.elements['vend-rua'].value = item.rua || ''; 
+                     form.elements['vend-numero'].value = item.numero || ''; 
+                     form.elements['vend-bairro'].value = item.bairro || ''; 
+                     form.elements['vend-cidade'].value = item.cidade || ''; 
+                     form.elements['vend-uf'].value = item.uf || ''; 
                      button.textContent = 'Atualizar Vendedor'; 
                  }
                 break;
@@ -288,17 +321,17 @@ document.addEventListener('DOMContentLoaded', () => {
                   item = dbFornecedores.find(f => f.codigo === itemId);
                   form = document.getElementById('form-fornecedor');
                   button = document.getElementById('btn-salvar-fornecedor');
-                  if(item) { 
-                      form.elements['forn-nome'].value = item.nome; 
-                      form.elements['forn-cnpj'].value = item.cnpj; 
-                      form.elements['forn-contato'].value = item.contato; 
-                      form.elements['forn-telefone'].value = item.telefone; 
-                      form.elements['forn-cep'].value = item.cep; 
-                      form.elements['forn-rua'].value = item.rua; 
-                      form.elements['forn-numero'].value = item.numero; 
-                      form.elements['forn-bairro'].value = item.bairro; 
-                      form.elements['forn-cidade'].value = item.cidade; 
-                      form.elements['forn-uf'].value = item.uf; 
+                  if(item && form) { 
+                      form.elements['forn-nome'].value = item.nome || ''; 
+                      form.elements['forn-cnpj'].value = item.cnpj || ''; 
+                      form.elements['forn-contato'].value = item.contato || ''; 
+                      form.elements['forn-telefone'].value = item.telefone || ''; 
+                      form.elements['forn-cep'].value = item.cep || ''; 
+                      form.elements['forn-rua'].value = item.rua || ''; 
+                      form.elements['forn-numero'].value = item.numero || ''; 
+                      form.elements['forn-bairro'].value = item.bairro || ''; 
+                      form.elements['forn-cidade'].value = item.cidade || ''; 
+                      form.elements['forn-uf'].value = item.uf || ''; 
                       button.textContent = 'Atualizar Fornecedor'; 
                   }
                  break;
@@ -306,11 +339,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 item = dbCupons.find(c => c.codigo === itemId);
                 form = document.getElementById('form-cupom');
                 button = document.getElementById('btn-salvar-cupom');
-                if (item) { 
-                    form.elements['cupom-codigo'].value = item.codigo; 
-                    form.elements['cupom-tipo'].value = item.tipo; 
-                    form.elements['cupom-valor'].value = item.valor; 
-                    form.elements['cupom-usos'].value = item.usos; 
+                if (item && form) { 
+                    form.elements['cupom-codigo'].value = item.codigo || ''; 
+                    form.elements['cupom-tipo'].value = item.tipo || 'fixed'; 
+                    form.elements['cupom-valor'].value = item.valor || ''; 
+                    form.elements['cupom-usos'].value = item.usos || 1; 
                     button.textContent = 'Atualizar Cupom'; 
                 }
                 break;
@@ -335,20 +368,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LÓGICA DE CADASTROS ---
     const renderFunctions = {};
 
-    // CATEGORIAS
     const formCategoria = document.getElementById('form-categoria');
     const tabelaCategorias = document.getElementById('tabela-categorias');
     const selectCategoriaProduto = document.getElementById('prod-categoria');
     if(formCategoria) {
-        formCategoria.addEventListener('submit', (e) => { e.preventDefault(); const nome = document.getElementById('cat-nome').value.toUpperCase(); if(!nome) return; if(currentlyEditing.type === 'categoria'){const item = dbCategorias.find(c => c.id == currentlyEditing.id); if(item) item.nome = nome;} else {const id = categoryCounter++; dbCategorias.push({ id, nome });} renderFunctions.categorias(); populateCategoryDropdown(); resetEditState(formCategoria); });
+        formCategoria.addEventListener('submit', (e) => { 
+            e.preventDefault(); 
+            const nome = document.getElementById('cat-nome').value.toUpperCase(); 
+            if(!nome) return; 
+            if(currentlyEditing.type === 'categoria'){
+                const item = dbCategorias.find(c => c.id == currentlyEditing.id); 
+                if(item) item.nome = nome;
+            } else {
+                const id = categoryCounter++; 
+                dbCategorias.push({ id, nome });
+            } 
+            saveData(STORAGE_KEYS.categories, dbCategorias);
+            renderFunctions.categorias(); 
+            populateCategoryDropdown(); 
+            resetEditState(formCategoria); 
+        });
     }
     renderFunctions.categorias = (data = dbCategorias) => { if(!tabelaCategorias) return; tabelaCategorias.innerHTML = ""; data.forEach(cat => { tabelaCategorias.innerHTML += `<tr><td>${toTitleCase(cat.nome)}</td><td class="actions"><button class="btn-view" data-id="${cat.id}" data-type="categoria">Ver</button><button class="btn-edit" data-id="${cat.id}" data-type="categoria">Editar</button><button class="btn-delete" data-id="${cat.id}" data-type="categoria">Excluir</button></td></tr>`; }); }
     function populateCategoryDropdown() { if(!selectCategoriaProduto) return; selectCategoriaProduto.innerHTML = '<option value="">Selecione...</option>'; dbCategorias.forEach(cat => { selectCategoriaProduto.innerHTML += `<option value="${cat.id}">${toTitleCase(cat.nome)}</option>`; }); }
 
-    // PRODUTOS
     const formProduto = document.getElementById('form-produto');
     const tabelaProdutos = document.getElementById('tabela-produtos');
     const prodFornecedorCodigoInput = document.getElementById('prod-fornecedor-codigo');
@@ -357,50 +402,59 @@ document.addEventListener('DOMContentLoaded', () => {
         prodFornecedorCodigoInput.addEventListener('input', () => { const codigo = prodFornecedorCodigoInput.value.toUpperCase(); if (!codigo) { prodFornecedorNomeSpan.textContent = ''; return; } const fornecedor = dbFornecedores.find(f => f.codigo === codigo); if (fornecedor) { prodFornecedorNomeSpan.textContent = toTitleCase(fornecedor.nome); prodFornecedorNomeSpan.classList.remove('error'); } else { prodFornecedorNomeSpan.textContent = 'Código não encontrado'; prodFornecedorNomeSpan.classList.add('error'); } });
     }
     if(formProduto) {
-        formProduto.addEventListener('submit', (e) => { e.preventDefault(); const prodData = { nome: document.getElementById('prod-nome').value.toUpperCase(), barcode: document.getElementById('prod-barcode').value, categoriaId: document.getElementById('prod-categoria').value, condicao: document.getElementById('prod-condicao').value, garantia: document.getElementById('prod-garantia').value, serial: document.getElementById('prod-serial').value.toUpperCase(), precoCusto: document.getElementById('prod-preco-custo').value, precoVenda: document.getElementById('prod-preco').value, fornecedorCodigo: prodFornecedorCodigoInput.value.toUpperCase(), estoque: document.getElementById('prod-estoque').value, estoqueMinimo: document.getElementById('prod-estoque-minimo').value, localizacao: document.getElementById('prod-localizacao').value.toUpperCase(), plataforma: document.getElementById('prod-plataforma').value.toUpperCase(), lancamento: document.getElementById('prod-lancamento').value, tags: document.getElementById('prod-tags').value.toUpperCase(), }; if (currentlyEditing.type === 'produto') { const item = dbProdutos.find(p => p.codigo === currentlyEditing.id); if (item) Object.assign(item, prodData); } else { const cod = 'P' + String(productCounter++).padStart(3, '0'); dbProdutos.push({ codigo: cod, ...prodData }); } renderFunctions.produtos(); resetEditState(formProduto); if(prodFornecedorNomeSpan) prodFornecedorNomeSpan.textContent = ''; });
+        formProduto.addEventListener('submit', (e) => { 
+            e.preventDefault(); 
+            const prodData = { nome: document.getElementById('prod-nome').value.toUpperCase(), barcode: document.getElementById('prod-barcode').value, categoriaId: document.getElementById('prod-categoria').value, condicao: document.getElementById('prod-condicao').value, garantia: document.getElementById('prod-garantia').value, serial: document.getElementById('prod-serial').value.toUpperCase(), precoCusto: document.getElementById('prod-preco-custo').value, precoVenda: document.getElementById('prod-preco').value, fornecedorCodigo: prodFornecedorCodigoInput.value.toUpperCase(), estoque: document.getElementById('prod-estoque').value, estoqueMinimo: document.getElementById('prod-estoque-minimo').value, localizacao: document.getElementById('prod-localizacao').value.toUpperCase(), plataforma: document.getElementById('prod-plataforma').value.toUpperCase(), lancamento: document.getElementById('prod-lancamento').value, tags: document.getElementById('prod-tags').value.toUpperCase() }; 
+            if (currentlyEditing.type === 'produto') { 
+                const item = dbProdutos.find(p => p.codigo === currentlyEditing.id); 
+                if (item) Object.assign(item, prodData); 
+            } else { 
+                const cod = 'P' + String(productCounter++).padStart(3, '0'); 
+                dbProdutos.push({ codigo: cod, ...prodData }); 
+            } 
+            saveData(STORAGE_KEYS.products, dbProdutos);
+            renderFunctions.produtos(); 
+            resetEditState(formProduto); 
+            if(prodFornecedorNomeSpan) prodFornecedorNomeSpan.textContent = ''; 
+        });
     }
     renderFunctions.produtos = (data = dbProdutos) => { if(!tabelaProdutos) return; tabelaProdutos.innerHTML = ""; data.forEach(prod => { const fornecedor = dbFornecedores.find(f => f.codigo === prod.fornecedorCodigo); const nomeFornecedor = fornecedor ? toTitleCase(fornecedor.nome) : 'N/D'; tabelaProdutos.innerHTML += `<tr><td class="code-column">${prod.codigo}</td><td>${toTitleCase(prod.nome)}</td><td>${nomeFornecedor}</td><td>${formatCurrency(parseFloat(prod.precoVenda))}</td><td>${prod.estoque}</td><td class="actions"><button class="btn-view" data-id="${prod.codigo}" data-type="produto">Ver</button><button class="btn-edit" data-id="${prod.codigo}" data-type="produto">Editar</button><button class="btn-delete" data-id="${prod.codigo}" data-type="produto">Excluir</button></td></tr>`; }); }
 
-    // CLIENTES
     const formCliente = document.getElementById('form-cliente');
     const tabelaClientes = document.getElementById('tabela-clientes');
     if(formCliente){
-        formCliente.addEventListener('submit', (e) => { e.preventDefault(); const cliData = { nome: document.getElementById('cli-nome').value.toUpperCase(), cpf: document.getElementById('cli-cpf').value, telefone: document.getElementById('cli-telefone').value, email: document.getElementById('cli-email').value, cep: document.getElementById('cli-cep').value, rua: document.getElementById('cli-rua').value.toUpperCase(), numero: document.getElementById('cli-numero').value, bairro: document.getElementById('cli-bairro').value.toUpperCase(), cidade: document.getElementById('cli-cidade').value.toUpperCase(), uf: document.getElementById('cli-uf').value.toUpperCase() }; if(currentlyEditing.type === 'cliente'){ const item = dbClientes.find(c => c.codigo === currentlyEditing.id); if(item) Object.assign(item, cliData); } else { const cod = 'C' + String(clientCounter++).padStart(3, '0'); dbClientes.push({ codigo: cod, ...cliData }); } renderFunctions.clientes(); resetEditState(formCliente); });
+        formCliente.addEventListener('submit', (e) => { e.preventDefault(); const cliData = { nome: document.getElementById('cli-nome').value.toUpperCase(), cpf: document.getElementById('cli-cpf').value, telefone: document.getElementById('cli-telefone').value, email: document.getElementById('cli-email').value, cep: document.getElementById('cli-cep').value, rua: document.getElementById('cli-rua').value.toUpperCase(), numero: document.getElementById('cli-numero').value, bairro: document.getElementById('cli-bairro').value.toUpperCase(), cidade: document.getElementById('cli-cidade').value.toUpperCase(), uf: document.getElementById('cli-uf').value.toUpperCase() }; if(currentlyEditing.type === 'cliente'){ const item = dbClientes.find(c => c.codigo === currentlyEditing.id); if(item) Object.assign(item, cliData); } else { const cod = 'C' + String(clientCounter++).padStart(3, '0'); dbClientes.push({ codigo: cod, ...cliData }); } saveData(STORAGE_KEYS.clients, dbClientes); renderFunctions.clientes(); resetEditState(formCliente); });
     }
     renderFunctions.clientes = (data = dbClientes) => { if(!tabelaClientes) return; tabelaClientes.innerHTML = ""; data.forEach(cliente => { tabelaClientes.innerHTML += `<tr><td class="code-column">${cliente.codigo}</td><td>${toTitleCase(cliente.nome)}</td><td>${cliente.cpf}</td><td>${cliente.telefone}</td><td class="actions"><button class="btn-view" data-id="${cliente.codigo}" data-type="cliente">Ver</button><button class="btn-edit" data-id="${cliente.codigo}" data-type="cliente">Editar</button><button class="btn-delete" data-id="${cliente.codigo}" data-type="cliente">Excluir</button></td></tr>`; }); }
 
-    // VENDEDORES
     const formVendedor = document.getElementById('form-vendedor');
     const tabelaVendedores = document.getElementById('tabela-vendedores');
     if(formVendedor) {
-        formVendedor.addEventListener('submit', (e) => { e.preventDefault(); const vendData = { nome: document.getElementById('vend-nome').value.toUpperCase(), cpf: document.getElementById('vend-cpf').value, telefone: document.getElementById('vend-telefone').value, email: document.getElementById('vend-email').value, cep: document.getElementById('vend-cep').value, rua: document.getElementById('vend-rua').value.toUpperCase(), numero: document.getElementById('vend-numero').value, bairro: document.getElementById('vend-bairro').value.toUpperCase(), cidade: document.getElementById('vend-cidade').value.toUpperCase(), uf: document.getElementById('vend-uf').value.toUpperCase() }; if(currentlyEditing.type === 'vendedor'){ const item = dbVendedores.find(v => v.codigo === currentlyEditing.id); if(item) Object.assign(item, vendData); } else { const cod = 'V' + String(sellerCounter++).padStart(3, '0'); dbVendedores.push({ codigo: cod, ...vendData }); } renderFunctions.vendedores(); resetEditState(formVendedor); });
+        formVendedor.addEventListener('submit', (e) => { e.preventDefault(); const vendData = { nome: document.getElementById('vend-nome').value.toUpperCase(), cpf: document.getElementById('vend-cpf').value, telefone: document.getElementById('vend-telefone').value, email: document.getElementById('vend-email').value, cep: document.getElementById('vend-cep').value, rua: document.getElementById('vend-rua').value.toUpperCase(), numero: document.getElementById('vend-numero').value, bairro: document.getElementById('vend-bairro').value.toUpperCase(), cidade: document.getElementById('vend-cidade').value.toUpperCase(), uf: document.getElementById('vend-uf').value.toUpperCase() }; if(currentlyEditing.type === 'vendedor'){ const item = dbVendedores.find(v => v.codigo === currentlyEditing.id); if(item) Object.assign(item, vendData); } else { const cod = 'V' + String(sellerCounter++).padStart(3, '0'); dbVendedores.push({ codigo: cod, ...vendData }); } saveData(STORAGE_KEYS.sellers, dbVendedores); renderFunctions.vendedores(); resetEditState(formVendedor); });
     }
     renderFunctions.vendedores = (data = dbVendedores) => { if(!tabelaVendedores) return; tabelaVendedores.innerHTML = ""; data.forEach(vend => { tabelaVendedores.innerHTML += `<tr><td class="code-column">${vend.codigo}</td><td>${toTitleCase(vend.nome)}</td><td>${vend.cpf}</td><td>${vend.telefone}</td><td class="actions"><button class="btn-view" data-id="${vend.codigo}" data-type="vendedor">Ver</button><button class="btn-edit" data-id="${vend.codigo}" data-type="vendedor">Editar</button><button class="btn-delete" data-id="${vend.codigo}" data-type="vendedor">Excluir</button></td></tr>`; }); }
 
-    // FORNECEDORES
     const formFornecedor = document.getElementById('form-fornecedor');
     const tabelaFornecedores = document.getElementById('tabela-fornecedores');
     if(formFornecedor) {
-        formFornecedor.addEventListener('submit', (e) => { e.preventDefault(); const fornData = { nome: document.getElementById('forn-nome').value.toUpperCase(), cnpj: document.getElementById('forn-cnpj').value, contato: document.getElementById('forn-contato').value.toUpperCase(), telefone: document.getElementById('forn-telefone').value, cep: document.getElementById('forn-cep').value, rua: document.getElementById('forn-rua').value.toUpperCase(), numero: document.getElementById('forn-numero').value, bairro: document.getElementById('forn-bairro').value.toUpperCase(), cidade: document.getElementById('forn-cidade').value.toUpperCase(), uf: document.getElementById('forn-uf').value.toUpperCase() }; if(currentlyEditing.type === 'fornecedor'){ const item = dbFornecedores.find(f => f.codigo === currentlyEditing.id); if(item) Object.assign(item, fornData); } else { const cod = 'F' + String(supplierCounter++).padStart(3, '0'); dbFornecedores.push({ codigo: cod, ...fornData }); } renderFunctions.fornecedores(); resetEditState(formFornecedor); });
+        formFornecedor.addEventListener('submit', (e) => { e.preventDefault(); const fornData = { nome: document.getElementById('forn-nome').value.toUpperCase(), cnpj: document.getElementById('forn-cnpj').value, contato: document.getElementById('forn-contato').value.toUpperCase(), telefone: document.getElementById('forn-telefone').value, cep: document.getElementById('forn-cep').value, rua: document.getElementById('forn-rua').value.toUpperCase(), numero: document.getElementById('forn-numero').value, bairro: document.getElementById('forn-bairro').value.toUpperCase(), cidade: document.getElementById('forn-cidade').value.toUpperCase(), uf: document.getElementById('forn-uf').value.toUpperCase() }; if(currentlyEditing.type === 'fornecedor'){ const item = dbFornecedores.find(f => f.codigo === currentlyEditing.id); if(item) Object.assign(item, fornData); } else { const cod = 'F' + String(supplierCounter++).padStart(3, '0'); dbFornecedores.push({ codigo: cod, ...fornData }); } saveData(STORAGE_KEYS.suppliers, dbFornecedores); renderFunctions.fornecedores(); resetEditState(formFornecedor); });
     }
     renderFunctions.fornecedores = (data = dbFornecedores) => { if(!tabelaFornecedores) return; tabelaFornecedores.innerHTML = ""; data.forEach(forn => { tabelaFornecedores.innerHTML += `<tr><td class="code-column">${forn.codigo}</td><td>${toTitleCase(forn.nome)}</td><td>${forn.cnpj}</td><td>${forn.telefone}</td><td class="actions"><button class="btn-view" data-id="${forn.codigo}" data-type="fornecedor">Ver</button><button class="btn-edit" data-id="${forn.codigo}" data-type="fornecedor">Editar</button><button class="btn-delete" data-id="${forn.codigo}" data-type="fornecedor">Excluir</button></td></tr>`; }); }
     
-    // CUPONS
     const formCupom = document.getElementById('form-cupom');
     const tabelaCupons = document.getElementById('tabela-cupons');
     if(formCupom) {
-        formCupom.addEventListener('submit', (e) => { e.preventDefault(); const cupomData = { codigo: document.getElementById('cupom-codigo').value.toUpperCase(), tipo: document.getElementById('cupom-tipo').value, valor: document.getElementById('cupom-valor').value, usos: document.getElementById('cupom-usos').value }; if(currentlyEditing.type === 'cupom'){ const item = dbCupons.find(c => c.codigo === currentlyEditing.id); if(item) Object.assign(item, cupomData);} else { dbCupons.push(cupomData); } renderFunctions.cupons(); resetEditState(formCupom); });
+        formCupom.addEventListener('submit', (e) => { e.preventDefault(); const cupomData = { codigo: document.getElementById('cupom-codigo').value.toUpperCase(), tipo: document.getElementById('cupom-tipo').value, valor: document.getElementById('cupom-valor').value, usos: document.getElementById('cupom-usos').value }; if(currentlyEditing.type === 'cupom'){ const item = dbCupons.find(c => c.codigo === currentlyEditing.id); if(item) Object.assign(item, cupomData);} else { dbCupons.push(cupomData); } saveData(STORAGE_KEYS.coupons, dbCupons); renderFunctions.cupons(); resetEditState(formCupom); });
     }
     renderFunctions.cupons = (data = dbCupons) => { if(!tabelaCupons) return; tabelaCupons.innerHTML = ""; data.forEach(cupom => { tabelaCupons.innerHTML += `<tr><td class="code-column">${cupom.codigo}</td><td>${cupom.tipo}</td><td>${cupom.valor}</td><td>${cupom.usos}</td><td class="actions"><button class="btn-view" data-id="${cupom.codigo}" data-type="cupom">Ver</button><button class="btn-edit" data-id="${cupom.codigo}" data-type="cupom">Editar</button><button class="btn-delete" data-id="${cupom.codigo}" data-type="cupom">Excluir</button></td></tr>`; }); }
 
-    // LÓGICA DE BUSCA
     function setupSearch(inputId, renderKey, database, searchKeys) {
         const searchInput = document.getElementById(inputId);
         if(!searchInput) return;
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             if (searchTerm === '') {
-                renderFunctions[renderKey](); 
+                renderFunctions[renderKey](database); 
                 return;
             }
             const filteredData = database.filter(item => 
@@ -412,7 +466,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // INICIALIZAÇÃO DAS BUSCAS
     setupSearch('search-produtos', 'produtos', dbProdutos, ['nome', 'codigo', 'barcode']);
     setupSearch('search-categorias', 'categorias', dbCategorias, ['nome']);
     setupSearch('search-clientes', 'clientes', dbClientes, ['nome', 'cpf', 'codigo']);
@@ -420,7 +473,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSearch('search-fornecedores', 'fornecedores', dbFornecedores, ['nome', 'cnpj', 'codigo']);
     setupSearch('search-cupons', 'cupons', dbCupons, ['codigo']);
     
-    // --- LÓGICA DE RELATÓRIOS ---
     function renderReports() {
         const hoje = new Date();
         hoje.setHours(0, 0, 0, 0);
@@ -452,9 +504,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const vendasPorVendedor = {};
         vendasDoDia.forEach(venda => {
-            const vendedor = dbVendedores.find(v => v.codigo === venda.vendedor.codigo);
-            if(vendedor) {
-                vendasPorVendedor[vendedor.codigo] = (vendasPorVendedor[vendedor.codigo] || 0) + venda.total;
+            if(venda.vendedor && venda.vendedor.codigo) {
+                vendasPorVendedor[venda.vendedor.codigo] = (vendasPorVendedor[venda.vendedor.codigo] || 0) + venda.total;
             }
         });
         const listaVendasVendedor = document.getElementById('lista-vendas-vendedor');
@@ -483,7 +534,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DE HISTÓRICO DE VENDAS ---
     const tabelaHistorico = document.getElementById('tabela-historico');
     renderFunctions.historico = (data = dbVendas) => {
         if(!tabelaHistorico) return;
@@ -494,7 +544,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // LÓGICA PARA MODAIS DE IMPRESSÃO
     const btnPrintNf = document.getElementById('btn-print-nf');
     const btnPrintGarantia = document.getElementById('btn-print-garantia');
     const docContentEl = document.getElementById('document-content');
@@ -503,19 +552,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnPrintNf) btnPrintNf.addEventListener('click', () => showPreview('nf'));
     if (btnPrintGarantia) btnPrintGarantia.addEventListener('click', () => showPreview('garantia'));
-    
-    if (btnClosePreview) btnClosePreview.addEventListener('click', () => { 
-        docPreviewModal.style.display = 'none'; 
-        if(postSaleModal) postSaleModal.style.display = 'block'; 
-    });
-
+    if (btnClosePreview) btnClosePreview.addEventListener('click', () => {  docPreviewModal.style.display = 'none'; if(postSaleModal) postSaleModal.style.display = 'block'; });
     if (btnPrintDocument) btnPrintDocument.addEventListener('click', () => window.print());
-    
-    window.addEventListener('afterprint', () => { 
-        if(docPreviewModal) { 
-            docPreviewModal.style.display = 'none'; 
-        } 
-    });
+    window.addEventListener('afterprint', () => { if(docPreviewModal) { docPreviewModal.style.display = 'none'; } });
     
     function formatCurrency(value) { return typeof value === 'number' ? value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : String(value); }
 
