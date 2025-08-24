@@ -8,6 +8,7 @@
     --success-color: #28a745;
     --error-color: #dc3545;
     --warning-color: #ffc107;
+    --warnig-color2: #ff0019;
 }
 
 body {
@@ -125,9 +126,10 @@ h2 {
 }
 .form-group { display: flex; flex-direction: column; }
 .form-group label { margin-bottom: 8px; font-size: 0.9em; }
-.form-group input, .form-group select {
+.form-group input, .form-group select, .form-group textarea {
     padding: 12px; background-color: #333; border: 1px solid var(--border-color);
     border-radius: 5px; color: var(--text-color); font-size: 1em;
+    font-family: 'Poppins', sans-serif; /* Garante a mesma fonte */
 }
 .form-group input:focus, .form-group select:focus { outline: none; border-color: #FF5F1F; }
 .form-container .section-divider {
@@ -141,7 +143,22 @@ input[type="date"] { color-scheme: dark; }
 .uppercase-input { text-transform: uppercase; }
 
 /* Cabeçalho da Tabela e Busca */
-.table-header { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 10px; }
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50px;
+    margin-bottom: 10px;
+    padding-top: 30px;
+
+    /* --- MÁGICA DO GRADIENTE ABAIXO --- */
+    border-top: none; /* 1. Removemos a borda antiga */
+    background-image: var(--primary-gradient); /* 2. Aplicamos o gradiente como fundo */
+    background-size: 100% 2px; /* 3. Definimos o tamanho: 100% de largura e 2px de altura (nossa linha) */
+    background-repeat: no-repeat; /* 4. Garantimos que a linha não se repita para baixo */
+    background-position: top; /* 5. Posicionamos a linha no topo do elemento */
+}
+
 .table-header h3 { margin: 0; font-weight: 500; color: #ccc; }
 .search-container { margin: 0; }
 .search-input { width: 350px; padding: 10px 15px; background-color: #333; border: 1px solid var(--border-color); border-radius: 5px; color: var(--text-color); font-size: 0.9em; box-sizing: border-box; }
@@ -320,4 +337,129 @@ thead { background-color: #2a2a2a; }
 }
 .modal-actions .btn-secondary {
     margin-top: 0;
+}
+
+/* --- ESTILOS CORRIGIDOS PARA BOTÕES DE NAVEGAÇÃO E LIMPAR CAMPOS DE DADOS --- */
+   /* --- ESTILOS FINAIS E CORRIGIDOS PARA AÇÕES DO FORMULÁRIO --- */
+
+/* Mantém o estilo do cabeçalho que você gostou */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.form-header h2 {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+/* NOVO: Container para o botão de limpar de baixo */
+.form-actions-bottom {
+    display: flex;
+    justify-content: flex-end; /* Alinha o botão à direita */
+    margin-top: 15px; /* Espaço entre o fim do form e o botão */
+}
+
+/* RESTAURANDO o botão principal para ocupar a linha toda dentro do form */
+.btn-primary {
+    grid-column: 1 / -1; /* Ocupa a largura toda */
+    margin-top: 10px;
+    /* Removemos as propriedades de flex que não são mais necessárias */
+    flex-grow: 0; 
+    margin-left: 0;
+}
+
+/* Estilo do botão de limpar minimalista (pode manter) */
+.btn-limpar {
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: transparent;
+    color: #aaa;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-limpar:hover {
+    background-color: #333;
+    color: white;
+    border-color: #555;
+}
+/* --- ESTILOS PARA BOTÕES DE NAVEGAÇÃO FIXOS --- */
+/* --- ESTILOS FINAIS PARA BOTÕES DE NAVEGAÇÃO POSICIONADOS --- */
+
+/* Estilo COMUM para ambos os botões */
+.scroll-btn {
+    position: fixed; /* Fica fixo na tela */
+    right: 30px;     /* Alinhado à direita */
+    z-index: 999;
+    
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: #2a2a2a;
+    color: #aaa;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+}
+
+/* Classe para torná-los visíveis (continua igual) */
+.scroll-btn.visible {
+    opacity: 0.8;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.scroll-btn:hover {
+    background: var(--primary-gradient);
+    color: white;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* POSIÇÃO INDIVIDUAL DE CADA BOTÃO */
+
+#btn-scroll-up {
+    top: 30px; /* <-- POSICIONA O BOTÃO DE SUBIR NO TOPO */
+}
+
+#btn-scroll-down {
+    bottom: 30px; /* <-- POSICIONA O BOTÃO DE DESCER NA BASE */
+}
+/* ========================================================== */
+/* AJUSTES FINAIS PARA TABELA DE CADASTROS */
+/* ========================================================== */
+
+/* 1. Diminui a fonte geral da tabela */
+.table-container table th,
+.table-container table td {
+    font-size: 0.8em; /* Deixa a fonte 10% menor. Ajuste se quiser. */
+    vertical-align: middle; /* Alinha o texto no meio da célula verticalmente */
+}
+
+/* 2. Força a coluna de Ações a NUNCA quebrar a linha */
+.table-container table td.actions {
+    white-space: nowrap; /* Este é o comando mágico que impede a quebra de linha */
+    width: 1%; /* Truque para fazer a coluna ocupar o menor espaço possível, mas sem quebrar */
+}
+
+/* 3. (BÔNUS) Corta textos muito longos com "..." para não estragar o layout */
+.truncate-text {
+    max-width: 250px; /* Largura máxima para a célula de texto */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

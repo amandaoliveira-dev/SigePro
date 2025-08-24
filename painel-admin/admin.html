@@ -26,6 +26,7 @@
 
         <main class="content">
             <div id="cadastros" class="content-panel">
+                <button id="btn-scroll-up" class="scroll-btn" title="Ir para o topo do formulário">▲</button>
                 <nav class="sub-nav">
                     <a href="#" class="sub-nav-link" data-target="produtos-content">📦 Produtos</a>
                     <a href="#" class="sub-nav-link" data-target="categorias-content">📚 Categorias</a>
@@ -36,7 +37,10 @@
                 </nav>
 
                 <div id="produtos-content" class="sub-panel">
-                    <h2>Cadastro de Produtos</h2>
+                    <div class="form-header">
+                        <h2>Cadastro de Produtos</h2>
+                        <button type="button" class="btn-limpar" data-form-target="#form-produto">🗑️Limpar</button>
+                    </div>
                     <form id="form-produto" class="form-container">
                         <div class="form-group large-field"><label for="prod-nome">Nome do Produto</label><input type="text" id="prod-nome" class="uppercase-input" required></div>
                         <div class="form-group"><label for="prod-barcode">Código de Barras (EAN)</label><input type="text" id="prod-barcode" placeholder="Escaneie ou digite o código de barras"></div>
@@ -59,6 +63,9 @@
                         <div class="form-group large-field"><label for="prod-tags">Tags / Palavras-chave</label><input type="text" id="prod-tags" placeholder="Ação, Aventura, Exclusivo..."></div>
                         <button type="submit" id="btn-salvar-produto" class="btn-primary">Salvar Produto</button>
                     </form>
+                    <div class="form-actions-bottom">
+                        <button type="button" class="btn-limpar" data-form-target="#form-produto">🗑️ Limpar</button>
+                    </div>
                     <div class="table-header">
                         <h3>Produtos Cadastrados</h3>
                         <div class="search-container"><input type="text" id="search-produtos" class="search-input" placeholder="Buscar por nome, código ou cód. de barras..."></div>
@@ -72,9 +79,13 @@
                 </div>
 
                 <div id="categorias-content" class="sub-panel">
-                    <h2>Cadastro de Categorias</h2>
+                    <div class="form-header">
+                            <h2>Cadastro de Categorias</h2>
+                            <button type="button" class="btn-limpar" data-form-target="#form-categoria">🗑️ Limpar</button>
+                    </div>
                     <form id="form-categoria" class="form-container">
                         <div class="form-group"><label for="cat-nome">Nome da Categoria</label><input type="text" id="cat-nome" class="uppercase-input" required></div>
+                        <div class="form-group large-field"><label for="cat-descricao">Descrição</label><textarea id="cat-descricao" rows="3" placeholder="Ex: Jogos novos para Playstation 5, mídia física..."></textarea></div>
                         <button type="submit" id="btn-salvar-categoria" class="btn-primary">Salvar Categoria</button>
                     </form>
                     <div class="table-header">
@@ -83,14 +94,17 @@
                     </div>
                     <div class="table-container">
                         <table>
-                            <thead><tr><th>Nome</th><th>Ações</th></tr></thead>
+                            <thead><tr><th>Nome</th><th>Descrição</th><th>Ações</th></tr></thead>
                             <tbody id="tabela-categorias"></tbody>
                         </table>
                     </div>
                 </div>
                 
                 <div id="clientes-content" class="sub-panel">
-                    <h2>Cadastro de Clientes</h2>
+                    <div class="form-header">
+                        <h2>Cadastro de Clientes</h2>
+                        <button type="button" class="btn-limpar" data-form-target="#form-cliente">🗑️ Limpar</button>
+                    </div>
                     <form id="form-cliente" class="form-container">
                         <div class="form-group"><label for="cli-nome">Nome Completo</label><input type="text" id="cli-nome" class="uppercase-input" required></div>
                         <div class="form-group"><label for="cli-cpf">CPF</label><input type="text" id="cli-cpf" inputmode="numeric" required></div>
@@ -103,8 +117,11 @@
                         <div class="form-group"><label for="cli-bairro">Bairro</label><input type="text" id="cli-bairro" class="uppercase-input" required></div>
                         <div class="form-group"><label for="cli-cidade">Cidade</label><input type="text" id="cli-cidade" class="uppercase-input" required></div>
                         <div class="form-group"><label for="cli-uf">Estado (UF)</label><input type="text" id="cli-uf" class="uppercase-input" required></div>
-                        <button type="submit" id="btn-salvar-cliente" class="btn-primary">Salvar Cliente</button>
+                        <button type="submit" id="btn-salvar-produto" class="btn-primary">Salvar Produto</button>                      
                     </form>
+                    <div class="form-actions-bottom">
+                        <button type="button" class="btn-limpar" data-form-target="#form-cliente">🗑️ Limpar</button>
+                    </div>
                     <div class="table-header">
                         <h3>Clientes Cadastrados</h3>
                         <div class="search-container"><input type="text" id="search-clientes" class="search-input" placeholder="Buscar por nome, CPF ou código..."></div>
@@ -118,7 +135,10 @@
                 </div>
                 
                 <div id="vendedores-content" class="sub-panel">
-                    <h2>Cadastro de Vendedores</h2>
+                    <div class="form-header">
+                        <h2>Cadastro de Vendedores</h2>
+                        <button type="button" class="btn-limpar" data-form-target="#form-vendedor">🗑️ Limpar</button>
+                    </div>
                     <form id="form-vendedor" class="form-container">
                         <div class="form-group"><label for="vend-nome">Nome do Vendedor</label><input type="text" id="vend-nome" class="uppercase-input" required></div>
                         <div class="form-group"><label for="vend-cpf">CPF</label><input type="text" id="vend-cpf" inputmode="numeric" required></div>
@@ -131,8 +151,11 @@
                         <div class="form-group"><label for="vend-bairro">Bairro</label><input type="text" id="vend-bairro" class="uppercase-input" required></div>
                         <div class="form-group"><label for="vend-cidade">Cidade</label><input type="text" id="vend-cidade" class="uppercase-input" required></div>
                         <div class="form-group"><label for="vend-uf">Estado (UF)</label><input type="text" id="vend-uf" class="uppercase-input" required></div>
-                        <button type="submit" id="btn-salvar-vendedor" class="btn-primary">Salvar Vendedor</button>
+                        <button type="submit" id="btn-salvar-produto" class="btn-primary">Salvar Produto</button>
                     </form>
+                    <div class="form-actions-bottom">
+                        <button type="button" class="btn-limpar" data-form-target="#form-vendedor">🗑️ Limpar</button>
+                    </div>
                     <div class="table-header">
                         <h3>Vendedores Cadastrados</h3>
                         <div class="search-container"><input type="text" id="search-vendedores" class="search-input" placeholder="Buscar por nome, CPF ou código..."></div>
@@ -146,7 +169,10 @@
                 </div>
                 
                 <div id="fornecedores-content" class="sub-panel">
-                    <h2>Cadastro de Fornecedores</h2>
+                    <div class="form-header">
+                        <h2>Cadastro de Fornecedores</h2>
+                        <button type="button" class="btn-limpar" data-form-target="#form-fornecedor">🗑️ Limpar</button>
+                    </div>
                     <form id="form-fornecedor" class="form-container">
                         <div class="form-group"><label for="forn-nome">Nome da Empresa</label><input type="text" id="forn-nome" class="uppercase-input" required></div>
                         <div class="form-group"><label for="forn-cnpj">CNPJ</label><input type="text" id="forn-cnpj" inputmode="numeric" required></div>
@@ -159,8 +185,11 @@
                         <div class="form-group"><label for="forn-bairro">Bairro</label><input type="text" id="forn-bairro" class="uppercase-input" required></div>
                         <div class="form-group"><label for="forn-cidade">Cidade</label><input type="text" id="forn-cidade" class="uppercase-input" required></div>
                         <div class="form-group"><label for="forn-uf">Estado (UF)</label><input type="text" id="forn-uf" class="uppercase-input" required></div>
-                        <button type="submit" id="btn-salvar-fornecedor" class="btn-primary">Salvar Fornecedor</button>
+                        <button type="submit" id="btn-salvar-produto" class="btn-primary">Salvar Produto</button>
                     </form>
+                    <div class="form-actions-bottom">
+                        <button type="button" class="btn-limpar" data-form-target="#form-fornecedor">🗑️ Limpar</button>
+                    </div>
                     <div class="table-header">
                         <h3>Fornecedores Cadastrados</h3>
                         <div class="search-container"><input type="text" id="search-fornecedores" class="search-input" placeholder="Buscar por nome, CNPJ ou código..."></div>
@@ -174,7 +203,10 @@
                 </div>
 
                 <div id="cupons-content" class="sub-panel">
-                    <h2>Cadastro de Cupons de Desconto</h2>
+                    <div class="form-header">
+                        <h2>Cadastro de Cupons de Desconto</h2>
+                        <button type="button" class="btn-limpar" data-form-target="#form-cupom">🗑️ Limpar</button>
+                    </div>
                     <form id="form-cupom" class="form-container">
                         <div class="form-group"><label for="cupom-codigo">Código (ex: PROMO10)</label><input type="text" id="cupom-codigo" class="uppercase-input" required></div>
                         <div class="form-group"><label for="cupom-tipo">Tipo de Desconto</label><select id="cupom-tipo"><option value="fixed">Valor Fixo (R$)</option><option value="percent">Porcentagem (%)</option></select></div>
@@ -279,6 +311,10 @@
         </div>
     </div>
 
+    <button id="btn-scroll-up" class="scroll-btn" title="Ir para o topo do formulário">▲</button>
+    <button id="btn-scroll-down" class="scroll-btn" title="Ir para a lista de cadastros">▼</button>
+    
     <script src="admin.js"></script>
+              
 </body>
 </html>

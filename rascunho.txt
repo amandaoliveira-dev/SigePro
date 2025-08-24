@@ -1,0 +1,11 @@
+
+<div class="form-header">
+    <h2>Cadastro de Fornecedores</h2>
+    <button type="button" class="btn-limpar">🗑️ Limpar</button>
+</div>
+
+
+<div class="form-footer-actions">
+    <button type="button" class="btn-limpar">🗑️ Limpar</button>
+    <button type="submit" id="btn-salvar-produto" class="btn-primary">Salvar Produto</button>
+</div>

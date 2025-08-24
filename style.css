@@ -219,3 +219,29 @@ button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 
   .printable-area { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; border: none; }
   .modal-actions { display: none !important; }
 }
+
+/* Exemplo para style.css */
+@media (max-width: 1200px) {
+    .pos-container {
+        grid-template-columns: 300px 1fr 300px; /* Diminui um pouco */
+    }
+}
+
+@media (max-width: 992px) {
+    .pos-container {
+        /* Transforma em uma única coluna */
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto; /* Define as linhas */
+        overflow-y: auto;
+    }
+    .items-panel {
+        /* O painel de itens deve vir primeiro na ordem visual */
+        grid-row: 2 / 3;
+    }
+    .input-panel {
+        grid-row: 1 / 2;
+    }
+    .summary-panel {
+        grid-row: 3 / 4;
+    }
+}

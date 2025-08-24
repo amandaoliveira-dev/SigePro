@@ -14,7 +14,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- CARREGANDO DADOS DO LOCALSTORAGE ---
     function loadData(key) {
         const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : null;
+        
+        // Se não houver nada salvo, retorna nulo.
+        if (!data) {
+            return null;
+        }
+
+        // Tenta converter o texto para objeto.
+        try {
+            return JSON.parse(data);
+        } 
+        // Se der erro na conversão...
+        catch (error) {
+            // Mostra um aviso no console para você (o desenvolvedor) saber do problema.
+            console.error(`ERRO: Dado corrompido encontrado no localStorage para a chave: "${key}"`);
+            
+            // Remove o dado ruim para não causar problemas no futuro.
+            localStorage.removeItem(key);
+            
+            // Retorna nulo, como se não houvesse nada salvo.
+            return null;
+        }
     }
 
     const STORAGE_KEYS = {
