@@ -388,3 +388,20 @@ thead { background-color: #2a2a2a; }
     overflow: hidden;
     text-overflow: ellipsis;
 }
+/* ESTILOS PARA OS BOTÕES DE IMPRESSÃO NO MODAL DE DETALHES */
+
+.modal-print-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 15px;
+    justify-content: center; /* Centraliza os botões */
+}
+
+.btn-modal-print {
+    padding: 8px 20px; /* Botões um pouco menores */
+    font-size: 0.9em;
+    font-weight: 500;
+    flex: 0 1 auto; /* Impede que os botões estiquem */
+}

@@ -58,52 +58,55 @@ function formatCurrency(value) {
 }
 // ADICIONE ESTA FUNÇÃO NO FINAL DO ARQUIVO utils.js
 
-function generateDocumentHTML(type) {
-    const docNumber = lastSaleData.recibo || Date.now().toString().slice(-6);
-    let clienteHtml = `<p><strong>CLIENTE:</strong> ${toTitleCase(lastSaleData.cliente.nome)}</p>`;
-    if (lastSaleData.cliente.cpf) {
-        clienteHtml += `<p><strong>CPF:</strong> ${lastSaleData.cliente.cpf}</p><p><strong>Telefone:</strong> ${lastSaleData.cliente.telefone}</p><p><strong>Endereço:</strong> ${toTitleCase(lastSaleData.cliente.rua)}, ${lastSaleData.cliente.numero} - ${toTitleCase(lastSaleData.cliente.bairro)}, ${toTitleCase(lastSaleData.cliente.cidade)}/${lastSaleData.cliente.uf.toUpperCase()}</p>`;
+// SUBSTITUA A FUNÇÃO INTEIRA EM utils.js POR ESTA:
+
+function generateDocumentHTML(type, saleData, allProducts) {
+    // Agora, usamos 'saleData' em vez de 'lastSaleData'
+    const docNumber = saleData.recibo || Date.now().toString().slice(-6);
+    let clienteHtml = `<p><strong>CLIENTE:</strong> ${toTitleCase(saleData.cliente.nome)}</p>`;
+    if (saleData.cliente.cpf) {
+        clienteHtml += `<p><strong>CPF:</strong> ${saleData.cliente.cpf}</p><p><strong>Telefone:</strong> ${saleData.cliente.telefone}</p><p><strong>Endereço:</strong> ${toTitleCase(saleData.cliente.rua)}, ${saleData.cliente.numero} - ${toTitleCase(saleData.cliente.bairro)}, ${toTitleCase(saleData.cliente.cidade)}/${saleData.cliente.uf.toUpperCase()}</p>`;
     }
 
     if (type === 'nf') {
         let itemsHtml = '';
-        lastSaleData.itens.filter(item => !item.isDiscount).forEach(item => {
+        saleData.itens.filter(item => !item.isDiscount).forEach(item => {
             itemsHtml += `<tr><td>${item.codigo}</td><td>${toTitleCase(item.nome)}</td><td>${item.quantidade}</td><td>${formatCurrency(item.preco)}</td><td>${formatCurrency(item.preco * item.quantidade)}</td></tr>`;
         });
-        
-        let discountsHtml = '';
-        const totalDiscountValue = (lastSaleData.subtotal && lastSaleData.total) ? (lastSaleData.subtotal - lastSaleData.total) : 0;
 
-        if (lastSaleData.discounts) {
-            if (lastSaleData.discounts.manualItems && lastSaleData.discounts.manualItems.length > 0) {
-                lastSaleData.discounts.manualItems.forEach(item => {
+        let discountsHtml = '';
+        const totalDiscountValue = (saleData.subtotal && saleData.total) ? (saleData.subtotal - saleData.total) : 0;
+
+        if (saleData.discounts) {
+            if (saleData.discounts.manualItems && saleData.discounts.manualItems.length > 0) {
+                saleData.discounts.manualItems.forEach(item => {
                     discountsHtml += `<p class="doc-discount-line">${toTitleCase(item.nome)}: <strong>${formatCurrency(item.preco)}</strong></p>`;
                 });
             }
-            if (lastSaleData.discounts.couponValue > 0) {
-                discountsHtml += `<p class="doc-discount-line">Cupom (${lastSaleData.discounts.couponCode}): <strong>${formatCurrency(-lastSaleData.discounts.couponValue)}</strong></p>`;
+            if (saleData.discounts.couponValue > 0) {
+                discountsHtml += `<p class="doc-discount-line">Cupom (${saleData.discounts.couponCode}): <strong>${formatCurrency(-saleData.discounts.couponValue)}</strong></p>`;
             }
-            if (lastSaleData.discounts.paymentValue > 0) {
-                discountsHtml += `<p class="doc-discount-line">Desconto PIX (5%): <strong>${formatCurrency(-lastSaleData.discounts.paymentValue)}</strong></p>`;
+            if (saleData.discounts.paymentValue > 0) {
+                discountsHtml += `<p class="doc-discount-line">Desconto PIX (5%): <strong>${formatCurrency(-saleData.discounts.paymentValue)}</strong></p>`;
             }
         }
-        
-        let paymentDetailsHtml = `<p><strong>Forma de Pagamento:</strong> ${lastSaleData.paymentMethod}</p>`;
-        if (lastSaleData.paymentMethod === 'Dinheiro' && lastSaleData.valorRecebido > 0) {
-            paymentDetailsHtml += `<p><strong>Valor Recebido:</strong> ${formatCurrency(lastSaleData.valorRecebido)}</p><p><strong>Troco:</strong> ${formatCurrency(lastSaleData.troco)}</p>`;
+
+        let paymentDetailsHtml = `<p><strong>Forma de Pagamento:</strong> ${saleData.paymentMethod}</p>`;
+        if (saleData.paymentMethod === 'Dinheiro' && saleData.valorRecebido > 0) {
+            paymentDetailsHtml += `<p><strong>Valor Recebido:</strong> ${formatCurrency(saleData.valorRecebido)}</p><p><strong>Troco:</strong> ${formatCurrency(saleData.troco)}</p>`;
         }
-        const pixHtml = lastSaleData.paymentMethod.includes('PIX') ? `<div class="pix-area-doc"><img src="https://i.imgur.com/g8fG1v1.png" alt="QR Code"><p>amanda-games-pix@email.com</p></div>` : '';
+        const pixHtml = saleData.paymentMethod.includes('PIX') ? `<div class="pix-area-doc"><img src="https://i.imgur.com/g8fG1v1.png" alt="QR Code"><p>amanda-games-pix@email.com</p></div>` : '';
 
         return `<div class="doc-header"><h3>AmanditaGames Store</h3><p>Seu Endereço | Seu Contato</p></div>
-                <div class="doc-section"><h4>RECIBO DE VENDA - Nº ${docNumber}</h4><p><strong>Data:</strong> ${new Date(lastSaleData.date).toLocaleString('pt-BR')}</p></div>
+                <div class="doc-section"><h4>RECIBO DE VENDA - Nº ${docNumber}</h4><p><strong>Data:</strong> ${new Date(saleData.date).toLocaleString('pt-BR')}</p></div>
                 <div class="doc-section"><h4>DADOS DO CLIENTE</h4>${clienteHtml}</div>
-                <div class="doc-section"><p><strong>Vendedor:</strong> ${toTitleCase(lastSaleData.vendedor.nome)}</p></div>
+                <div class="doc-section"><p><strong>Vendedor:</strong> ${toTitleCase(saleData.vendedor.nome)}</p></div>
                 <div class="doc-section"><h4>ITENS DA COMPRA</h4><table class="doc-table"><thead><tr><th>Cód.</th><th>Produto</th><th>Qtd.</th><th>Vlr. Unit.</th><th>Total</th></tr></thead><tbody>${itemsHtml}</tbody></table></div>
                 <div class="doc-section"><h4>Pagamento</h4><div class="payment-details-grid"><div class="payment-summary-left">
-                <p><strong>Subtotal Produtos:</strong> ${formatCurrency(lastSaleData.subtotal || 0)}</p>
+                <p><strong>Subtotal Produtos:</strong> ${formatCurrency(saleData.subtotal || 0)}</p>
                 ${totalDiscountValue > 0 ? `<p class="doc-discount-total-line"><strong>Valor Total Descontos:</strong> ${formatCurrency(-totalDiscountValue)}</p>${discountsHtml}` : ''}
                 <hr>
-                <p class="doc-total-line"><strong>TOTAL PAGO:</strong> <strong>${formatCurrency(lastSaleData.total)}</strong></p>
+                <p class="doc-total-line"><strong>TOTAL PAGO:</strong> <strong>${formatCurrency(saleData.total)}</strong></p>
                 ${paymentDetailsHtml}</div>
                 <div class="payment-summary-right">${pixHtml}</div></div></div>
                 <div class="doc-footer"><p>Obrigado pela preferência!</p></div>`;
@@ -111,22 +114,19 @@ function generateDocumentHTML(type) {
 
     if (type === 'garantia') {
         let itemsGarantiaHtml = '';
-        lastSaleData.itens.filter(item => !item.isDiscount).forEach(item => {
-            // No admin.js, a variável dbProdutos está disponível. No script.js, usamos mockDatabase.
-            // Para unificar, precisamos de uma forma de acessar a lista de produtos.
-            // Assumimos que uma variável 'dbProdutos' ou 'mockDatabase' estará disponível no escopo global.
-            const listaDeProdutos = typeof dbProdutos !== 'undefined' ? dbProdutos : (typeof mockDatabase !== 'undefined' ? Object.values(mockDatabase) : []);
-            const produtoOriginal = listaDeProdutos.find(p => p.codigo.toUpperCase() === item.codigo.toUpperCase());
-            
+        saleData.itens.filter(item => !item.isDiscount).forEach(item => {
+            // Agora, usamos 'allProducts' em vez de tentar adivinhar a variável
+            const produtoOriginal = allProducts.find(p => p.codigo.toUpperCase() === item.codigo.toUpperCase());
+
             const serial = produtoOriginal ? produtoOriginal.serial : 'N/A';
             const garantia = produtoOriginal ? produtoOriginal.garantia : 'N/A';
-            
+
             itemsGarantiaHtml += `<tr><td>${toTitleCase(item.nome)}</td><td>${serial}</td><td>${garantia}</td></tr>`;
         });
         return `<div class="doc-header"><h3>AmanditaGames Store</h3><p>Seu Endereço | Seu Contato</p></div>
                 <div class="doc-section" style="text-align:center;"><h2>CERTIFICADO DE GARANTIA</h2></div>
                 <div class="doc-section"><h4>DADOS DO CLIENTE</h4>${clienteHtml}</div>
-                <div class="doc-section"><h4>REFERENTE À VENDA</h4><p><strong>Recibo Nº:</strong> ${docNumber}</p><p><strong>Data da Compra:</strong> ${new Date(lastSaleData.date).toLocaleDateString('pt-BR')}</p></div>
+                <div class="doc-section"><h4>REFERENTE À VENDA</h4><p><strong>Recibo Nº:</strong> ${docNumber}</p><p><strong>Data da Compra:</strong> ${new Date(saleData.date).toLocaleDateString('pt-BR')}</p></div>
                 <div class="doc-section"><h4>PRODUTOS COBERTOS PELA GARANTIA</h4><table class="doc-table"><thead><tr><th>Produto</th><th>Nº de Série</th><th>Garantia</th></tr></thead><tbody>${itemsGarantiaHtml}</tbody></table></div>
                 <div class="doc-section"><h4>TERMOS DE GARANTIA</h4>
                 <p style="font-size: 11px; text-align: justify; white-space: pre-wrap;">Este certificado é a prova da sua garantia e deve ser apresentado para que o serviço seja validado. O não cumprimento das condições estabelecidas abaixo anula a garantia.

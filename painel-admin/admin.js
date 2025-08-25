@@ -149,63 +149,103 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- FUNÇÕES CRUD (Criar, Ler, Atualizar, Deletar) ---
+    // COLE ESTA NOVA VERSÃO NO LUGAR DA ANTIGA showDetails
     function showDetails(itemId, itemType) {
         let item;
         let detailsHtml = '';
         let title = 'Detalhes';
+        let actionsHtml = ''; // Espaço para os botões de impressão
 
-        switch (itemType) {
-            case 'produto':
-                item = dbProdutos.find(p => p.codigo === itemId);
-                if (item) {
-                    const fornecedor = dbFornecedores.find(f => f.codigo === item.fornecedorCodigo);
-                    const nomeFornecedor = fornecedor ? toTitleCase(fornecedor.nome) : 'Não informado';
-                    const categoria = dbCategorias.find(c => String(c.id) === String(item.categoriaId));
-                    const nomeCategoria = categoria ? toTitleCase(categoria.nome) : 'Sem categoria';
-                    title = `Detalhes do Produto: ${toTitleCase(item.nome)}`;
-                    detailsHtml = `<p><strong>Código Interno:</strong> ${item.codigo}</p><p><strong>Cód. Barras:</strong> ${item.barcode || 'N/A'}</p><p><strong>Nº de Série:</strong> ${item.serial || 'N/A'}</p><p><strong>Nome:</strong> ${toTitleCase(item.nome)}</p><p><strong>Condição:</strong> ${item.condicao}</p><p><strong>Garantia:</strong> ${item.garantia}</p><p><strong>Categoria:</strong> <span class="detail-highlight">${nomeCategoria}</span></p><p><strong>Plataforma:</strong> ${toTitleCase(item.plataforma)}</p><hr><p><strong>Preço de Custo:</strong> ${formatCurrency(parseFloat(item.precoCusto))}</p><p><strong>Preço de Venda:</strong> ${formatCurrency(parseFloat(item.precoVenda))}</p><p><strong>Fornecedor:</strong> ${nomeFornecedor} (${item.fornecedorCodigo || 'N/A'})</p><hr><p><strong>Estoque Atual:</strong> ${item.estoque} unidades</p><p><strong>Estoque Mínimo:</strong> ${item.estoqueMinimo} unidades</p><p><strong>Localização:</strong> ${toTitleCase(item.localizacao)}</p><hr><p><strong>Data de Lançamento:</strong> ${item.lancamento ? new Date(item.lancamento).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A'}</p><p><strong>Tags:</strong> ${toTitleCase(item.tags)}</p>`;
-                }
-                break;
-            case 'categoria':
-                item = dbCategorias.find(c => c.id == itemId);
-                if (item) {
-                    title = `Detalhes da Categoria: ${toTitleCase(item.nome)}`;
-                    detailsHtml = `<p><strong>ID:</strong> ${item.id}</p><p><strong>Nome:</strong> ${toTitleCase(item.nome)}</p><p><strong>Descrição:</strong> ${item.descricao || 'Nenhuma'}</p>`;
-                }
-                break;
-            case 'cliente':
-                item = dbClientes.find(c => c.codigo === itemId);
-                if (item) {
-                    title = `Detalhes do Cliente: ${toTitleCase(item.nome)}`;
-                    detailsHtml = `<p><strong>Código:</strong> ${item.codigo}</p><p><strong>Nome:</strong> ${toTitleCase(item.nome)}</p><p><strong>CPF:</strong> ${item.cpf}</p><p><strong>Telefone:</strong> ${item.telefone}</p><p><strong>E-mail:</strong> ${item.email}</p><p><strong>Endereço:</strong> ${toTitleCase(item.rua)}, Nº ${item.numero} - ${toTitleCase(item.bairro)}, ${toTitleCase(item.cidade)}/${item.uf.toUpperCase()}</p><p><strong>CEP:</strong> ${item.cep}</p>`;
-                }
-                break;
-            case 'vendedor':
-                item = dbVendedores.find(v => v.codigo === itemId);
-                if (item) {
-                    title = `Detalhes do Vendedor: ${toTitleCase(item.nome)}`;
-                    detailsHtml = `<p><strong>Código:</strong> ${item.codigo}</p><p><strong>Nome:</strong> ${toTitleCase(item.nome)}</p><p><strong>CPF:</strong> ${item.cpf}</p><p><strong>Telefone:</strong> ${item.telefone}</p><p><strong>E-mail:</strong> ${item.email}</p><p><strong>Endereço:</strong> ${toTitleCase(item.rua)}, Nº ${item.numero} - ${toTitleCase(item.bairro)}, ${toTitleCase(item.cidade)}/${item.uf.toUpperCase()}</p><p><strong>CEP:</strong> ${item.cep}</p>`;
-                }
-                break;
-            case 'fornecedor':
-                item = dbFornecedores.find(f => f.codigo === itemId);
-                if (item) {
-                    title = `Detalhes do Fornecedor: ${toTitleCase(item.nome)}`;
-                    detailsHtml = `<p><strong>Código:</strong> ${item.codigo}</p><p><strong>Empresa:</strong> ${toTitleCase(item.nome)}</p><p><strong>CNPJ:</strong> ${item.cnpj}</p><p><strong>Contato:</strong> ${toTitleCase(item.contato)}</p><p><strong>Telefone:</strong> ${item.telefone}</p><p><strong>Endereço:</strong> ${toTitleCase(item.rua)}, Nº ${item.numero} - ${toTitleCase(item.bairro)}, ${toTitleCase(item.cidade)}/${item.uf.toUpperCase()}</p><p><strong>CEP:</strong> ${item.cep}</p>`;
-                }
-                break;
-            case 'cupom':
-                item = dbCupons.find(c => c.codigo === itemId);
-                if (item) {
-                    title = `Detalhes do Cupom: ${item.codigo}`;
-                    detailsHtml = `<p><strong>Código:</strong> ${item.codigo}</p><p><strong>Tipo:</strong> ${item.tipo}</p><p><strong>Valor:</strong> ${item.valor}</p><p><strong>Usos Totais:</strong> ${item.usos}</p>`;
-                }
-                break;
+        if (itemType === 'venda') {
+            item = dbVendas.find(v => v.recibo === itemId);
+            // ADICIONE ESTA LINHA ABAIXO:
+            lastSaleData = item; // Guardamos a venda encontrada na "memória" global
+            if (item) {
+                title = `Detalhes da Venda - Recibo Nº ${item.recibo}`;
+
+                let itemsTable = item.itens.map(p => `<tr><td>${p.codigo}</td><td>${toTitleCase(p.nome)}</td><td>${p.quantidade}x</td><td>${formatCurrency(p.preco)}</td></tr>`).join('');
+
+                detailsHtml = `
+                    <p><strong>Cliente:</strong> ${toTitleCase(item.cliente.nome)}</p>
+                    <p><strong>Vendedor:</strong> ${toTitleCase(item.vendedor.nome)}</p>
+                    <p><strong>Data:</strong> ${new Date(item.date).toLocaleString('pt-BR')}</p>
+                    <hr>
+                    <h4>Itens:</h4>
+                    <table class="doc-table">
+                        <thead><tr><th>Cód.</th><th>Produto</th><th>Qtd.</th><th>Preço</th></tr></thead>
+                        <tbody>${itemsTable}</tbody>
+                    </table>
+                    <hr>
+                    <p><strong>Subtotal:</strong> ${formatCurrency(item.subtotal)}</p>
+                    <p><strong>Total Descontos:</strong> ${formatCurrency(item.subtotal - item.total)}</p>
+                    <p><strong>TOTAL PAGO:</strong> <span class="detail-highlight">${formatCurrency(item.total)}</span></p>
+                `;
+
+                // Adiciona os botões de impressão
+                actionsHtml = `
+                    <div class="modal-print-actions">
+                        <button class="btn-secondary btn-modal-print" data-type="nf">📄 2ª Via Recibo</button>
+                        <button class="btn-secondary btn-modal-print" data-type="garantia">📜 2ª Via Garantia</button>
+                    </div>
+                `;
+            }
+        } else {
+            // A lógica antiga para os outros tipos de item (produto, cliente, etc.)
+            // Esta parte é para garantir que a função "Ver" dos outros cadastros continue funcionando
+            switch (itemType) {
+                case 'produto':
+                    item = dbProdutos.find(p => p.codigo === itemId);
+                    if (item) {
+                        const fornecedor = dbFornecedores.find(f => f.codigo === item.fornecedorCodigo);
+                        const nomeFornecedor = fornecedor ? toTitleCase(fornecedor.nome) : 'Não informado';
+                        const categoria = dbCategorias.find(c => String(c.id) === String(item.categoriaId));
+                        const nomeCategoria = categoria ? toTitleCase(categoria.nome) : 'Sem categoria';
+                        title = `Detalhes do Produto: ${toTitleCase(item.nome)}`;
+                        detailsHtml = `<p><strong>Código Interno:</strong> ${item.codigo}</p><p><strong>Cód. Barras:</strong> ${item.barcode || 'N/A'}</p><p><strong>Nº de Série:</strong> ${item.serial || 'N/A'}</p><p><strong>Nome:</strong> ${toTitleCase(item.nome)}</p><p><strong>Condição:</strong> ${item.condicao}</p><p><strong>Garantia:</strong> ${item.garantia}</p><p><strong>Categoria:</strong> <span class="detail-highlight">${nomeCategoria}</span></p><p><strong>Plataforma:</strong> ${toTitleCase(item.plataforma)}</p><hr><p><strong>Preço de Custo:</strong> ${formatCurrency(parseFloat(item.precoCusto))}</p><p><strong>Preço de Venda:</strong> ${formatCurrency(parseFloat(item.precoVenda))}</p><p><strong>Fornecedor:</strong> ${nomeFornecedor} (${item.fornecedorCodigo || 'N/A'})</p><hr><p><strong>Estoque Atual:</strong> ${item.estoque} unidades</p><p><strong>Estoque Mínimo:</strong> ${item.estoqueMinimo} unidades</p><p><strong>Localização:</strong> ${toTitleCase(item.localizacao)}</p><hr><p><strong>Data de Lançamento:</strong> ${item.lancamento ? new Date(item.lancamento).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A'}</p><p><strong>Tags:</strong> ${toTitleCase(item.tags)}</p>`;
+                    }
+                    break;
+                // Os outros cases (categoria, cliente, etc.) continuam aqui...
+                case 'categoria':
+                    item = dbCategorias.find(c => c.id == itemId);
+                    if (item) {
+                        title = `Detalhes da Categoria: ${toTitleCase(item.nome)}`;
+                        detailsHtml = `<p><strong>ID:</strong> ${item.id}</p><p><strong>Nome:</strong> ${toTitleCase(item.nome)}</p><p><strong>Descrição:</strong> ${item.descricao || 'Nenhuma'}</p>`;
+                    }
+                    break;
+                case 'cliente':
+                    item = dbClientes.find(c => c.codigo === itemId);
+                    if (item) {
+                        title = `Detalhes do Cliente: ${toTitleCase(item.nome)}`;
+                        detailsHtml = `<p><strong>Código:</strong> ${item.codigo}</p><p><strong>Nome:</strong> ${toTitleCase(item.nome)}</p><p><strong>CPF:</strong> ${item.cpf}</p><p><strong>Telefone:</strong> ${item.telefone}</p><p><strong>E-mail:</strong> ${item.email}</p><p><strong>Endereço:</strong> ${toTitleCase(item.rua)}, Nº ${item.numero} - ${toTitleCase(item.bairro)}, ${toTitleCase(item.cidade)}/${item.uf.toUpperCase()}</p><p><strong>CEP:</strong> ${item.cep}</p>`;
+                    }
+                    break;
+                case 'vendedor':
+                    item = dbVendedores.find(v => v.codigo === itemId);
+                    if (item) {
+                        title = `Detalhes do Vendedor: ${toTitleCase(item.nome)}`;
+                        detailsHtml = `<p><strong>Código:</strong> ${item.codigo}</p><p><strong>Nome:</strong> ${toTitleCase(item.nome)}</p><p><strong>CPF:</strong> ${item.cpf}</p><p><strong>Telefone:</strong> ${item.telefone}</p><p><strong>E-mail:</strong> ${item.email}</p><p><strong>Endereço:</strong> ${toTitleCase(item.rua)}, Nº ${item.numero} - ${toTitleCase(item.bairro)}, ${toTitleCase(item.cidade)}/${item.uf.toUpperCase()}</p><p><strong>CEP:</strong> ${item.cep}</p>`;
+                    }
+                    break;
+                case 'fornecedor':
+                    item = dbFornecedores.find(f => f.codigo === itemId);
+                    if (item) {
+                        title = `Detalhes do Fornecedor: ${toTitleCase(item.nome)}`;
+                        detailsHtml = `<p><strong>Código:</strong> ${item.codigo}</p><p><strong>Empresa:</strong> ${toTitleCase(item.nome)}</p><p><strong>CNPJ:</strong> ${item.cnpj}</p><p><strong>Contato:</strong> ${toTitleCase(item.contato)}</p><p><strong>Telefone:</strong> ${item.telefone}</p><p><strong>Endereço:</strong> ${toTitleCase(item.rua)}, Nº ${item.numero} - ${toTitleCase(item.bairro)}, ${toTitleCase(item.cidade)}/${item.uf.toUpperCase()}</p><p><strong>CEP:</strong> ${item.cep}</p>`;
+                    }
+                    break;
+                case 'cupom':
+                    item = dbCupons.find(c => c.codigo === itemId);
+                    if (item) {
+                        title = `Detalhes do Cupom: ${item.codigo}`;
+                        detailsHtml = `<p><strong>Código:</strong> ${item.codigo}</p><p><strong>Tipo:</strong> ${item.tipo}</p><p><strong>Valor:</strong> ${item.valor}</p><p><strong>Usos Totais:</strong> ${item.usos}</p>`;
+                    }
+                    break;
+            }
         }
 
         if (item) {
             modalTitle.textContent = title;
-            modalBody.innerHTML = detailsHtml;
+            modalBody.innerHTML = detailsHtml + actionsHtml; // Juntamos os detalhes e os botões
             detailsModal.style.display = "block";
         }
     }
@@ -413,32 +453,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    mainContent.addEventListener('click', (e) => {
-        const target = e.target;
-        if (target.classList.contains('btn-view') || target.classList.contains('btn-edit') || target.classList.contains('btn-delete')) {
-            const itemId = target.dataset.id;
-            const itemType = target.dataset.type;
+    // SUBSTITUA O BLOCO ANTIGO POR ESTE:
 
-            if (target.classList.contains('btn-view') && !target.classList.contains('btn-reprint')) {
-                showDetails(itemId, itemType);
-            }
-            if (target.classList.contains('btn-edit')) {
-                editItem(itemId, itemType);
-            }
-            if (target.classList.contains('btn-delete')) {
-                openConfirmModal(itemId, itemType);
+    document.addEventListener('click', (e) => {
+        const target = e.target; // O 'target' agora é pego aqui dentro
+
+        // Lógica para os botões de ação nas tabelas de cadastro
+        if (target.classList.contains('btn-view') || target.classList.contains('btn-edit') || target.classList.contains('btn-delete')) {
+            // Previne que a mesma lógica se aplique aos botões de reimpressão
+            if (!target.classList.contains('btn-sale-details')) {
+                const itemId = target.dataset.id;
+                const itemType = target.dataset.type;
+
+                if (target.classList.contains('btn-view')) {
+                    showDetails(itemId, itemType);
+                }
+                if (target.classList.contains('btn-edit')) {
+                    editItem(itemId, itemType);
+                }
+                if (target.classList.contains('btn-delete')) {
+                    openConfirmModal(itemId, itemType);
+                }
             }
         }
-        if (target.classList.contains('btn-reprint')) {
+
+        // Se o botão de detalhes de VENDA na tabela for clicado
+        if (target.classList.contains('btn-sale-details')) {
             const vendaId = target.dataset.id;
-            const venda = dbVendas.find(v => v.recibo === vendaId);
-            if (venda) {
-                lastSaleData = venda;
-                if (postSaleModal) {
-                    const newSaleButton = postSaleModal.querySelector('.btn-link');
-                    if (newSaleButton) newSaleButton.style.display = 'none';
-                    postSaleModal.style.display = 'block';
-                }
+            showDetails(vendaId, 'venda');
+        }
+
+        // Se um dos botões de impressão DENTRO DO MODAL for clicado
+        if (target.classList.contains('btn-modal-print')) {
+            const printType = target.dataset.type;
+            // Apenas checamos se a "memória" (lastSaleData) não está vazia
+            if (lastSaleData) {
+                showPreview(printType);
             }
         }
     });
@@ -805,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tabelaHistorico.innerHTML = "";
         data.forEach(venda => {
             const totalItens = venda.itens.reduce((acc, item) => acc + item.quantidade, 0);
-            tabelaHistorico.innerHTML += `<tr><td class="code-column">${venda.recibo}</td><td>${new Date(venda.date).toLocaleString('pt-BR')}</td><td>${toTitleCase(venda.cliente.nome)}</td><td>${toTitleCase(venda.vendedor.nome)}</td><td>${totalItens}</td><td>${formatCurrency(venda.total)}</td><td class="actions"><button class="btn-view btn-reprint" data-id="${venda.recibo}" data-type="venda">Detalhes</button></td></tr>`;
+            tabelaHistorico.innerHTML += `<tr><td class="code-column">${venda.recibo}</td><td>${new Date(venda.date).toLocaleString('pt-BR')}</td><td>${toTitleCase(venda.cliente.nome)}</td><td>${toTitleCase(venda.vendedor.nome)}</td><td>${totalItens}</td><td>${formatCurrency(venda.total)}</td><td class="actions"><button class="btn-view btn-sale-details" data-id="${venda.recibo}" data-type="venda">Detalhes</button></td></tr>`;
         });
     }
 
@@ -829,8 +879,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // DEPOIS
     function showPreview(type) {
-        docContentEl.innerHTML = generateDocumentHTML(type);
+        docContentEl.innerHTML = generateDocumentHTML(type, lastSaleData, dbProdutos);
         if (postSaleModal) postSaleModal.style.display = 'none';
         if (docPreviewModal) docPreviewModal.style.display = 'block';
     }

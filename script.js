@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const STORAGE_KEYS = {
         products: 'amanditaGames_products',
         clients: 'amanditaGames_clients', // Adicionado
+        sales: 'amanditaGames_sales' //adcionado
     };
 
     // BANCOS DE DADOS
@@ -182,13 +183,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 paymentValue: paymentDiscount
             }
         };
-        paymentModal.style.display = 'none';
+        lastSaleData.recibo = Date.now().toString().slice(-6);
+        const historicoVendas = loadData(STORAGE_KEYS.sales) || [];
+        historicoVendas.push(lastSaleData);
+        saveData(STORAGE_KEYS.sales, historicoVendas);
+          
+        paymentModal.style.display = 'none'; 
         postSaleModal.style.display = 'block';
     }
 
 
+    // DEPOIS
     function showPreview(type) {
-        docContentEl.innerHTML = generateDocumentHTML(type);
+        docContentEl.innerHTML = generateDocumentHTML(type, lastSaleData, Object.values(mockDatabase));
         postSaleModal.style.display = 'none';
         docPreviewModal.style.display = 'block';
     }
