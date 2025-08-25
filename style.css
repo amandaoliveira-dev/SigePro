@@ -44,18 +44,41 @@ body {
 }
 
 /* Área de conteúdo que deve rolar */
-.panel-content-scrollable {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 15px;
-    margin-right: -15px;
-}
+/* Unifica as áreas de conteúdo com rolagem */
+.panel-content-scrollable, 
 .table-container {
     flex-grow: 1;
     overflow-y: auto;
     padding-right: 15px;
     margin-right: -15px;
+    scrollbar-width: thin;
+    scrollbar-color: #444 #2a2a2a;
 }
+
+/* Unifica a estilização da barra de rolagem para Webkit */
+.panel-content-scrollable::-webkit-scrollbar, 
+.table-container::-webkit-scrollbar { 
+    width: 10px; 
+    height: 10px; 
+}
+
+.panel-content-scrollable::-webkit-scrollbar-track, 
+.table-container::-webkit-scrollbar-track { 
+    background: #2a2a2a; 
+    border-radius: 5px; 
+}
+
+.panel-content-scrollable::-webkit-scrollbar-thumb, 
+.table-container::-webkit-scrollbar-thumb { 
+    background: #444; 
+    border-radius: 5px; 
+}
+
+.panel-content-scrollable::-webkit-scrollbar-thumb:hover, 
+.table-container::-webkit-scrollbar-thumb:hover { 
+    background: #555; 
+}
+
 
 /* Garante que os botões no final não encolham */
 .input-panel .goto-admin, .summary-panel .btn-primary {
@@ -115,110 +138,6 @@ tr.discount-item td { color: var(--success-color); font-style: italic; }
 button#add-manual-desc-btn { background-color: var(--success-color); }
 button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4); }
 
-/* Barra de Rolagem */
-.panel-content-scrollable::-webkit-scrollbar, .table-container::-webkit-scrollbar { width: 10px; height: 10px; }
-.panel-content-scrollable::-webkit-scrollbar-track, .table-container::-webkit-scrollbar-track { background: #2a2a2a; border-radius: 5px; }
-.panel-content-scrollable::-webkit-scrollbar-thumb, .table-container::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; }
-.panel-content-scrollable::-webkit-scrollbar-thumb:hover, .table-container::-webkit-scrollbar-thumb:hover { background: #555; }
-.panel-content-scrollable, .table-container { scrollbar-width: thin; scrollbar-color: #444 #2a2a2a; }
-
-/* Modais */
-.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.7); animation: fadeInModal 0.3s; }
-@keyframes fadeInModal { from { background-color: rgba(0, 0, 0, 0); } to { background-color: rgba(0, 0, 0, 0.7); } }
-.modal-content { background-color: var(--panel-color); margin: 10% auto; padding: 30px; border: 1px solid var(--border-color); width: 90%; max-width: 450px; border-radius: 8px; position: relative; animation: slideIn 0.3s; }
-@keyframes slideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-/* POR ISTO (ESTILO ELEGANTE): */
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 30px;
-    height: 30px;
-    background-color: #333;
-    color: #aaa;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    transition: all 0.2s ease-in-out;
-}
-.close-button:hover, .close-button:focus {
-    background-color: var(--error-color); /* A cor vermelha de erro */
-    color: white;
-    transform: rotate(90deg);
-}
-
-.modal-actions { margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;}
-
-/* Modal de Pagamento */
-.payment-summary { border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
-.payment-summary div { display: flex; justify-content: space-between; font-size: 1.1em; margin-bottom: 10px; }
-.payment-summary strong { font-size: 1.2em; color: #FF5F1F; }
-#payment-input-area .form-group { margin-bottom: 20px; }
-#payment-input-area .form-group input { font-size: 1.5em; text-align: center; padding: 15px; }
-.troco-display { text-align: center; margin-top: 15px; padding: 20px; border-radius: 5px; background-color: #333; }
-.troco-display span { display: block; font-size: 1.1em; color: #ccc; }
-.troco-display strong { display: block; font-size: 2.5em; color: var(--success-color); margin-top: 5px; }
-.pix-area { text-align: center; }
-.pix-area img { max-width: 200px; border-radius: 5px; }
-.pix-area p { background-color: #333; padding: 10px; border-radius: 5px; font-family: monospace; word-break: break-all; margin-top: 15px; }
-
-/* --- SEÇÃO DE IMPRESSÃO CORRIGIDA --- */
-#post-sale-modal .modal-content { text-align: center; }
-#post-sale-modal p { margin: 20px 0; font-size: 1.1em; }
-.post-sale-actions { justify-content: center; }
-.btn-link { background: none; border: none; color: #5aa1ff; text-decoration: underline; cursor: pointer; margin-top: 20px; font-size: 0.9em; padding: 0;}
-.document-preview { max-width: 800px; }
-.printable-area { background-color: white; color: black; padding: 40px; font-family: Arial, Helvetica, sans-serif; }
-.doc-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; }
-.doc-header h3 { margin: 0; font-size: 24px; color: black; border: none;}
-.doc-header p { margin: 5px 0 0; font-size: 12px; }
-.doc-section { margin-top: 20px; }
-.doc-section h4 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; font-size: 16px; color: black; border-color: #ccc;}
-.doc-section p { font-size: 12px; margin: 8px 0; }
-.doc-section strong { font-size: 12px; color: black; } /* ESTA É A LINHA QUE CAUSAVA O PROBLEMA */
-.doc-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
-.doc-table th, .doc-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-.doc-table th { background-color: #f2f2f2; }
-.doc-footer { margin-top: 30px; text-align: center; font-size: 12px; font-style: italic; }
-.payment-details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: flex-start; }
-.payment-summary-left hr { border: none; border-top: 1px solid #ccc; margin: 10px 0; }
-.pix-area-doc { text-align: center; border-left: 1px solid #ccc; padding-left: 20px; }
-.pix-area-doc img { max-width: 120px; }
-.pix-area-doc p { font-size: 11px; word-break: break-all; }
-
-/* Estilos dos descontos */
-.doc-discount-line { font-size: 11px; color: #444; margin: 4px 0; padding: 0; border: none; }
-.doc-discount-line strong { font-size: 11px; }
-.doc-discount-total-line { color: var(--success-color); font-weight: bold; }
-.doc-discount-total-line strong { color: inherit; }
-
-/* CORREÇÃO FINAL PARA O TOTAL PAGO */
-.doc-total-line {
-    border-top: 2px solid #333;
-    padding-top: 15px;
-    margin-top: 15px;
-}
-.doc-total-line strong {
-    font-size: 18px !important;
-    font-weight: 500 !important;
-}
-.doc-total-line strong:last-child {
-    font-weight: 700 !important;
-}
-
-/* Regras de Impressão */
-@media print {
-  body * { visibility: hidden; }
-  .printable-area, .printable-area * { visibility: visible; }
-  .printable-area { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; border: none; }
-  .modal-actions { display: none !important; }
-}
 
 /* Exemplo para style.css */
 @media (max-width: 1200px) {

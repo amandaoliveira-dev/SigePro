@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - AmanditaGames Store</title>
-    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="../common.css"> <link rel="stylesheet" href="admin.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -26,7 +26,6 @@
 
         <main class="content">
             <div id="cadastros" class="content-panel">
-                <button id="btn-scroll-up" class="scroll-btn" title="Ir para o topo do formulário">▲</button>
                 <nav class="sub-nav">
                     <a href="#" class="sub-nav-link" data-target="produtos-content">📦 Produtos</a>
                     <a href="#" class="sub-nav-link" data-target="categorias-content">📚 Categorias</a>
@@ -117,7 +116,7 @@
                         <div class="form-group"><label for="cli-bairro">Bairro</label><input type="text" id="cli-bairro" class="uppercase-input" required></div>
                         <div class="form-group"><label for="cli-cidade">Cidade</label><input type="text" id="cli-cidade" class="uppercase-input" required></div>
                         <div class="form-group"><label for="cli-uf">Estado (UF)</label><input type="text" id="cli-uf" class="uppercase-input" required></div>
-                        <button type="submit" id="btn-salvar-produto" class="btn-primary">Salvar Produto</button>                      
+                        <button type="submit" id="btn-salvar-cliente" class="btn-primary">Salvar Cliente</button>                      
                     </form>
                     <div class="form-actions-bottom">
                         <button type="button" class="btn-limpar" data-form-target="#form-cliente">🗑️ Limpar</button>
@@ -151,7 +150,7 @@
                         <div class="form-group"><label for="vend-bairro">Bairro</label><input type="text" id="vend-bairro" class="uppercase-input" required></div>
                         <div class="form-group"><label for="vend-cidade">Cidade</label><input type="text" id="vend-cidade" class="uppercase-input" required></div>
                         <div class="form-group"><label for="vend-uf">Estado (UF)</label><input type="text" id="vend-uf" class="uppercase-input" required></div>
-                        <button type="submit" id="btn-salvar-produto" class="btn-primary">Salvar Produto</button>
+                        <button type="submit" id="btn-salvar-vendedor" class="btn-primary">Salvar Vendedor</button>
                     </form>
                     <div class="form-actions-bottom">
                         <button type="button" class="btn-limpar" data-form-target="#form-vendedor">🗑️ Limpar</button>
@@ -185,7 +184,7 @@
                         <div class="form-group"><label for="forn-bairro">Bairro</label><input type="text" id="forn-bairro" class="uppercase-input" required></div>
                         <div class="form-group"><label for="forn-cidade">Cidade</label><input type="text" id="forn-cidade" class="uppercase-input" required></div>
                         <div class="form-group"><label for="forn-uf">Estado (UF)</label><input type="text" id="forn-uf" class="uppercase-input" required></div>
-                        <button type="submit" id="btn-salvar-produto" class="btn-primary">Salvar Produto</button>
+                        <button type="submit" id="btn-salvar-fornecedor" class="btn-primary">Salvar Fornecedor</button>
                     </form>
                     <div class="form-actions-bottom">
                         <button type="button" class="btn-limpar" data-form-target="#form-fornecedor">🗑️ Limpar</button>
@@ -228,9 +227,7 @@
             </div>
 
             <div id="relatorios" class="content-panel">
-                <div class="table-header">
-                    <h2>Relatórios do Dia</h2>
-                </div>
+                <h2>Relatórios do Dia</h2>
                 <div class="summary-cards-container">
                     <div class="summary-card"><h3>Faturamento do Dia</h3><p id="report-faturamento-dia">R$ 0,00</p></div>
                     <div class="summary-card"><h3>Vendas Realizadas</h3><p id="report-vendas-dia">0</p></div>
@@ -314,6 +311,7 @@
     <button id="btn-scroll-up" class="scroll-btn" title="Ir para o topo do formulário">▲</button>
     <button id="btn-scroll-down" class="scroll-btn" title="Ir para a lista de cadastros">▼</button>
     
+    <script src="../utils.js"></script>
     <script src="admin.js"></script>
               
 </body>
