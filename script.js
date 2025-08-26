@@ -27,10 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const STORAGE_KEYS = {
-        products: 'amanditaGames_products',
-        clients: 'amanditaGames_clients', // Adicionado
-        sales: 'amanditaGames_sales' //adcionado
-    };
+ 		products: 'amanditaGames_products',
+ 		clients: 'amanditaGames_clients',
+ 		sellers: 'amanditaGames_sellers',
+        coupons: 'amanditaGames_coupons', // <-- ADICIONADO
+ 		sales: 'amanditaGames_sales'
+ 	};
 
     // BANCOS DE DADOS
     // Carrega os produtos salvos pelo admin
@@ -52,9 +54,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return obj;
     }, {});
 
-    // Vendedores e cupons continuam como exemplo por enquanto
-    const mockCoupons = { "PROMO10": { type: 'fixed', value: 10.00, uses: 5, remaining: 5 }, "GAMER20": { type: 'fixed', value: 20.00, uses: 1, remaining: 1 } };
-    const mockSellers = { "V001": { nome: "JOÃO VENDEDOR" } };
+    // ATUALIZADO: Carrega os vendedores salvos pelo admin
+ 	const dbVendedoresArray = loadData(STORAGE_KEYS.sellers) || [];
+ 	const mockSellers = dbVendedoresArray.reduce((obj, item) => {
+ 		obj[item.codigo.toUpperCase()] = item;
+ 		return obj;
+ 	}, {});
+
+ 	// ATUALIZADO: Carrega os cupons salvos pelo admin
+ 	const dbCuponsArray = loadData(STORAGE_KEYS.coupons) || [];
+ 	const mockCoupons = dbCuponsArray.reduce((obj, item) => {
+ 		obj[item.codigo.toUpperCase()] = {
+ 			type: item.tipo,
+ 			value: parseFloat(item.valor),
+ 			// A lógica de usos restantes precisaria de um controle mais avançado,
+ 			// mas para o protótipo, vamos assumir que todos estão disponíveis.
+ 			remaining: parseInt(item.usos) 
+ 		};
+ 		return obj;
+ 	}, {});
 
     // ELEMENTOS DO DOM (PDV)
     const clienteInput = document.getElementById('cliente-input');
@@ -105,6 +123,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // ADICIONADA ESTAS DUAS LINHAS ABAIXO
     let subtotal = 0;
     let paymentDiscount = 0;
+    // ADICIONE ESTA FUNÇÃO AUXILIAR AQUI
+ 	function toTitleCase(str) {
+ 		if (!str) return '';
+ 		// Esta função formata um texto para o "Formato de Título"
+ 		return str.toString().toLowerCase().split(' ').map(word =>
+ 			word.charAt(0).toUpperCase() + word.slice(1)
+ 		).join(' ');
+ 	}
 
     // --- FUNÇÕES DE LÓGICA DO PDV ---
     const addProductToCart = () => { const productCode = produtoInput.value.toUpperCase(); const quantidade = parseInt(quantidadeInput.value); if (!mockDatabase[productCode]) { alert("Produto não encontrado!"); return; } if (isNaN(quantidade) || quantidade <= 0) { alert("Quantidade inválida."); return; } const existingProduct = cart.find(item => item.codigo === productCode && !item.isDiscount); if (existingProduct) { existingProduct.quantidade += quantidade; } else { cart.push({ codigo: productCode, nome: mockDatabase[productCode].nome, preco: mockDatabase[productCode].preco, quantidade: quantidade, isDiscount: false, }); } produtoInput.value = ""; quantidadeInput.value = "1"; produtoInput.focus(); updateUI(); };
@@ -194,11 +220,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // DEPOIS
-    function showPreview(type) {
-        docContentEl.innerHTML = generateDocumentHTML(type, lastSaleData, Object.values(mockDatabase));
-        postSaleModal.style.display = 'none';
-        docPreviewModal.style.display = 'block';
-    }
+function showPreview(type) {
+    docContentEl.innerHTML = generateDocumentHTML(type, lastSaleData, Object.values(mockDatabase));
+    postSaleModal.style.display = 'none';
+    docPreviewModal.style.display = 'block';
+}
 
     function resetForNextSale() {
         if (appliedCoupon) { mockCoupons[appliedCoupon.code].remaining--; }

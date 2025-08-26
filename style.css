@@ -164,3 +164,66 @@ button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 
         grid-row: 3 / 4;
     }
 }
+/* --- ESTILOS DO MODAL DE PÓS-VENDA (AJUSTE VERTICAL) --- */
+
+/* O container agora usa flexbox com quebra de linha */
+.post-sale-actions {
+    display: flex;
+    flex-wrap: wrap;          /* Permite que os botões quebrem para a linha de baixo */
+    justify-content: center;  /* Centraliza os botões na horizontal */
+    gap: 15px;                /* Espaço entre os botões de impressão */
+    margin-top: 25px;
+}
+
+/* Estilo para os botões SECUNDÁRIOS (Imprimir) */
+#btn-print-nf, #btn-print-garantia {
+    flex-grow: 1; /* Faz os dois botões dividirem o espaço da linha de cima */
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    background-color: transparent;
+    color: var(--text-color);
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#btn-print-nf:hover, #btn-print-garantia:hover {
+    background-color: #333;
+    border-color: #555;
+}
+
+/* Estilo PRINCIPAL para o botão "Nova Venda" */
+#btn-new-sale {
+    width: 100%; /* Faz o botão ocupar toda a largura e ir para a linha de baixo */
+    background: var(--primary-gradient);
+    color: white;
+    padding: 18px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    /* A MÁGICA ESTÁ AQUI: */
+    margin-top: 15px; /* Cria o espaçamento vertical para afastá-lo dos botões de cima */
+}
+
+#btn-new-sale:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 95, 31, 0.4);
+}
+/* ========================================================== */
+/* CENTRALIZAÇÃO DO MODAL DE PAGAMENTO                      */
+/* ========================================================== */
+
+#payment-modal .modal-content {
+    text-align: center; /* 1. Centraliza todo o texto e conteúdo do modal */
+}
+
+/* 2. Garante que o formulário de "Valor Recebido" (para pagamento em dinheiro)
+      continue com o alinhamento à esquerda, que é mais natural para formulários. */
+#payment-modal .form-group {
+    text-align: left;
+}
