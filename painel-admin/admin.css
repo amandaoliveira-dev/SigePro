@@ -407,3 +407,282 @@ thead { background-color: #2a2a2a; }
     font-weight: 500;
     flex: 0 1 auto; /* Impede que os botões estiquem */
 }
+/* ========================================================== */
+/* ESTILOS FINAIS P/ FRENTE DE CAIXA (COM LAYOUT EM GRID)     */
+
+    /* Container geral para centralizar na tela */
+    .caixa-container {
+        max-width: 800px; /* Aumenta um pouco a largura para o layout de duas colunas */
+        margin: 0 auto;
+    }
+
+    /* --- Formulário de Abertura (continua igual) --- */
+    #caixa-fechado-view .caixa-form {
+        max-width: 550px;
+        margin: 0 auto;
+        grid-template-columns: 1fr;
+    }
+
+    .caixa-form .form-group small {
+        font-size: 0.8em;
+        color: #888;
+        margin-top: 8px;
+    }
+/* ========================================================== */
+/* LAYOUT FINAL E ALINHADO P/ FECHAMENTO DE CAIXA LADO A LADO */
+    .fechamento-grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px; 
+    }
+
+    /* Remove margens que possam interferir no alinhamento do grid */
+    .fechamento-grid-container .caixa-form,
+    .fechamento-grid-container .fechamento-resumo {
+        margin: 0;
+    }
+
+    /* CORREÇÃO 1: Centraliza o conteúdo do bloco da direita verticalmente */
+    .fechamento-resumo {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* CORREÇÃO 2: Faz o botão ocupar 100% do espaço das duas colunas */
+    .fechamento-grid-container #btn-fechar-caixa {
+    grid-column: 1 / -1;          /* Ocupa o espaço das duas colunas */
+    width: 100%;                  /* Força a largura a 100% do espaço disponível */
+    max-width: 100%;              /* Remove qualquer limite de largura máxima de outra regra */
+    box-sizing: border-box;       /* Garante que o padding não interfira no tamanho final */
+    }
+/* --- Elementos (caixa de info, resumo, etc.) --- */
+    .info-box {
+        background-color: var(--panel-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--success-color);
+    }
+
+    .info-box p {
+        margin: 0 0 10px 0;
+        font-size: 1.1em;
+    }
+    .info-box p:last-child {
+        margin-bottom: 0;
+    }
+
+    .fechamento-resumo {
+        background-color: #2a2a2a;
+        border-radius: 8px;
+        padding: 20px 25px;
+        border: 1px solid var(--border-color);
+    }
+
+    .fechamento-resumo p {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1em;
+        margin: 0;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .fechamento-resumo p:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    .fechamento-resumo p:first-child {
+        padding-top: 0;
+    }
+
+    .fechamento-resumo strong {
+        font-weight: 600;
+        font-family: monospace, sans-serif;
+        font-size: 1.2em;
+    }
+
+    .diferenca-caixa strong.sobra {
+        color: var(--success-color);
+    }
+
+    .diferenca-caixa strong.falta {
+        color: var(--error-color);
+    }
+
+    /* --- Sangrias e Suprimentos (continua igual) --- */
+    .movimentacoes-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+    .movimentacao-form {
+        grid-template-columns: 1fr;
+    }
+    .movimentacao-form h3 {
+        margin-top: 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+    .info-box-bloqueado {
+        background-color: var(--panel-color);
+        border-radius: 8px;
+        padding: 40px 20px;
+        margin-top: 20px;
+        text-align: center;
+        border: 1px dashed var(--border-color);
+    }
+    .info-box-bloqueado p {
+        margin: 0;
+        font-size: 1.2em;
+        color: #888;
+        font-weight: 500;
+    }
+
+/* ========================================================== */
+/* ESTILOS PARA O BOTÃO FECHAR CAIXA                       */
+    /* Garante que o botão de fechar caixa tenha a estrutura dos outros botões de ação */
+    #btn-fechar-caixa {
+        /* width: 100%; REMOVIDO - A classe btn-danger já cuida da largura */
+        max-width: 500px; /* Garante que não estique demais */
+        margin: auto; /* Centraliza o botão e adiciona espaçamento */
+        padding: 15px;
+        border-radius: 5px;
+        border: none;
+        color: white;
+        font-size: 1.1em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    #btn-fechar-caixa:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+    }
+/* ========================================================== */
+/* ESTILOS PARA A TELA DE SANGRIAS E SUPRIMENTOS            */
+
+    .movimentacoes-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Duas colunas de tamanho igual */
+        gap: 40px;
+    }
+
+    .movimentacao-form {
+        grid-template-columns: 1fr; /* Força os campos a ocuparem uma única coluna */
+    }
+
+    .movimentacao-form h3 {
+        margin-top: 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .info-box-bloqueado {
+        background-color: var(--panel-color);
+        border-radius: 8px;
+        padding: 40px 20px;
+        margin-top: 20px;
+        text-align: center;
+        border: 1px dashed var(--border-color);
+    }
+
+    .info-box-bloqueado p {
+        margin: 0;
+        font-size: 1.2em;
+        color: #888;
+        font-weight: 500;
+    }
+/* ========================================================== */
+/* ESTILOS PARA BOTÕES DE SANGRIAS E SUPRIMENTOS (COM CLASSES) */
+
+    /* Regra de ESTRUTURA para ambos os botões */
+    .movimentacao-form .btn-danger,
+    .movimentacao-form .btn-success {
+        grid-column: 1 / -1;
+        width: 100%;
+        padding: 15px;
+        border-radius: 5px;
+        border: none;
+        color: white;
+        font-size: 1.1em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .movimentacao-form .btn-danger:hover,
+    .movimentacao-form .btn-success:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Regra de COR para o novo .btn-success */
+    .btn-success {
+        background-color: var(--success-color);
+    }
+    .btn-success:hover {
+        background-color: #218838; /* Verde mais escuro */
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    /* Regra de COR para o .btn-danger (para garantir a consistência) */
+    .btn-danger {
+        background-color: var(--error-color);
+    }
+    .btn-danger:hover {
+        background-color: #c82333; /* Vermelho mais escuro */
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+    }
+/* ========================================================== */
+/* ESTILOS PARA O RESUMO DE FECHAMENTO DE CAIXA             */
+    .fechamento-resumo {
+        background-color: #2a2a2a;
+        border-radius: 8px;
+        padding: 20px 25px;
+        margin-top: -10px; /* Puxa para mais perto do formulário de cima */
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+    }
+
+    .fechamento-resumo p {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1em;
+        margin: 0;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .fechamento-resumo p:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .fechamento-resumo p:first-child {
+        padding-top: 0;
+    }
+
+    .fechamento-resumo strong {
+        font-weight: 600;
+        font-family: monospace, sans-serif; /* Fonte monoespaçada para números */
+        font-size: 1.2em;
+    }
+
+    #btn-fechar-caixa {
+        width: 100%;
+        max-width: 500px; /* Mesma largura máxima do formulário */
+    }
+
+    /* Classes de cor para a diferença do caixa */
+    .diferenca-caixa strong.sobra {
+        color: var(--success-color);
+    }
+
+    .diferenca-caixa strong.falta {
+        color: var(--error-color);
+    }

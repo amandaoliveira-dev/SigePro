@@ -26,6 +26,7 @@
         </nav>
 
         <main class="content">
+
             <div id="pdv" class="content-panel">
                 <nav class="sub-nav">
                     <a href="#" class="sub-nav-link" data-target="caixa-content">💵 Abertura e Fechamento</a>
@@ -34,13 +35,94 @@
                 </nav>
 
                 <div id="caixa-content" class="sub-panel">
-                    <h2>Abertura e Fechamento de Caixa</h2>
-                    <p>Funcionalidade a ser implementada.</p>
+
+                    <div id="caixa-fechado-view">
+                        <h2>Abertura de Caixa</h2>
+                        <div class="form-container caixa-form">
+                            <div class="form-group">
+                                <label for="valor-inicial">Valor Inicial em Caixa (R$)</label>
+                                <input type="number" id="valor-inicial" placeholder="50.00" step="0.01" required>
+                                <small>Este é o valor que você tem na gaveta para troco.</small>
+                            </div>
+                            <button id="btn-abrir-caixa" class="btn-primary">Abrir Caixa</button>
+                        </div>
+                    </div>
+
+                    <div id="caixa-aberto-view" style="display: none;">
+                        <h2>Caixa em Operação</h2>
+                        <div class="info-box">
+                            <p><strong>Aberto em:</strong> <span id="info-data-abertura">--/--/---- --:--</span></p>
+                            <p><strong>Valor de Abertura:</strong> <span id="info-valor-abertura">R$ 0,00</span></p>
+                        </div>
+
+                        <div class="section-divider">Fechamento de Caixa</div>
+
+                        <div class="fechamento-grid-container">
+                            <div class="form-container caixa-form">
+                                <div class="form-group">
+                                    <label for="valor-final">Valor Final Contado em Caixa (R$)</label>
+                                    <input type="number" id="valor-final" placeholder="1250.75" step="0.01" required>
+                                    <small>Digite o valor total que você contou na gaveta agora.</small>
+                                </div>
+                            </div>
+
+                            <div class="fechamento-resumo">
+                                <p>
+                                    <span>Valor Calculado pelo Sistema:</span>
+                                    <strong id="valor-calculado-sistema">R$ 0,00</strong>
+                                </p>
+                                <p class="diferenca-caixa">
+                                    <span>Diferença (Sobra/Falta):</span>
+                                    <strong id="diferenca-caixa">R$ 0,00</strong>
+                                </p>
+                            </div>
+
+                            <button id="btn-fechar-caixa" class="btn-danger">Confirmar Fechamento de Caixa</button>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div id="sangria-content" class="sub-panel">
                     <h2>Sangrias e Suprimentos</h2>
-                    <p>Funcionalidade a ser implementada.</p>
+
+                    <div id="movimentacoes-bloqueado-view" style="display: none;">
+                        <div class="info-box-bloqueado">
+                            <p>Abra um caixa para registrar movimentações.</p>
+                        </div>
+                    </div>
+
+                    <div id="movimentacoes-view">
+                        <div class="movimentacoes-container">
+
+                            <div class="form-container movimentacao-form">
+                                <h3>Registrar Sangria (Retirada)</h3>
+                                <div class="form-group">
+                                    <label for="sangria-valor">Valor (R$)</label>
+                                    <input type="number" id="sangria-valor" placeholder="200.00" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="sangria-motivo">Motivo (Opcional)</label>
+                                    <input type="text" id="sangria-motivo" placeholder="Ex: Malote para o banco">
+                                </div>
+                                <button id="btn-registrar-sangria" class="btn-danger">Registrar Sangria</button>
+                            </div>
+
+                            <div class="form-container movimentacao-form">
+                                <h3>Registrar Suprimento (Adição)</h3>
+                                <div class="form-group">
+                                    <label for="suprimento-valor">Valor (R$)</label>
+                                    <input type="number" id="suprimento-valor" placeholder="50.00" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="suprimento-motivo">Motivo (Opcional)</label>
+                                    <input type="text" id="suprimento-motivo" placeholder="Ex: Troco adicional">
+                                </div>
+                                <button id="btn-registrar-suprimento" class="btn-success" >Registrar Suprimento</button>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
 

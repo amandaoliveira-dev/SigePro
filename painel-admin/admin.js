@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- ELEMENTOS PRINCIPAIS DO DOM (DECLARADOS UMA SÓ VEZ AQUI) ---
+ // --- ELEMENTOS PRINCIPAIS DO DOM (DECLARADOS UMA SÓ VEZ AQUI) ---
     const mainContent = document.querySelector('.content'); // Declarado aqui em cima!
     const mainNavLinks = document.querySelectorAll('.sidebar .nav-link');
     const mainContentPanels = document.querySelectorAll('.content > .content-panel');
     const subNavLinks = document.querySelectorAll('.sub-nav-link');
     const subContentPanels = document.querySelectorAll('.sub-panel');
 
-    // --- LÓGICA DE NAVEGAÇÃO EM DOIS NÍVEIS ---
+// ==========================================================
+// --- LÓGICA DE NAVEGAÇÃO EM DOIS NÍVEIS ---
     mainNavLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -71,7 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
         sellers: 'amanditaGames_sellers',
         suppliers: 'amanditaGames_suppliers',
         coupons: 'amanditaGames_coupons',
-        sales: 'amanditaGames_sales'
+        sales: 'amanditaGames_sales',
+        caixas: 'amanditaGames_caixas',
+        caixaMovimentacoes: 'amanditaGames_caixaMovimentacoes'
     };
 
     document.querySelectorAll('.form-container').forEach(form => {
@@ -81,8 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
-    // --- BANCOS DE DADOS E CONTADORES ---
+// ==========================================================
+// --- BANCOS DE DADOS E CONTADORES ---
     let dbCategorias = loadData(STORAGE_KEYS.categories) || [{
         id: 1,
         nome: 'JOGOS PS5'
@@ -96,6 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let dbFornecedores = loadData(STORAGE_KEYS.suppliers) || [];
     let dbCupons = loadData(STORAGE_KEYS.coupons) || [];
     let dbVendas = loadData(STORAGE_KEYS.sales) || [];
+    let dbCaixas = loadData(STORAGE_KEYS.caixas) || [];
+    let dbMovimentacoes = loadData(STORAGE_KEYS.caixaMovimentacoes) || [];
 
     let productCounter = dbProdutos.length ? Math.max(0, ...dbProdutos.map(p => parseInt(p.codigo.replace('P', '')))) + 1 : 1;
     let categoryCounter = dbCategorias.length ? Math.max(0, ...dbCategorias.map(c => c.id)) + 1 : 1;
@@ -108,8 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
         type: null
     };
     let lastSaleData = {};
-
-    // --- ELEMENTOS GLOBAIS (MODAIS) ---
+    let caixaAtual = null;
+// ==========================================================
+// --- ELEMENTOS GLOBAIS (MODAIS) ---
     const detailsModal = document.getElementById('details-modal');
     const modalTitle = document.getElementById('modal-title');
     const modalBody = document.getElementById('modal-body');
@@ -123,8 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const postSaleCloseButton = postSaleModal.querySelector('.close-button');
     const docPreviewModal = document.getElementById('document-preview-modal');
     const docPreviewCloseButton = docPreviewModal.querySelector('.close-button');
+    const btnAbrirCaixa = document.getElementById('btn-abrir-caixa');
+    const btnFecharCaixa = document.getElementById('btn-fechar-caixa');
+    const valorFinalInput = document.getElementById('valor-final');
+    const valorCalculadoEl = document.getElementById('valor-calculado-sistema'); 
+    const diferencaCaixaEl = document.getElementById('diferenca-caixa');
 
-    // --- LÓGICA DOS MODAIS ---
+// ==========================================================
+// --- LÓGICA DOS MODAIS ---
     if (detailsCloseButton) {
         detailsCloseButton.onclick = () => {
             detailsModal.style.display = "none";
@@ -165,9 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
             docPreviewModal.style.display = "none";
         }
     }
-
-    // --- FUNÇÕES CRUD (Criar, Ler, Atualizar, Deletar) ---
-    // COLE ESTA NOVA VERSÃO NO LUGAR DA ANTIGA showDetails
+// ==========================================================
+// --- FUNÇÕES CRUD (Criar, Ler, Atualizar, Deletar) ---
     function showDetails(itemId, itemType) {
         let item;
         let detailsHtml = '';
@@ -471,9 +482,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // SUBSTITUA O BLOCO ANTIGO POR ESTE:
+    function setupEnterKeyNavigation(formElement) {
+        const focusableElements = Array.from(
+            formElement.querySelectorAll('input, select, textarea, button:not([type="button"])')
+        );
 
-    document.addEventListener('click', (e) => {
+        formElement.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const currentElement = e.target;
+                const currentIndex = focusableElements.indexOf(currentElement);
+
+                // Se o Enter for pressionado em um campo que não seja o último
+                if (currentIndex > -1 && currentIndex < focusableElements.length - 1) {
+                    e.preventDefault(); // Impede o comportamento padrão (como submeter o form)
+                    const nextElement = focusableElements[currentIndex + 1];
+                    nextElement.focus(); // Move o foco para o próximo elemento
+                }
+            }
+        });
+    }
+
+    function renderCaixaView() {
+        const fechadoView = document.getElementById('caixa-fechado-view');
+        const abertoView = document.getElementById('caixa-aberto-view');
+
+        if (caixaAtual) {
+            fechadoView.style.display = 'none';
+            abertoView.style.display = 'block';
+            document.getElementById('info-data-abertura').textContent = new Date(caixaAtual.dataAbertura).toLocaleString('pt-BR');
+            document.getElementById('info-valor-abertura').textContent = formatCurrency(caixaAtual.valorAbertura);
+            document.getElementById('valor-final').value = '';
+            calcularEExibirFechamento(); // Calcula os valores assim que a tela abre
+        } else {
+            fechadoView.style.display = 'block';
+            abertoView.style.display = 'none';
+            document.getElementById('valor-inicial').value = '';
+        }
+        renderMovimentacoesView(); // ATUALIZA A TELA DE SANGRIAS/SUPRIMENTOS
+    }
+
+    function calcularEExibirFechamento() {
+        if (!caixaAtual) return; // Só executa se um caixa estiver aberto
+
+        // 1. Pega o valor inicial do caixa
+        let valorCalculado = caixaAtual.valorAbertura;
+
+        // 2. Soma as VENDAS EM DINHEIRO feitas durante esta sessão
+        const vendasDaSessao = dbVendas.filter(venda => 
+            new Date(venda.date) > new Date(caixaAtual.dataAbertura) &&
+            venda.paymentMethod === 'Dinheiro'
+        );
+        const totalVendasDinheiro = vendasDaSessao.reduce((acc, venda) => acc + venda.total, 0);
+        valorCalculado += totalVendasDinheiro;
+
+        // 3. Soma os SUPRIMENTOS e subtrai as SANGRIAS desta sessão
+        const movimentacoesDaSessao = dbMovimentacoes.filter(mov => mov.caixaId === caixaAtual.id);
+        movimentacoesDaSessao.forEach(mov => {
+            if (mov.tipo === 'SUPRIMENTO') {
+                valorCalculado += mov.valor;
+            } else if (mov.tipo === 'SANGRIA') {
+                valorCalculado -= mov.valor;
+            }
+        });
+
+        // Exibe o valor calculado na tela
+        valorCalculadoEl.textContent = formatCurrency(valorCalculado);
+
+        // 4. Calcula e exibe a DIFERENÇA (Sobra/Falta)
+        const valorFinalDigitado = parseFloat(valorFinalInput.value) || 0;
+        const diferenca = valorFinalDigitado - valorCalculado;
+
+        diferencaCaixaEl.textContent = formatCurrency(diferenca);
+        diferencaCaixaEl.classList.remove('sobra', 'falta'); // Limpa as cores
+        if (diferenca > 0) {
+            diferencaCaixaEl.classList.add('sobra');
+        } else if (diferenca < 0) {
+            diferencaCaixaEl.classList.add('falta');
+        }
+
+        return { valorCalculado, diferenca }; // Retorna os valores para uso posterior
+    }
+
+    if (valorFinalInput) {
+        valorFinalInput.addEventListener('input', calcularEExibirFechamento);
+    }
+        document.addEventListener('click', (e) => {
         const target = e.target; // O 'target' agora é pego aqui dentro
 
         // Lógica para os botões de ação nas tabelas de cadastro
@@ -511,8 +604,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
-    // --- SEÇÃO DE CADASTROS (Handlers e Renderização) ---
+// ==========================================================
+// --- SEÇÃO DE CADASTROS (Handlers e Renderização) ---
     const renderFunctions = {};
 
     // CATEGORIAS
@@ -561,7 +654,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // PRODUTOS
+// ==========================================================
+// PRODUTOS
     const formProduto = document.getElementById('form-produto');
     const tabelaProdutos = document.getElementById('tabela-produtos');
     const prodFornecedorCodigoInput = document.getElementById('prod-fornecedor-codigo');
@@ -628,8 +722,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tabelaProdutos.innerHTML += `<tr><td class="code-column">${prod.codigo}</td><td>${toTitleCase(prod.nome)}</td><td>${nomeFornecedor}</td><td>${formatCurrency(parseFloat(prod.precoVenda))}</td><td>${prod.estoque}</td><td class="actions"><button class="btn-view" data-id="${prod.codigo}" data-type="produto">Ver</button><button class="btn-edit" data-id="${prod.codigo}" data-type="produto">Editar</button><button class="btn-delete" data-id="${prod.codigo}" data-type="produto">Excluir</button></td></tr>`;
         });
     }
-
-    // CLIENTES
+// ==========================================================
+// CLIENTES
     const formCliente = document.getElementById('form-cliente');
     const tabelaClientes = document.getElementById('tabela-clientes');
     if (formCliente) {
@@ -669,8 +763,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tabelaClientes.innerHTML += `<tr><td class="code-column">${cliente.codigo}</td><td>${toTitleCase(cliente.nome)}</td><td>${cliente.cpf}</td><td>${cliente.telefone}</td><td class="actions"><button class="btn-view" data-id="${cliente.codigo}" data-type="cliente">Ver</button><button class="btn-edit" data-id="${cliente.codigo}" data-type="cliente">Editar</button><button class="btn-delete" data-id="${cliente.codigo}" data-type="cliente">Excluir</button></td></tr>`;
         });
     }
-
-    // VENDEDORES
+// ==========================================================
+// VENDEDORES
     const formVendedor = document.getElementById('form-vendedor');
     const tabelaVendedores = document.getElementById('tabela-vendedores');
     if (formVendedor) {
@@ -710,8 +804,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tabelaVendedores.innerHTML += `<tr><td class="code-column">${vend.codigo}</td><td>${toTitleCase(vend.nome)}</td><td>${vend.cpf}</td><td>${vend.telefone}</td><td class="actions"><button class="btn-view" data-id="${vend.codigo}" data-type="vendedor">Ver</button><button class="btn-edit" data-id="${vend.codigo}" data-type="vendedor">Editar</button><button class="btn-delete" data-id="${vend.codigo}" data-type="vendedor">Excluir</button></td></tr>`;
         });
     }
-
-    // FORNECEDORES
+// ==========================================================
+// FORNECEDORES
     const formFornecedor = document.getElementById('form-fornecedor');
     const tabelaFornecedores = document.getElementById('tabela-fornecedores');
     if (formFornecedor) {
@@ -751,8 +845,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tabelaFornecedores.innerHTML += `<tr><td class="code-column">${forn.codigo}</td><td>${toTitleCase(forn.nome)}</td><td>${forn.cnpj}</td><td>${forn.telefone}</td><td class="actions"><button class="btn-view" data-id="${forn.codigo}" data-type="fornecedor">Ver</button><button class="btn-edit" data-id="${forn.codigo}" data-type="fornecedor">Editar</button><button class="btn-delete" data-id="${forn.codigo}" data-type="fornecedor">Excluir</button></td></tr>`;
         });
     }
-
-    // CUPONS
+// ==========================================================
+// CUPONS
     const formCupom = document.getElementById('form-cupom');
     const tabelaCupons = document.getElementById('tabela-cupons');
     if (formCupom) {
@@ -782,8 +876,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tabelaCupons.innerHTML += `<tr><td class="code-column">${cupom.codigo}</td><td>${cupom.tipo}</td><td>${cupom.valor}</td><td>${cupom.usos}</td><td class="actions"><button class="btn-view" data-id="${cupom.codigo}" data-type="cupom">Ver</button><button class="btn-edit" data-id="${cupom.codigo}" data-type="cupom">Editar</button><button class="btn-delete" data-id="${cupom.codigo}" data-type="cupom">Excluir</button></td></tr>`;
         });
     }
-
-    // --- FUNÇÕES DE BUSCA E RELATÓRIOS ---
+// ==========================================================
+// --- FUNÇÕES DE BUSCA E RELATÓRIOS ---
     function setupSearch(inputId, renderKey, database, searchKeys) {
         const searchInput = document.getElementById(inputId);
         if (!searchInput) return;
@@ -876,8 +970,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tabelaHistorico.innerHTML += `<tr><td class="code-column">${venda.recibo}</td><td>${new Date(venda.date).toLocaleString('pt-BR')}</td><td>${toTitleCase(venda.cliente.nome)}</td><td>${toTitleCase(venda.vendedor.nome)}</td><td>${totalItens}</td><td>${formatCurrency(venda.total)}</td><td class="actions"><button class="btn-view btn-sale-details" data-id="${venda.recibo}" data-type="venda">Detalhes</button></td></tr>`;
         });
     }
-
-    // --- FUNÇÕES DE IMPRESSÃO ---
+// ==========================================================
+// --- FUNÇÕES DE IMPRESSÃO ---
     const btnPrintNf = document.getElementById('btn-print-nf');
     const btnPrintGarantia = document.getElementById('btn-print-garantia');
     const docContentEl = document.getElementById('document-content');
@@ -897,14 +991,147 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // DEPOIS
     function showPreview(type) {
         docContentEl.innerHTML = generateDocumentHTML(type, lastSaleData, dbProdutos);
         if (postSaleModal) postSaleModal.style.display = 'none';
         if (docPreviewModal) docPreviewModal.style.display = 'block';
     }
+// ==========================================================
+// --- LÓGICA DE ABERTURA E FECHAMENTO DE CAIXA ---
+    if (btnAbrirCaixa) {
+        btnAbrirCaixa.addEventListener('click', () => {
+            const valorInicialInput = document.getElementById('valor-inicial');
+            const valorAbertura = parseFloat(valorInicialInput.value);
 
-    // --- INICIALIZAÇÃO GERAL ---
+            if (isNaN(valorAbertura) || valorAbertura < 0) {
+                alert('Por favor, insira um valor de abertura válido.');
+                return;
+            }
+
+            // Cria o novo registro de caixa
+            caixaAtual = {
+                id: Date.now(),
+                dataAbertura: new Date().toISOString(),
+                valorAbertura: valorAbertura,
+                status: 'ABERTO',
+                // Campos para o fechamento
+                dataFechamento: null,
+                valorFechamento: null,
+            };
+
+            dbCaixas.push(caixaAtual);
+            saveData(STORAGE_KEYS.caixas, dbCaixas);
+            renderCaixaView(); // Atualiza a tela
+        });
+    }
+
+    if (btnFecharCaixa) {
+        btnFecharCaixa.addEventListener('click', () => {
+            const valorFinalInput = document.getElementById('valor-final');
+            const valorFechamento = parseFloat(valorFinalInput.value);
+
+            if (isNaN(valorFechamento) || valorFechamento < 0) {
+                alert('Por favor, insira um valor de fechamento válido.');
+                return;
+            }
+
+            // Pega os valores finais calculados
+            const { valorCalculado, diferenca } = calcularEExibirFechamento();
+
+            const caixaParaFechar = dbCaixas.find(c => c.id === caixaAtual.id);
+            if (caixaParaFechar) {
+                caixaParaFechar.dataFechamento = new Date().toISOString();
+                caixaParaFechar.valorFechamento = valorFechamento;
+                caixaParaFechar.valorCalculadoSistema = valorCalculado; // SALVA O VALOR CALCULADO
+                caixaParaFechar.diferenca = diferenca; // SALVA A DIFERENÇA
+                caixaParaFechar.status = 'FECHADO';
+
+                saveData(STORAGE_KEYS.caixas, dbCaixas);
+                caixaAtual = null;
+                renderCaixaView();
+            }
+        });
+    }
+
+// --- LÓGICA DE SANGRIAS E SUPRIMENTOS ---
+    const btnRegistrarSangria = document.getElementById('btn-registrar-sangria');
+    const btnRegistrarSuprimento = document.getElementById('btn-registrar-suprimento');
+
+    function renderMovimentacoesView() {
+        const bloqueadoView = document.getElementById('movimentacoes-bloqueado-view');
+        const movimentacoesView = document.getElementById('movimentacoes-view');
+
+        if (caixaAtual) { // Se o caixa está aberto, mostra os formulários
+            bloqueadoView.style.display = 'none';
+            movimentacoesView.style.display = 'block';
+        } else { // Se o caixa está fechado, mostra a mensagem de bloqueio
+            bloqueadoView.style.display = 'block';
+            movimentacoesView.style.display = 'none';
+        }
+    }
+
+    if (btnRegistrarSangria) {
+        btnRegistrarSangria.addEventListener('click', () => {
+            const valor = parseFloat(document.getElementById('sangria-valor').value);
+            const motivo = document.getElementById('sangria-motivo').value;
+
+            if (isNaN(valor) || valor <= 0) {
+                alert('Por favor, insira um valor válido para a sangria.');
+                return;
+            }
+
+            // Cria o registro da movimentação
+            dbMovimentacoes.push({
+                id: Date.now(),
+                caixaId: caixaAtual.id,
+                tipo: 'SANGRIA',
+                valor: valor,
+                motivo: motivo,
+                data: new Date().toISOString()
+            });
+
+            saveData(STORAGE_KEYS.caixaMovimentacoes, dbMovimentacoes);
+            alert(`Sangria de ${formatCurrency(valor)} registrada com sucesso!`);
+            document.getElementById('sangria-valor').value = '';
+            document.getElementById('sangria-motivo').value = '';
+        });
+    }
+
+    if (btnRegistrarSuprimento) {
+        btnRegistrarSuprimento.addEventListener('click', () => {
+            const valor = parseFloat(document.getElementById('suprimento-valor').value);
+            const motivo = document.getElementById('suprimento-motivo').value;
+
+            if (isNaN(valor) || valor <= 0) {
+                alert('Por favor, insira um valor válido para o suprimento.');
+                return;
+            }
+
+            dbMovimentacoes.push({
+                id: Date.now(),
+                caixaId: caixaAtual.id,
+                tipo: 'SUPRIMENTO',
+                valor: valor,
+                motivo: motivo,
+                data: new Date().toISOString()
+            });
+
+            saveData(STORAGE_KEYS.caixaMovimentacoes, dbMovimentacoes);
+            alert(`Suprimento de ${formatCurrency(valor)} registrado com sucesso!`);
+            document.getElementById('suprimento-valor').value = '';
+            document.getElementById('suprimento-motivo').value = '';
+        });
+    }
+
+
+
+// ==========================================================
+// --- INICIALIZAÇÃO GERAL ---
+
+    // Tenta encontrar um caixa que foi deixado aberto
+    caixaAtual = dbCaixas.find(c => c.status === 'ABERTO') || null;
+    renderCaixaView(); // Renderiza a visão correta do caixa (aberto ou fechado)
+
     const activeSidebarLink = document.querySelector('.sidebar .nav-link.active');
     if (activeSidebarLink) {
         activeSidebarLink.click();
@@ -918,9 +1145,16 @@ document.addEventListener('DOMContentLoaded', () => {
     renderFunctions.cupons();
     populateCategoryDropdown();
 
-    // ==========================================================
-    // LÓGICA PARA OS NOVOS BOTÕES DE FLUIDEZ
-    // ==========================================================
+
+// ==========================================================
+// --- NAVEGAÇÃO POR "ENTER" NOS FORMULÁRIOS ---
+    document.querySelectorAll('.form-container').forEach(form => {
+        setupEnterKeyNavigation(form);
+    });
+
+// ==========================================================
+// LÓGICA PARA OS NOVOS BOTÕES DE FLUIDEZ
+    
     const clearFormButtons = document.querySelectorAll('.btn-limpar');
     clearFormButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -1001,4 +1235,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-}); // <-- FIM DO 'DOMContentLoaded'
+}); 
