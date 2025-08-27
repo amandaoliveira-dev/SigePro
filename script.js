@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dbProdutosArray = loadData(STORAGE_KEYS.products) || [];
     const mockDatabase = dbProdutosArray.reduce((obj, item) => {
         obj[item.codigo.toUpperCase()] = {
+            codigo: item.codigo, // <== ADICIONE ESTA LINHA
             nome: item.nome,
             preco: parseFloat(item.precoVenda),
             serial: item.serial,
@@ -124,14 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let subtotal = 0;
     let paymentDiscount = 0;
     // ADICIONE ESTA FUNÇÃO AUXILIAR AQUI
- 	function toTitleCase(str) {
- 		if (!str) return '';
- 		// Esta função formata um texto para o "Formato de Título"
- 		return str.toString().toLowerCase().split(' ').map(word =>
- 			word.charAt(0).toUpperCase() + word.slice(1)
- 		).join(' ');
- 	}
-
+    
     // --- FUNÇÕES DE LÓGICA DO PDV ---
     const addProductToCart = () => { const productCode = produtoInput.value.toUpperCase(); const quantidade = parseInt(quantidadeInput.value); if (!mockDatabase[productCode]) { alert("Produto não encontrado!"); return; } if (isNaN(quantidade) || quantidade <= 0) { alert("Quantidade inválida."); return; } const existingProduct = cart.find(item => item.codigo === productCode && !item.isDiscount); if (existingProduct) { existingProduct.quantidade += quantidade; } else { cart.push({ codigo: productCode, nome: mockDatabase[productCode].nome, preco: mockDatabase[productCode].preco, quantidade: quantidade, isDiscount: false, }); } produtoInput.value = ""; quantidadeInput.value = "1"; produtoInput.focus(); updateUI(); };
     const addManualDiscount = () => { const description = manualDescDescEl.value; const value = parseFloat(manualDescValorEl.value.replace(',', '.')) || 0; if (!description || value <= 0) { alert("Por favor, preencha a descrição e um valor válido para o desconto."); return; } cart.push({ codigo: 'DESC', nome: description.toUpperCase(), preco: -value, quantidade: 1, isDiscount: true, }); manualDescDescEl.value = ""; manualDescValorEl.value = ""; updateUI(); };

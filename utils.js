@@ -56,9 +56,7 @@ function formatCurrency(value) {
         currency: 'BRL'
     }) : String(value);
 }
-// ADICIONE ESTA FUNÇÃO NO FINAL DO ARQUIVO utils.js
 
-// SUBSTITUA A FUNÇÃO INTEIRA EM utils.js POR ESTA:
 
 function generateDocumentHTML(type, saleData, allProducts) {
     // Agora, usamos 'saleData' em vez de 'lastSaleData'

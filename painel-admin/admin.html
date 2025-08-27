@@ -17,14 +17,33 @@
                 <span>AmanditaGames</span>
             </header>
             <ul class="nav-list">
-                <li><a href="#" class="nav-link" data-target="cadastros">📝 Cadastros</a></li>
-                <li><a href="#" class="nav-link" data-target="relatorios">📊 Relatórios</a></li>
-                <li><a href="#" class="nav-link active" data-target="historico">📜 Histórico de Vendas</a></li>
+                <li class="nav-item"><a href="#" class="nav-link active" data-target="pdv">🏪 Frente de Caixa</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-target="cadastros">📝 Cadastros</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-target="relatorios">📊 Relatórios</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-target="historico">📜 Histórico de Vendas</a></li>
             </ul>
             <a href="../index.html" class="goto-pos">Ir para Frente de Caixa ➔</a>
         </nav>
 
         <main class="content">
+            <div id="pdv" class="content-panel">
+                <nav class="sub-nav">
+                    <a href="#" class="sub-nav-link" data-target="caixa-content">💵 Abertura e Fechamento</a>
+                    <a href="../index.html" class="sub-nav-link">🛒 Tela de Venda</a>
+                    <a href="#" class="sub-nav-link" data-target="sangria-content">💸 Sangrias e Suprimentos</a>
+                </nav>
+
+                <div id="caixa-content" class="sub-panel">
+                    <h2>Abertura e Fechamento de Caixa</h2>
+                    <p>Funcionalidade a ser implementada.</p>
+                </div>
+
+                <div id="sangria-content" class="sub-panel">
+                    <h2>Sangrias e Suprimentos</h2>
+                    <p>Funcionalidade a ser implementada.</p>
+                </div>
+            </div>
+
             <div id="cadastros" class="content-panel">
                 <nav class="sub-nav">
                     <a href="#" class="sub-nav-link" data-target="produtos-content">📦 Produtos</a>

@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const targetId = link.dataset.target;
-
+            
             mainNavLinks.forEach(l => l.classList.remove('active'));
             mainContentPanels.forEach(p => p.classList.remove('active'));
 
@@ -20,13 +20,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const activePanel = document.getElementById(targetId);
             if (activePanel) activePanel.classList.add('active');
 
-            if (targetId === 'cadastros') {
-                const firstSubNavLink = document.querySelector('.sub-nav-link');
-                const activeSubNavLink = document.querySelector('.sub-nav-link.active');
-                if (firstSubNavLink && !activeSubNavLink) {
-                    firstSubNavLink.click();
+            // LÓGICA CORRIGIDA
+            if (targetId === 'cadastros' || targetId === 'pdv') { // Usando 'pdv' como descobrimos
+                // PRIMEIRO: Limpa TODAS as seleções dos sub-menus
+                subNavLinks.forEach(l => l.classList.remove('active'));
+                subContentPanels.forEach(p => p.classList.remove('active'));
+
+                // SEGUNDO: Ativa o primeiro sub-item da aba correspondente
+                const firstSubNavLink = activePanel.querySelector('.sub-nav-link');
+                
+                if (firstSubNavLink) {
+                    const firstSubPanelId = firstSubNavLink.dataset.target;
+                    const firstSubPanel = document.getElementById(firstSubPanelId);
+
+                    firstSubNavLink.classList.add('active');
+                    if (firstSubPanel) firstSubPanel.classList.add('active');
                 }
             }
+            
             if (targetId === 'relatorios') renderReports();
             if (targetId === 'historico') renderFunctions.historico();
         });
@@ -34,6 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     subNavLinks.forEach(link => {
         link.addEventListener('click', (e) => {
+            // VERIFICAÇÃO ADICIONADA: Se o link não tiver um 'data-target',
+            // ele é um link normal (como o nosso para o PDV), então não fazemos nada.
+            if (!link.dataset.target) {
+                return;
+            }
+
+            // O resto da lógica só executa para os links que são abas.
             e.preventDefault();
             const targetId = link.dataset.target;
 
@@ -886,7 +904,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (docPreviewModal) docPreviewModal.style.display = 'block';
     }
 
-    
     // --- INICIALIZAÇÃO GERAL ---
     const activeSidebarLink = document.querySelector('.sidebar .nav-link.active');
     if (activeSidebarLink) {
