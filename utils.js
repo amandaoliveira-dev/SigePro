@@ -145,3 +145,73 @@ function generateDocumentHTML(type, saleData, allProducts) {
                 <div class="doc-footer" style="margin-top: 50px;"><p>_________________________<br>Assinatura do Responsável</p></div>`;
     }
 }
+
+// ==========================================================
+// --- SISTEMA DE NOTIFICAÇÃO GLOBAL ---
+document.addEventListener('DOMContentLoaded', () => {
+    const notificationModal = document.getElementById('notification-modal');
+    if (notificationModal) {
+        const notificationTitle = document.getElementById('notification-modal-title');
+        const notificationText = document.getElementById('notification-modal-text');
+        const notificationOkBtn = document.getElementById('notification-modal-ok');
+        const notificationCloseBtn = notificationModal.querySelector('.close-button');
+
+        window.showNotification = function(message, type = 'info') {
+            notificationText.textContent = message;
+            notificationModal.className = 'modal'; // Reseta as classes de cor
+
+            switch (type) {
+                case 'success':
+                    notificationTitle.textContent = 'Sucesso!';
+                    notificationModal.classList.add('modal-success');
+                    break;
+                case 'error':
+                    notificationTitle.textContent = 'Erro!';
+                    notificationModal.classList.add('modal-error');
+                    break;
+                case 'warning':
+                    notificationTitle.textContent = 'Atenção!';
+                    notificationModal.classList.add('modal-warning');
+                    break;
+                default:
+                    notificationTitle.textContent = 'Aviso';
+                    break;
+            }
+            notificationModal.style.display = 'block';
+        }
+
+        function closeNotification() {
+            notificationModal.style.display = 'none';
+        }
+
+        notificationOkBtn.addEventListener('click', closeNotification);
+        notificationCloseBtn.addEventListener('click', closeNotification);
+    }
+});
+// DOCUMENTO DE IMPRESSÃO ORÇAMENTO--------
+function generateOrcamentoHTML(quoteData) {
+    const docNumber = quoteData.id;
+    let clienteHtml = `<p><strong>CLIENTE:</strong> ${toTitleCase(quoteData.cliente.nome)}</p>`;
+    // Adiciona detalhes se o cliente for cadastrado
+    if (quoteData.cliente.codigo) {
+        const clienteCompleto = dbClientes.find(c => c.codigo === quoteData.cliente.codigo);
+        if(clienteCompleto) {
+            clienteHtml += `<p><strong>CPF:</strong> ${clienteCompleto.cpf}</p><p><strong>Telefone:</strong> ${clienteCompleto.telefone}</p>`;
+        }
+    }
+
+    let itemsHtml = '';
+    quoteData.itens.forEach(item => {
+        itemsHtml += `<tr><td>${item.codigo}</td><td>${toTitleCase(item.nome)}</td><td>${item.quantidade}</td><td>${formatCurrency(item.preco)}</td><td>${formatCurrency(item.preco * item.quantidade)}</td></tr>`;
+    });
+
+    return `<div class="doc-header"><h3>AmanditaGames Store</h3><p>Seu Endereço | Seu Contato</p></div>
+            <div class="doc-section" style="text-align:center;"><h2>ORÇAMENTO - Nº ${docNumber}</h2></div>
+            <div class="doc-section"><p><strong>Data de Emissão:</strong> ${new Date(quoteData.dataCriacao).toLocaleDateString('pt-BR')}</p><p><strong>Válido até:</strong> ${new Date(quoteData.validade).toLocaleDateString('pt-BR')}</p></div>
+            <div class="doc-section"><h4>DADOS DO CLIENTE</h4>${clienteHtml}</div>
+            <div class="doc-section"><h4>ITENS DO ORÇAMENTO</h4><table class="doc-table"><thead><tr><th>Cód.</th><th>Produto</th><th>Qtd.</th><th>Vlr. Unit.</th><th>Total</th></tr></thead><tbody>${itemsHtml}</tbody></table></div>
+            <div class="doc-section" style="margin-top: 30px; text-align: right;">
+                <p class="doc-total-line" style="border-top: 2px solid #333; padding-top: 15px;"><strong>VALOR TOTAL:</strong> <strong>${formatCurrency(quoteData.total)}</strong></p>
+            </div>
+            <div class="doc-footer" style="margin-top: 40px;"><p>Este documento é um orçamento e não tem validade fiscal. Os valores são válidos até a data de expiração.</p><p>Obrigado pela preferência!</p></div>`;
+}

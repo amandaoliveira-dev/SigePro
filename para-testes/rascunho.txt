@@ -1,3 +1,1425 @@
+
+versão mais recente funciona de aparencias
+admi.css
+/* Configurações Globais e Cores */
+:root {
+    --bg-color: #121212;
+    --panel-color: #1E1E1E;
+    --text-color: #E0E0E0;
+    --primary-gradient: linear-gradient(90deg, #FF007A, #FF5F1F);
+    --border-color: #444;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --warning-color: #ffc107;
+    --warning-color2: #ff0019;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estrutura Principal */
+.admin-container {
+    display: flex;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+/* Menu Lateral (Sidebar) */
+.sidebar {
+    width: 250px;
+    background-color: var(--panel-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color);
+    flex-shrink: 0; /* Adicione esta linha */
+}
+.sidebar-header {
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+.sidebar-header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.sidebar-header span {
+    font-size: 0.9em;
+    color: #888;
+}
+.sidebar .nav-list {
+    list-style: none;
+    padding: 0 5px 0 0;
+    margin: 0;
+    flex-grow: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #444 #2a2a2a;
+}
+.sidebar ul li a {
+    display: block;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 15px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+    border-left: 4px solid transparent;
+}
+.sidebar ul li a:hover {
+    background-color: #333;
+}
+.sidebar ul li a.active {
+    background-color: rgba(255, 95, 31, 0.1);
+    color: #FF5F1F;
+    font-weight: 600;
+    border-left: 4px solid #FF5F1F;
+}
+.goto-pos {
+    text-align: center; color: #aaa; text-decoration: none;
+    padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);
+    margin-top: 20px;
+    flex-shrink: 0;
+}
+.goto-pos:hover { background-color: #333; color: white; }
+
+.sidebar .nav-list::-webkit-scrollbar { width: 10px; }
+.sidebar .nav-list::-webkit-scrollbar-track { background: transparent; }
+.sidebar .nav-list::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; border: 3px solid var(--panel-color); }
+.sidebar .nav-list::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* Conteúdo Principal */
+.content {
+    flex-grow: 1;
+    padding: 40px;
+    overflow-y: auto;
+    min-width: 0;
+}
+.content-panel {
+    display: none;
+}
+.content-panel.active {
+    display: block;
+}
+h2 {
+    margin-top: 0;
+    font-weight: 600;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Formulários */
+.form-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px 30px;
+    background-color: var(--panel-color);
+    padding: 25px;
+    border-radius: 8px;
+}
+.form-group { display: flex; flex-direction: column; }
+.form-group label { margin-bottom: 8px; font-size: 0.9em; }
+.form-group input, .form-group select, .form-group textarea {
+    padding: 12px; background-color: #333; border: 1px solid var(--border-color);
+    border-radius: 5px; color: var(--text-color); font-size: 1em;
+    font-family: 'Poppins', sans-serif; /* Garante a mesma fonte */
+}
+.form-group input:focus, .form-group select:focus { outline: none; border-color: #FF5F1F; }
+.form-container .section-divider {
+    grid-column: 1 / -1; margin-top: 10px; margin-bottom: -5px; font-size: 0.8em;
+    text-transform: uppercase; color: #888; padding-bottom: 5px; border-bottom: 1px solid var(--border-color);
+}
+.form-group.large-field { grid-column: 1 / -1; }
+
+.lookup-status {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.8em; /* Leve ajuste para o uppercase */
+    font-style: normal; /* Remove o itálico */
+    font-weight: 600; /* Deixa o texto um pouco mais forte */
+    text-transform: uppercase; /* Transforma em caixa alta */
+    color: var(--success-color);
+}
+.lookup-status.error { color: var(--error-color); }
+input[type="date"] { color-scheme: dark; }
+.uppercase-input { text-transform: uppercase; }
+
+/* Cabeçalho da Tabela e Busca */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50px;
+    margin-bottom: 10px;
+    padding-top: 30px;
+
+    /* --- MÁGICA DO GRADIENTE ABAIXO --- */
+    border-top: none; /* 1. Removemos a borda antiga */
+    background-image: var(--primary-gradient); /* 2. Aplicamos o gradiente como fundo */
+    background-size: 100% 2px; /* 3. Definimos o tamanho: 100% de largura e 2px de altura (nossa linha) */
+    background-repeat: no-repeat; /* 4. Garantimos que a linha não se repita para baixo */
+    background-position: top; /* 5. Posicionamos a linha no topo do elemento */
+}
+
+.table-header h3 { margin: 0; font-weight: 500; color: #ccc; }
+.search-container { margin: 0; }
+.search-input { width: 350px; padding: 10px 15px; background-color: #333; border: 1px solid var(--border-color); border-radius: 5px; color: var(--text-color); font-size: 0.9em; box-sizing: border-box; }
+.search-input:focus { outline: none; border-color: #FF5F1F; }
+
+/* Tabelas */
+.table-container {
+    background-color: var(--panel-color);
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 0;
+    max-height: 80vh; /* Limita a altura da tabela a 60% da altura da tela */
+    overflow-y: auto; /* Adiciona a rolagem vertical se necessário */
+}
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+td.code-column { font-weight: bold; color: #FF5F1F; text-align: left; }
+thead { background-color: #2a2a2a; }
+.actions button { margin-right: 5px; background: none; border: 1px solid; color: var(--text-color); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.9em; transition: all 0.2s; }
+.btn-view { color: #17a2b8; border-color: #17a2b8; }
+.btn-edit { color: #5aa1ff; border-color: #5aa1ff; }
+.btn-delete { color: #ff4d4d; border-color: #ff4d4d; }
+.btn-view:hover, .btn-edit:hover, .btn-delete:hover { background-color: #333; color: white; }
+
+/* Botões */
+/* SUBSTITUA O PRIMEIRO .btn-primary POR ESTE CÓDIGO UNIFICADO */
+.btn-primary {
+    grid-column: 1 / -1;
+    margin-top: 10px;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    background: var(--primary-gradient);
+    color: white;
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    flex-grow: 0; 
+    margin-left: 0;
+}
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 95, 31, 0.4);
+}
+.btn-secondary {
+    background-color: #555;
+    border: none;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+.btn-secondary:hover {
+    background-color: #666;
+    transform: translateY(-3px);
+}
+
+/* Estilos do Dashboard de Relatórios e Histórico */
+.summary-cards-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; }
+.summary-card { background-color: var(--panel-color); padding: 25px; border-radius: 8px; border-left: 5px solid var(--border-color); }
+.summary-card h3 { margin: 0 0 10px 0; font-size: 1em; font-weight: 400; color: #aaa; text-transform: uppercase; border: none; }
+.summary-card p { margin: 0; font-size: 2.2em; font-weight: 600; color: var(--text-color); }
+.summary-card:first-child p { color: var(--success-color); }
+.reports-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px; }
+.report-widget { background-color: var(--panel-color); padding: 25px; border-radius: 8px; }
+.report-widget h3 { margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+.report-widget ul { list-style: none; padding: 0; margin: 0; }
+.report-widget ul li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #2a2a2a; font-size: 0.9em; }
+.report-widget ul li:last-child { border-bottom: none; }
+.report-widget ul li span:last-child { font-weight: 600; }
+.report-widget.low-stock ul li { color: var(--warning-color); }
+.filters-container { display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-end; background-color: var(--panel-color); padding: 20px 25px; border-radius: 8px; margin-bottom: 20px; }
+.filters-container .form-group { margin-bottom: 0; }
+.filters-container .search-input { width: 350px; margin: 0; }
+.date-range { display: flex; align-items: center; gap: 10px; }
+.date-range input { width: 150px; }
+
+/* --- NOVOS ESTILOS PARA A NAVEGAÇÃO SECUNDÁRIA --- */
+.sub-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+     align-items: center;
+}
+.sub-nav-link {
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+.sub-nav-link:hover {
+    background-color: #333;
+}
+.sub-nav-link.active {
+    background: var(--primary-gradient);
+    color: white;
+    font-weight: 600;
+}
+.sub-panel {
+    display: none;
+}
+.sub-panel.active {
+    display: block;
+}
+
+.modal-actions .btn-primary {
+    margin-top: 0;
+}
+.modal-actions .btn-secondary {
+    margin-top: 0;
+}
+
+/* --- ESTILOS CORRIGIDOS PARA BOTÕES DE NAVEGAÇÃO E LIMPAR CAMPOS DE DADOS --- */
+   /* --- ESTILOS FINAIS E CORRIGIDOS PARA AÇÕES DO FORMULÁRIO --- */
+
+/* Mantém o estilo do cabeçalho que você gostou */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.form-header h2 {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+/* NOVO: Container para o botão de limpar de baixo */
+.form-actions-bottom {
+    display: flex;
+    justify-content: flex-end; /* Alinha o botão à direita */
+    margin-top: 15px; /* Espaço entre o fim do form e o botão */
+}
+
+
+/* Estilo do botão de limpar minimalista (pode manter) */
+.btn-limpar {
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: transparent;
+    color: #aaa;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-limpar:hover {
+    background-color: #333;
+    color: white;
+    border-color: #555;
+}
+/* Estilo COMUM para ambos os botões (COM MAIS DESTAQUE) */
+.scroll-btn {
+    position: fixed;
+    right: 30px;
+    z-index: 999;
+
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none; /* Removemos a borda sutil */
+    background: var(--primary-gradient); /* Usamos o gradiente principal */
+    color: white; /* Cor do ícone branca para contraste */
+    font-size: 15px; /* Ícone um pouco maior */
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Sombra para destacar */
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px); /* Animação de subida */
+}
+
+/* Classe para torná-los visíveis */
+.scroll-btn.visible {
+    opacity: 0.9; /* Opacidade quase total */
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.scroll-btn:hover {
+    opacity: 1; /* Opacidade total no hover */
+    transform: scale(1.1); /* Efeito de zoom */
+    box-shadow: 0 6px 15px rgba(255, 95, 31, 0.5); /* Sombra mais forte da cor do botão */
+}
+
+/* POSIÇÃO INDIVIDUAL DE CADA BOTÃO */
+
+#btn-scroll-up {
+    top: 30px; /* <-- POSICIONA O BOTÃO DE SUBIR NO TOPO */
+}
+
+#btn-scroll-down {
+    bottom: 30px; /* <-- POSICIONA O BOTÃO DE DESCER NA BASE */
+}
+/* ========================================================== */
+/* AJUSTES FINAIS PARA TABELA DE CADASTROS */
+/* ========================================================== */
+
+/* 1. Diminui a fonte geral da tabela */
+.table-container table th,
+.table-container table td {
+    font-size: 0.8em; /* Deixa a fonte 10% menor. Ajuste se quiser. */
+    vertical-align: middle; /* Alinha o texto no meio da célula verticalmente */
+}
+
+/* 2. Força a coluna de Ações a NUNCA quebrar a linha */
+.table-container table td.actions {
+    white-space: nowrap; /* Este é o comando mágico que impede a quebra de linha */
+    width: 1%; /* Truque para fazer a coluna ocupar o menor espaço possível, mas sem quebrar */
+}
+
+/* 3. (BÔNUS) Corta textos muito longos com "..." para não estragar o layout */
+.truncate-text {
+    max-width: 250px; /* Largura máxima para a célula de texto */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* ESTILOS PARA OS BOTÕES DE IMPRESSÃO NO MODAL DE DETALHES */
+
+.modal-print-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 15px;
+    justify-content: center; /* Centraliza os botões */
+}
+
+.btn-modal-print {
+    padding: 8px 20px; /* Botões um pouco menores */
+    font-size: 0.9em;
+    font-weight: 500;
+    flex: 0 1 auto; /* Impede que os botões estiquem */
+}
+/* ========================================================== */
+/* ESTILOS FINAIS P/ FRENTE DE CAIXA (COM LAYOUT EM GRID)     */
+
+    /* Container geral para centralizar na tela */
+    .caixa-container {
+        max-width: 800px; /* Aumenta um pouco a largura para o layout de duas colunas */
+        margin: 0 auto;
+    }
+
+    /* --- Formulário de Abertura (continua igual) --- */
+    #caixa-fechado-view .caixa-form {
+        max-width: 550px;
+        margin: 0 auto;
+        grid-template-columns: 1fr;
+    }
+
+    .caixa-form .form-group small {
+        font-size: 0.8em;
+        color: #888;
+        margin-top: 8px;
+    }
+/* ========================================================== */
+/* LAYOUT FINAL E ALINHADO P/ FECHAMENTO DE CAIXA LADO A LADO */
+    .fechamento-grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px; 
+    }
+
+    /* Remove margens que possam interferir no alinhamento do grid */
+    .fechamento-grid-container .caixa-form,
+    .fechamento-grid-container .fechamento-resumo {
+        margin: 0;
+    }
+
+    /* CORREÇÃO 1: Centraliza o conteúdo do bloco da direita verticalmente */
+    .fechamento-resumo {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* CORREÇÃO 2: Faz o botão ocupar 100% do espaço das duas colunas */
+    .fechamento-grid-container #btn-fechar-caixa {
+    grid-column: 1 / -1;          /* Ocupa o espaço das duas colunas */
+    width: 100%;                  /* Força a largura a 100% do espaço disponível */
+    max-width: 100%;              /* Remove qualquer limite de largura máxima de outra regra */
+    box-sizing: border-box;       /* Garante que o padding não interfira no tamanho final */
+    }
+/* --- Elementos (caixa de info, resumo, etc.) --- */
+    .info-box {
+        background-color: var(--panel-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--success-color);
+    }
+
+    .info-box p {
+        margin: 0 0 10px 0;
+        font-size: 1.1em;
+    }
+    .info-box p:last-child {
+        margin-bottom: 0;
+    }
+
+    .fechamento-resumo {
+        background-color: #2a2a2a;
+        border-radius: 8px;
+        padding: 20px 25px;
+        border: 1px solid var(--border-color);
+    }
+
+    .fechamento-resumo p {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1em;
+        margin: 0;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .fechamento-resumo p:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    .fechamento-resumo p:first-child {
+        padding-top: 0;
+    }
+
+    .fechamento-resumo strong {
+        font-weight: 600;
+        font-family: monospace, sans-serif;
+        font-size: 1.2em;
+    }
+
+    .diferenca-caixa strong.sobra {
+        color: var(--success-color);
+    }
+
+    .diferenca-caixa strong.falta {
+        color: var(--error-color);
+    }
+
+    /* --- Sangrias e Suprimentos (continua igual) --- */
+    .movimentacoes-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+    .movimentacao-form {
+        grid-template-columns: 1fr;
+    }
+    .movimentacao-form h3 {
+        margin-top: 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+    .info-box-bloqueado {
+        background-color: var(--panel-color);
+        border-radius: 8px;
+        padding: 40px 20px;
+        margin-top: 20px;
+        text-align: center;
+        border: 1px dashed var(--border-color);
+    }
+    .info-box-bloqueado p {
+        margin: 0;
+        font-size: 1.2em;
+        color: #888;
+        font-weight: 500;
+    }
+
+/* ========================================================== */
+/* ESTILOS PARA O BOTÃO FECHAR CAIXA                       */
+    /* Garante que o botão de fechar caixa tenha a estrutura dos outros botões de ação */
+    #btn-fechar-caixa {
+        /* width: 100%; REMOVIDO - A classe btn-danger já cuida da largura */
+        max-width: 500px; /* Garante que não estique demais */
+        margin: auto; /* Centraliza o botão e adiciona espaçamento */
+        padding: 15px;
+        border-radius: 5px;
+        border: none;
+        color: white;
+        font-size: 1.1em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    #btn-fechar-caixa:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+    }
+/* ========================================================== */
+/* ESTILOS PARA A TELA DE SANGRIAS E SUPRIMENTOS            */
+
+    .movimentacoes-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Duas colunas de tamanho igual */
+        gap: 40px;
+    }
+
+    .movimentacao-form {
+        grid-template-columns: 1fr; /* Força os campos a ocuparem uma única coluna */
+    }
+
+    .movimentacao-form h3 {
+        margin-top: 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .info-box-bloqueado {
+        background-color: var(--panel-color);
+        border-radius: 8px;
+        padding: 40px 20px;
+        margin-top: 20px;
+        text-align: center;
+        border: 1px dashed var(--border-color);
+    }
+
+    .info-box-bloqueado p {
+        margin: 0;
+        font-size: 1.2em;
+        color: #888;
+        font-weight: 500;
+    }
+/* ========================================================== */
+/* ESTILOS PARA BOTÕES DE SANGRIAS E SUPRIMENTOS (COM CLASSES) */
+
+    /* Regra de ESTRUTURA para ambos os botões */
+    .movimentacao-form .btn-danger,
+    .movimentacao-form .btn-success {
+        grid-column: 1 / -1;
+        width: 100%;
+        padding: 15px;
+        border-radius: 5px;
+        border: none;
+        color: white;
+        font-size: 1.1em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .movimentacao-form .btn-danger:hover,
+    .movimentacao-form .btn-success:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Regra de COR para o novo .btn-success */
+    .btn-success {
+        background-color: var(--success-color);
+    }
+    .btn-success:hover {
+        background-color: #218838; /* Verde mais escuro */
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    /* Regra de COR para o .btn-danger (para garantir a consistência) */
+    .btn-danger {
+        background-color: var(--error-color);
+    }
+    .btn-danger:hover {
+        background-color: #c82333; /* Vermelho mais escuro */
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+    }
+/* ========================================================== */
+/* ESTILOS PARA O RESUMO DE FECHAMENTO DE CAIXA             */
+    .fechamento-resumo {
+        background-color: #2a2a2a;
+        border-radius: 8px;
+        padding: 20px 25px;
+        margin-top: -10px; /* Puxa para mais perto do formulário de cima */
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+    }
+
+    .fechamento-resumo p {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1em;
+        margin: 0;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .fechamento-resumo p:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .fechamento-resumo p:first-child {
+        padding-top: 0;
+    }
+
+    .fechamento-resumo strong {
+        font-weight: 600;
+        font-family: monospace, sans-serif; /* Fonte monoespaçada para números */
+        font-size: 1.2em;
+    }
+
+    #btn-fechar-caixa {
+        width: 100%;
+        max-width: 500px; /* Mesma largura máxima do formulário */
+    }
+
+    /* Classes de cor para a diferença do caixa */
+    .diferenca-caixa strong.sobra {
+        color: var(--success-color);
+    }
+
+    .diferenca-caixa strong.falta {
+        color: var(--error-color);
+    }
+/* ========================================================== */
+/* ESTILOS PARA O NOVO SUBMENU COM DROPDOWNS                */
+/* ========================================================== */
+
+/* Alinha os itens principais do submenu (Análise, Operações, etc.) */
+.sub-nav .sub-nav-item {
+    position: relative; /* Essencial para o posicionamento do dropdown */
+}
+
+/* Estiliza o link principal que abre o dropdown */
+.sub-nav-master {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.sub-nav-master:hover {
+    background-color: #333;
+}
+
+/* Estiliza a setinha do dropdown */
+.sub-nav-master .arrow {
+    font-size: 0.7em;
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Gira a setinha quando o menu está aberto */
+.sub-nav-item.open .sub-nav-master .arrow {
+    transform: rotate(180deg);
+}
+
+/* Quando o item principal está ativo, muda a cor */
+.sub-nav-item.active .sub-nav-master {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+/* Container do menu dropdown (o que abre e fecha) */
+.dropdown-menu {
+    display: none; /* Começa escondido */
+    position: absolute;
+    top: 110%; /* Aparece um pouco abaixo do botão principal */
+    left: 0;
+    z-index: 1000;
+    background-color: var(--panel-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    min-width: 220px; /* Largura mínima do dropdown */
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    overflow: hidden; /* Garante que os cantos arredondados funcionem nos links */
+}
+
+/* Mostra o menu quando a classe .open é adicionada via JS */
+.sub-nav-item.open .dropdown-menu {
+    display: block;
+}
+
+/* Estiliza os links dentro do dropdown */
+.dropdown-menu .sub-nav-link {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown-menu .sub-nav-link:last-child {
+    border-bottom: none; /* Remove a borda do último item */
+}
+/* ========================================================== */
+/* AJUSTE VISUAL PARA FILTROS (ALINHAMENTO E ESPAÇAMENTO REFINADO) */
+/* ========================================================== */
+
+/* 1. Container geral dos filtros: alinha itens pelo centro e mantém espaçamento */
+.filters-container {
+    padding: 10px 20px; /* Padding levemente ajustado */
+    gap: 25px; /* MAIOR ESPAÇO entre o grupo de data e o de botões */
+    align-items: center; /* ALINHA OS ITENS PELO CENTRO VERTICALMENTE */
+    flex-wrap: nowrap; /* Impede quebra de linha */
+    justify-content: flex-start;
+}
+
+/* 2. Grupo de Data: Garante que label e inputs fiquem em colunas, mas o grupo alinha */
+.filters-container .form-group {
+    display: flex;
+    flex-direction: column; /* Label acima do input */
+    gap: 5px; /* Espaço entre label e o input/botoes */
+    white-space: nowrap;
+}
+
+.filters-container .form-group label {
+    font-size: 0.8em; /* Rótulo um pouco maior para melhor leitura */
+    margin-bottom: 0;
+}
+
+/* 3. Inputs de Data: Altura e padding refinados */
+.filters-container .date-range {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaço entre inputs e 'até' */
+}
+
+.filters-container .date-range input {
+    width: 130px; /* Largura um pouco maior para facilitar seleção */
+    height: 34px; /* ALTURA FIXA para alinhar com os botões */
+    padding: 6px 10px; /* Padding para centralizar o texto */
+    font-size: 0.9em; /* Fonte um pouco maior */
+    box-sizing: border-box;
+}
+
+.filters-container .date-range span {
+    font-size: 0.8em; /* Tamanho do 'até' */
+    white-space: nowrap;
+}
+
+/* 4. Botões de Filtro Rápido: Altura e padding alinhados com os inputs de data */
+.filters-container .quick-filters {
+    display: flex;
+    gap: 15px; /* Espaço entre os botões */
+    flex-wrap: nowrap;
+}
+
+.filters-container .quick-filters .btn-secondary {
+    height: 34px; /* ALTURA FIXA idêntica aos inputs de data */
+    padding: 6px 10px; /* Padding para centralizar o texto */
+    font-size: 0.85em; /* Fonte ajustada */
+    line-height: 1;
+    white-space: nowrap;
+}
+/* ========================================================== */
+/* ESTILOS PARA AS ABAS DA TELA DE ORÇAMENTOS (CORREÇÃO)    */
+/* ========================================================== */
+.orcamento-view {
+    display: none; /* Garante que ambas as abas comecem escondidas */
+}
+
+.orcamento-view.active {
+    display: block; /* Mostra APENAS a aba que estiver com a classe 'active' */
+}
+/* Estilos para as tags de status na lista de orçamentos */
+.status-tag {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+}
+.status-pendente { background-color: #ffc107; color: #333; }
+.status-convertido { background-color: var(--success-color); }
+.status-expirado { background-color: #6c757d; }
+.status-cancelado { background-color: var(--error-color); }
+/* ========================================================== */
+/* ESTILOS GLOBAIS PARA BARRA DE ROLAGEM DE TABELAS */
+/* ========================================================== */
+.table-container::-webkit-scrollbar {
+    width: 10px;
+}
+.table-container::-webkit-scrollbar-track {
+    background: #2a2a2a;
+    border-radius: 5px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 5px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+style.css
+/* Configurações Globais e Cores */
+:root {
+    --bg-color: #121212;
+    --panel-color: #1E1E1E;
+    --text-color: #E0E0E0;
+    --primary-gradient: linear-gradient(90deg, #FF007A, #FF5F1F);
+    --border-color: #444;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Layout Principal */
+.pos-container {
+    display: grid;
+    grid-template-columns: 350px 1fr 350px;
+    grid-template-rows: 1fr;
+    gap: 20px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* Ajustes nos painéis para controle de altura e rolagem */
+.input-panel, .items-panel, .summary-panel {
+    background-color: var(--panel-color);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Área de conteúdo que deve rolar */
+/* Unifica as áreas de conteúdo com rolagem */
+.panel-content-scrollable, 
+.table-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 15px;
+    margin-right: -15px;
+    scrollbar-width: thin;
+    scrollbar-color: #444 #2a2a2a;
+}
+
+/* Unifica a estilização da barra de rolagem para Webkit */
+.panel-content-scrollable::-webkit-scrollbar, 
+.table-container::-webkit-scrollbar { 
+    width: 10px; 
+    height: 10px; 
+}
+
+.panel-content-scrollable::-webkit-scrollbar-track, 
+.table-container::-webkit-scrollbar-track { 
+    background: #2a2a2a; 
+    border-radius: 5px; 
+}
+
+.panel-content-scrollable::-webkit-scrollbar-thumb, 
+.table-container::-webkit-scrollbar-thumb { 
+    background: #444; 
+    border-radius: 5px; 
+}
+
+.panel-content-scrollable::-webkit-scrollbar-thumb:hover, 
+.table-container::-webkit-scrollbar-thumb:hover { 
+    background: #555; 
+}
+
+
+/* Garante que os botões no final não encolham */
+.input-panel .goto-admin, .summary-panel .btn-primary {
+    flex-shrink: 0;
+    margin-top: 20px;
+}
+
+h1, h2 {
+    margin-top: 0;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    font-weight: 600;
+}
+.logo-header { text-align: center; margin-bottom: 20px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 8px; font-size: 0.9em; font-weight: 300; }
+.form-group input, .form-group select { width: 100%; padding: 12px; background-color: #333; border: 1px solid var(--border-color); border-radius: 5px; color: var(--text-color); font-size: 1em; box-sizing: border-box; }
+.form-group input:focus, .form-group select:focus { outline: none; border-color: #FF5F1F; }
+.goto-admin { display: block; width: 100%; margin-top: auto; padding: 12px; border-radius: 5px; border: 1px solid var(--border-color); background-color: #333; color: #aaa; text-align: center; text-decoration: none; font-weight: 600; box-sizing: border-box; transition: all 0.2s; }
+.goto-admin:hover { background-color: #444; color: white; border-color: #555; transform: translateY(-2px); }
+.product-entry-group { display: flex; gap: 10px; align-items: flex-end; }
+.product-search { flex-grow: 1; }
+.quantity-input { width: 80px; }
+.section-divider { font-size: 0.8em; text-transform: uppercase; color: #888; margin: 20px 0 10px; padding-bottom: 5px; border-bottom: 1px solid var(--border-color); }
+
+/* Painel de Itens */
+.items-panel { grid-column: 2 / 3; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+thead { position: sticky; top: 0; background-color: var(--panel-color); }
+th { font-weight: 600; }
+.remove-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 1.2em; }
+tr.discount-item td { color: var(--success-color); font-style: italic; }
+
+/* Painel de Resumo */
+.summary-panel { justify-content: space-between; }
+.summary-line, .summary-total { display: flex; justify-content: space-between; align-items: center; font-size: 1.1em; margin-bottom: 15px; }
+.summary-person { font-size: 0.9em; color: #ccc; }
+.summary-person span:last-child { font-weight: bold; }
+.summary-total { font-size: 1.8em; font-weight: 700; border-top: 2px solid var(--border-color); padding-top: 15px; }
+.summary-total span:last-child { color: #FF5F1F; }
+.cupom-group { display: flex; }
+.cupom-group input { border-radius: 5px 0 0 5px; }
+.cupom-group button { border: none; background: #555; color: white; padding: 0 15px; border-radius: 0 5px 5px 0; cursor: pointer; }
+.cupom-group button:hover { background: #666; }
+#cupom-status { font-size: 0.8em; margin-top: 5px; display: block; }
+#cupom-status.success { color: var(--success-color); }
+#cupom-status.error { color: var(--error-color); }
+
+/* Botões */
+.btn-primary, .btn-add, .btn-secondary { display: block; width: 100%; padding: 15px; border: none; border-radius: 5px; color: white; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.2s; box-sizing: border-box; }
+.btn-primary { padding: 20px; font-size: 1.3em; background: var(--primary-gradient); }
+.btn-add { background: var(--primary-gradient); margin-bottom: 10px; }
+.btn-secondary { background-color: #555; }
+.btn-primary:hover, .btn-add:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255, 95, 31, 0.4); }
+.btn-secondary:hover { transform: translateY(-3px); background-color: #666; }
+button#add-manual-desc-btn { background-color: var(--success-color); }
+button#add-manual-desc-btn:hover { background-color: #2ebf4f; box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4); }
+
+
+/* Exemplo para style.css */
+@media (max-width: 1200px) {
+    .pos-container {
+        grid-template-columns: 300px 1fr 300px; /* Diminui um pouco */
+    }
+}
+
+@media (max-width: 992px) {
+    .pos-container {
+        /* Transforma em uma única coluna */
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto; /* Define as linhas */
+        overflow-y: auto;
+    }
+    .items-panel {
+        /* O painel de itens deve vir primeiro na ordem visual */
+        grid-row: 2 / 3;
+    }
+    .input-panel {
+        grid-row: 1 / 2;
+    }
+    .summary-panel {
+        grid-row: 3 / 4;
+    }
+}
+/* --- ESTILOS DO MODAL DE PÓS-VENDA (AJUSTE VERTICAL) --- */
+
+/* O container agora usa flexbox com quebra de linha */
+.post-sale-actions {
+    display: flex;
+    flex-wrap: wrap;          /* Permite que os botões quebrem para a linha de baixo */
+    justify-content: center;  /* Centraliza os botões na horizontal */
+    gap: 15px;                /* Espaço entre os botões de impressão */
+    margin-top: 25px;
+}
+
+/* Estilo para os botões SECUNDÁRIOS (Imprimir) */
+#btn-print-nf, #btn-print-garantia {
+    flex-grow: 1; /* Faz os dois botões dividirem o espaço da linha de cima */
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    background-color: transparent;
+    color: var(--text-color);
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#btn-print-nf:hover, #btn-print-garantia:hover {
+    background-color: #333;
+    border-color: #555;
+}
+
+/* Estilo PRINCIPAL para o botão "Nova Venda" */
+#btn-new-sale {
+    width: 100%; /* Faz o botão ocupar toda a largura e ir para a linha de baixo */
+    background: var(--primary-gradient);
+    color: white;
+    padding: 18px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    /* A MÁGICA ESTÁ AQUI: */
+    margin-top: 15px; /* Cria o espaçamento vertical para afastá-lo dos botões de cima */
+}
+
+#btn-new-sale:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 95, 31, 0.4);
+}
+/* ========================================================== */
+/* CENTRALIZAÇÃO DO MODAL DE PAGAMENTO                      */
+/* ========================================================== */
+
+#payment-modal .modal-content {
+    text-align: center; /* 1. Centraliza todo o texto e conteúdo do modal */
+}
+
+/* 2. Garante que o formulário de "Valor Recebido" (para pagamento em dinheiro)
+      continue com o alinhamento à esquerda, que é mais natural para formulários. */
+#payment-modal .form-group {
+    text-align: left;
+}
+javascript
+
+script.JS
+document.addEventListener('DOMContentLoaded', () => {
+   
+    // --- CARREGANDO DADOS DO LOCALSTORAGE ---
+    function loadData(key) {
+        const data = localStorage.getItem(key);
+        
+        // Se não houver nada salvo, retorna nulo.
+        if (!data) {
+            return null;
+        }
+
+        // Tenta converter o texto para objeto.
+        try {
+            return JSON.parse(data);
+        } 
+        // Se der erro na conversão...
+        catch (error) {
+            // Mostra um aviso no console para você (o desenvolvedor) saber do problema.
+            console.error(`ERRO: Dado corrompido encontrado no localStorage para a chave: "${key}"`);
+            
+            // Remove o dado ruim para não causar problemas no futuro.
+            localStorage.removeItem(key);
+            
+            // Retorna nulo, como se não houvesse nada salvo.
+            return null;
+        }
+    }
+
+    const STORAGE_KEYS = {
+ 		products: 'amanditaGames_products',
+ 		clients: 'amanditaGames_clients',
+ 		sellers: 'amanditaGames_sellers',
+        coupons: 'amanditaGames_coupons', // <-- ADICIONADO
+ 		sales: 'amanditaGames_sales',
+        orcamentos: 'amanditaGames_orcamentos'
+ 	};
+
+    // BANCOS DE DADOS
+    // Carrega os produtos salvos pelo admin
+    const dbOrcamentosArray = loadData(STORAGE_KEYS.orcamentos) || [];
+    const dbProdutosArray = loadData(STORAGE_KEYS.products) || [];
+    const mockDatabase = dbProdutosArray.reduce((obj, item) => {
+        obj[item.codigo.toUpperCase()] = {
+            codigo: item.codigo, // <== ADICIONE ESTA LINHA
+            nome: item.nome,
+            preco: parseFloat(item.precoVenda),
+            serial: item.serial,
+            garantia: item.garantia
+        };
+        return obj;
+    }, {});
+
+    // ATUALIZADO: Carrega os clientes salvos pelo admin
+    const dbClientesArray = loadData(STORAGE_KEYS.clients) || [];
+    const mockClients = dbClientesArray.reduce((obj, item) => {
+        obj[item.codigo.toUpperCase()] = item;
+        return obj;
+    }, {});
+
+    // ATUALIZADO: Carrega os vendedores salvos pelo admin
+ 	const dbVendedoresArray = loadData(STORAGE_KEYS.sellers) || [];
+ 	const mockSellers = dbVendedoresArray.reduce((obj, item) => {
+ 		obj[item.codigo.toUpperCase()] = item;
+ 		return obj;
+ 	}, {});
+
+ 	// ATUALIZADO: Carrega os cupons salvos pelo admin
+ 	const dbCuponsArray = loadData(STORAGE_KEYS.coupons) || [];
+ 	const mockCoupons = dbCuponsArray.reduce((obj, item) => {
+ 		obj[item.codigo.toUpperCase()] = {
+ 			type: item.tipo,
+ 			value: parseFloat(item.valor),
+ 			// A lógica de usos restantes precisaria de um controle mais avançado,
+ 			// mas para o protótipo, vamos assumir que todos estão disponíveis.
+ 			remaining: parseInt(item.usos) 
+ 		};
+ 		return obj;
+ 	}, {});
+    
+
+    // ELEMENTOS DO DOM (PDV)
+    const clienteInput = document.getElementById('cliente-input');
+    const vendedorInput = document.getElementById('vendedor-input');
+    const produtoInput = document.getElementById('produto-input');
+    const quantidadeInput = document.getElementById('quantidade-input');
+    const addProductBtn = document.getElementById('add-product-btn');
+    const cartItemsContainer = document.getElementById('cart-items');
+    const subtotalEl = document.getElementById('subtotal');
+    const totalDescontosEl = document.getElementById('descontos-total');
+    const totalGeralEl = document.getElementById('total-geral');
+    const finishSaleBtn = document.getElementById('finish-sale-btn');
+    const summaryClienteEl = document.getElementById('summary-cliente');
+    const summaryVendedorEl = document.getElementById('summary-vendedor');
+    const cupomInput = document.getElementById('cupom-input');
+    const applyCupomBtn = document.getElementById('apply-cupom-btn');
+    const cupomStatusEl = document.getElementById('cupom-status');
+    const paymentMethodEl = document.getElementById('payment-method');
+    const manualDescDescEl = document.getElementById('manual-desc-desc');
+    const manualDescValorEl = document.getElementById('manual-desc-valor');
+    const addManualDescBtn = document.getElementById('add-manual-desc-btn');
+
+    // ELEMENTOS DO DOM (MODAIS)
+    const paymentModal = document.getElementById('payment-modal');
+    const modalTotalVendaEl = document.getElementById('modal-total-venda');
+    const modalPaymentMethodEl = document.getElementById('modal-payment-method');
+    const paymentInputArea = document.getElementById('payment-input-area');
+    const btnConfirmPayment = document.getElementById('btn-confirm-payment');
+    const paymentModalCloseButton = paymentModal.querySelector('.close-button');
+    const postSaleModal = document.getElementById('post-sale-modal');
+    const postSaleModalCloseButton = postSaleModal.querySelector('.close-button');
+    const btnPrintNf = document.getElementById('btn-print-nf');
+    const btnPrintGarantia = document.getElementById('btn-print-garantia');
+    const btnNewSale = document.getElementById('btn-new-sale');
+    const docPreviewModal = document.getElementById('document-preview-modal');
+    const docContentEl = document.getElementById('document-content');
+    const btnClosePreview = document.getElementById('btn-close-preview');
+    const btnPrintDocument = document.getElementById('btn-print-document');
+    const docPreviewModalCloseButton = docPreviewModal.querySelector('.close-button');
+
+    // ESTADO DA APLICAÇÃO
+    let cart = [];
+    let appliedCoupon = null;
+    let finalTotal = 0;
+    let lastSaleData = {};
+    let currentClient = null;
+    let currentSeller = null;
+    // ADICIONADA ESTAS DUAS LINHAS ABAIXO
+    let subtotal = 0;
+    let paymentDiscount = 0;
+    // ADICIONE ESTA FUNÇÃO AUXILIAR AQUI
+    
+    // --- FUNÇÕES DE LÓGICA DO PDV ---
+    const addProductToCart = () => { const productCode = produtoInput.value.toUpperCase(); const quantidade = parseInt(quantidadeInput.value); if (!mockDatabase[productCode]) { alert("Produto não encontrado!"); return; } if (isNaN(quantidade) || quantidade <= 0) { alert("Quantidade inválida."); return; } const existingProduct = cart.find(item => item.codigo === productCode && !item.isDiscount); if (existingProduct) { existingProduct.quantidade += quantidade; } else { cart.push({ codigo: productCode, nome: mockDatabase[productCode].nome, preco: mockDatabase[productCode].preco, quantidade: quantidade, isDiscount: false, }); } produtoInput.value = ""; quantidadeInput.value = "1"; produtoInput.focus(); updateUI(); };
+    const addManualDiscount = () => { const description = manualDescDescEl.value; const value = parseFloat(manualDescValorEl.value.replace(',', '.')) || 0; if (!description || value <= 0) { alert("Por favor, preencha a descrição e um valor válido para o desconto."); return; } cart.push({ codigo: 'DESC', nome: description.toUpperCase(), preco: -value, quantidade: 1, isDiscount: true, }); manualDescDescEl.value = ""; manualDescValorEl.value = ""; updateUI(); };
+    const applyCoupon = () => { const code = cupomInput.value.toUpperCase(); const coupon = mockCoupons[code]; cupomStatusEl.textContent = ""; appliedCoupon = null; if (!coupon) { cupomStatusEl.textContent = "Cupom inválido."; cupomStatusEl.className = 'error'; } else if (coupon.remaining <= 0) { cupomStatusEl.textContent = "Este cupom já foi totalmente resgatado."; cupomStatusEl.className = 'error'; } else { appliedCoupon = { code, ...coupon }; cupomStatusEl.textContent = `Cupom "${code}" aplicado! (-${formatCurrency(coupon.value)})`; cupomStatusEl.className = 'success'; } updateUI(); };
+    const removeItemFromCart = (index) => { cart.splice(index, 1); updateUI(); };
+   
+    // SUBSTITUA SUA FUNÇÃO updateUI INTEIRA POR ESTA:
+
+    const updateUI = () => {
+        cartItemsContainer.innerHTML = "";
+        // AÇÃO 1: A variável 'subtotal' não é mais calculada aqui dentro.
+        // Ela agora é a nossa variável global.
+
+        cart.forEach((item, index) => { 
+            const totalItem = item.preco * item.quantidade; 
+            // AÇÃO 2: A linha 'subtotal += totalItem' foi REMOVIDA daqui.
+            const row = document.createElement('tr'); 
+            if (item.isDiscount) row.className = 'discount-item'; 
+            row.innerHTML = `<td>${item.codigo}</td><td>${toTitleCase(item.nome)}</td><td>${formatCurrency(item.preco)}</td><td>${item.quantidade}</td><td>${formatCurrency(totalItem)}</td><td><button class="remove-btn" data-index="${index}">✖</button></td>`; 
+            cartItemsContainer.appendChild(row); 
+        });
+        
+        let totalDescontos = cart.filter(i => i.isDiscount).reduce((acc, item) => acc + Math.abs(item.preco), 0);
+        
+        let couponDiscountValue = 0;
+        if (appliedCoupon) { couponDiscountValue = appliedCoupon.value; }
+        
+        paymentDiscount = 0; 
+        
+        // AÇÃO 3: Aqui calculamos o subtotal SOMENTE dos produtos e guardamos na nossa variável global.
+        subtotal = cart.filter(i => !i.isDiscount).reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+        if (paymentMethodEl.value === 'pix' && subtotal > 0) { paymentDiscount = subtotal * 0.05; }
+        
+        totalDescontos += couponDiscountValue + paymentDiscount;
+
+        // AÇÃO 4: O Total Geral agora é o Subtotal (só de produtos) MENOS o total de todos os descontos.
+        finalTotal = subtotal - totalDescontos;
+        
+        subtotalEl.textContent = formatCurrency(subtotal); // Agora exibe o subtotal correto (só produtos)
+        totalDescontosEl.textContent = formatCurrency(-totalDescontos);
+        totalGeralEl.textContent = formatCurrency(finalTotal);
+        
+        currentClient = mockClients[clienteInput.value.toUpperCase()] || null;
+        currentSeller = mockSellers[vendedorInput.value.toUpperCase()] || null;
+        summaryClienteEl.textContent = currentClient ? toTitleCase(currentClient.nome) : "Consumidor Padrão";
+        summaryVendedorEl.textContent = currentSeller ? toTitleCase(currentSeller.nome) : "Vendedor Padrão";
+    };
+
+    function openPaymentModal() { if (cart.length === 0) { alert("Nenhum item no carrinho!"); return; } updateUI(); const paymentMethod = paymentMethodEl.options[paymentMethodEl.selectedIndex].text; modalTotalVendaEl.textContent = formatCurrency(finalTotal); modalPaymentMethodEl.textContent = paymentMethod; paymentInputArea.innerHTML = ''; switch (paymentMethodEl.value) { case 'dinheiro': paymentInputArea.innerHTML = `<div class="form-group"><label for="valor-recebido">Valor Recebido (R$)</label><input type="number" id="valor-recebido" placeholder="50.00" step="0.01" min="0"></div><div class="troco-display"><span>Troco</span><strong id="troco-valor">R$ 0,00</strong></div>`; document.getElementById('valor-recebido').addEventListener('input', calculateChange); break; case 'pix': paymentInputArea.innerHTML = `<div class="pix-area"><p>Escaneie o QR Code para pagar</p><img src="https://i.imgur.com/g8fG1v1.png" alt="QR Code Falso"><p>amanda-games-pix@email.com</p></div>`; break; default: paymentInputArea.innerHTML = `<p style="text-align:center; font-size: 1.1em;">Por favor, insira o cartão na maquininha.</p>`; break; } paymentModal.style.display = 'block'; }
+    function calculateChange() { const valorRecebidoInput = document.getElementById('valor-recebido'); const trocoValorEl = document.getElementById('troco-valor'); const valorRecebido = parseFloat(valorRecebidoInput.value.replace(',', '.')) || 0; const finalTotalInCents = Math.round(finalTotal * 100); const valorRecebidoInCents = Math.round(valorRecebido * 100); if (valorRecebidoInCents >= finalTotalInCents) { const trocoInCents = valorRecebidoInCents - finalTotalInCents; trocoValorEl.textContent = formatCurrency(trocoInCents / 100); } else { trocoValorEl.textContent = formatCurrency(0); } }
+
+    function confirmPayment() {
+        
+        let valorRecebido = 0;
+        let troco = 0;
+        if (paymentMethodEl.value === 'dinheiro') {
+            const valorRecebidoInput = document.getElementById('valor-recebido');
+            valorRecebido = parseFloat(valorRecebidoInput.value.replace(',', '.')) || 0;
+            if (valorRecebido >= finalTotal) { troco = valorRecebido - finalTotal; }
+        }
+        lastSaleData = {
+            cliente: currentClient || { nome: 'CONSUMIDOR PADRÃO', cpf: '', telefone: '', rua: '', numero: '', bairro: '', cidade: '', uf: '' },
+            vendedor: currentSeller || { nome: 'VENDEDOR PADRÃO' },
+            itens: [...cart],
+            total: finalTotal,
+            subtotal: subtotal,
+            paymentMethod: paymentMethodEl.options[paymentMethodEl.selectedIndex].text,
+            valorRecebido: valorRecebido,
+            troco: troco,
+            date: new Date(),
+            discounts: {
+                manualItems: cart.filter(i => i.isDiscount),
+                couponCode: appliedCoupon ? appliedCoupon.code : null,
+                couponValue: appliedCoupon ? appliedCoupon.value : 0,
+                paymentValue: paymentDiscount
+            }
+        };
+        lastSaleData.recibo = Date.now().toString().slice(-6);
+        const historicoVendas = loadData(STORAGE_KEYS.sales) || [];
+        historicoVendas.push(lastSaleData);
+        saveData(STORAGE_KEYS.sales, historicoVendas);
+          
+        paymentModal.style.display = 'none'; 
+        postSaleModal.style.display = 'block';
+    }
+
+
+    // DEPOIS
+function showPreview(type) {
+    docContentEl.innerHTML = generateDocumentHTML(type, lastSaleData, Object.values(mockDatabase));
+    postSaleModal.style.display = 'none';
+    docPreviewModal.style.display = 'block';
+}
+
+    function resetForNextSale() {
+        if (appliedCoupon) { mockCoupons[appliedCoupon.code].remaining--; }
+        cart = [];
+        appliedCoupon = null;
+        lastSaleData = {};
+        cupomInput.value = "";
+        cupomStatusEl.textContent = "";
+        clienteInput.value = "";
+        vendedorInput.value = "";
+        postSaleModal.style.display = 'none';
+        docPreviewModal.style.display = 'none';
+        updateUI();
+    }
+
+    // --- EVENT LISTENERS ---
+    addProductBtn.addEventListener('click', addProductToCart);
+    produtoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') quantidadeInput.focus(); });
+    quantidadeInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addProductToCart(); });
+    addManualDescBtn.addEventListener('click', addManualDiscount);
+    applyCupomBtn.addEventListener('click', applyCoupon);
+    paymentMethodEl.addEventListener('change', updateUI);
+    clienteInput.addEventListener('input', updateUI);
+    vendedorInput.addEventListener('input', updateUI);
+    cartItemsContainer.addEventListener('click', (e) => { if(e.target.classList.contains('remove-btn')){ removeItemFromCart(e.target.dataset.index); } });
+    
+    finishSaleBtn.addEventListener('click', openPaymentModal);
+    btnConfirmPayment.addEventListener('click', confirmPayment);
+    paymentModalCloseButton.onclick = () => { paymentModal.style.display = 'none'; };
+    postSaleModalCloseButton.onclick = () => { resetForNextSale(); };
+
+    btnPrintNf.addEventListener('click', () => showPreview('nf'));
+    btnPrintGarantia.addEventListener('click', () => showPreview('garantia'));
+    btnNewSale.addEventListener('click', resetForNextSale);
+    btnClosePreview.addEventListener('click', () => { docPreviewModal.style.display = 'none'; postSaleModal.style.display = 'block'; });
+    btnPrintDocument.addEventListener('click', () => window.print());
+    docPreviewModalCloseButton.onclick = () => {
+        docPreviewModal.style.display = 'none';
+        postSaleModal.style.display = 'block'; // Adicionamos esta linha
+    };
+    
+    window.addEventListener('afterprint', () => {
+        docPreviewModal.style.display = 'none';
+        postSaleModal.style.display = 'block';
+    });
+    function checkForQuoteConversion() {
+        const quoteId = localStorage.getItem('quoteToConvert');
+        if (quoteId) {
+            const quote = dbOrcamentosArray.find(o => o.id === quoteId);
+            if (quote) {
+                // Limpa o carrinho atual
+                cart = [];
+                // Adiciona os itens do orçamento ao carrinho
+                quote.itens.forEach(item => {
+                    cart.push({
+                        codigo: item.codigo,
+                        nome: item.nome,
+                        preco: item.preco,
+                        quantidade: item.quantidade,
+                        isDiscount: false,
+                    });
+                });
+
+                // Preenche o cliente, tratando o caso de ser avulso
+                if (quote.cliente && quote.cliente.codigo) {
+                    clienteInput.value = quote.cliente.codigo;
+                } else if (quote.cliente && quote.cliente.nome) {
+                    clienteInput.value = ''; // Limpa o campo de código
+                    // Define o cliente avulso diretamente
+                    currentClient = { nome: quote.cliente.nome };
+                }
+            }
+            // Limpa a memória para não carregar de novo na próxima vez
+            localStorage.removeItem('quoteToConvert');
+        }
+    }
+    // Executa a verificação assim que a página carrega
+    checkForQuoteConversion();
+    
+    // --- INICIALIZAÇÃO ---
+    updateUI();
+});
+admin.JS
 document.addEventListener('DOMContentLoaded', () => {
 
  // --- ELEMENTOS PRINCIPAIS DO DOM (DECLARADOS UMA SÓ VEZ AQUI) ---
@@ -9,6 +1431,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ==========================================================
 // LÓGICA DE NAVEGAÇÃO FINAL E UNIFICADA
+
 
     // Função ÚNICA e central para ativar qualquer sub-painel
     function activateSubPanel(clickedLink) {
@@ -265,45 +1688,37 @@ document.addEventListener('DOMContentLoaded', () => {
             // A lógica antiga para os outros tipos de item (produto, cliente, etc.)
             // Esta parte é para garantir que a função "Ver" dos outros cadastros continue funcionando
             switch (itemType) {
-                    case 'orcamento':
-                        item = dbOrcamentos.find(o => o.id === itemId);
-                        if (item) {
-                            title = `Detalhes do Orçamento - Nº ${item.id}`;
+                case 'orcamento':
+                    item = dbOrcamentos.find(o => o.id === itemId);
+                    if (item) {
+                        title = `Detalhes do Orçamento - Nº ${item.id}`;
 
-                            let itemsTable = item.itens.map(p => 
-                                `<tr>
-                                    <td>${p.codigo}</td>
-                                    <td>${toTitleCase(p.nome)}</td>
-                                    <td>${p.quantidade}x</td>
-                                    <td>${formatCurrency(p.preco)}</td>
-                                </tr>`
-                            ).join('');
+                        let itemsTable = item.itens.map(p => 
+                            `<tr>
+                                <td>${p.codigo}</td>
+                                <td>${toTitleCase(p.nome)}</td>
+                                <td>${p.quantidade}x</td>
+                                <td>${formatCurrency(p.preco)}</td>
+                            </tr>`
+                        ).join('');
 
-                            detailsHtml = `
-                                <p><strong>Cliente:</strong> ${toTitleCase(item.cliente.nome)}</p>
-                                <p><strong>Data de Criação:</strong> ${new Date(item.dataCriacao).toLocaleDateString('pt-BR')}</p>
-                                <p><strong>Válido até:</strong> ${new Date(item.validade).toLocaleDateString('pt-BR')}</p>
-                                <p><strong>Status:</strong> <span class="detail-highlight">${toTitleCase(item.status)}</span></p>
-                                <hr>
-                                <h4>Itens do Orçamento:</h4>
-                                <table class="doc-table">
-                                    <thead><tr><th>Cód.</th><th>Produto</th><th>Qtd.</th><th>Preço</th></tr></thead>
-                                    <tbody>${itemsTable}</tbody>
-                                </table>
-                                <hr>
-                                <p style="text-align:right; font-size: 1.5em;"><strong>TOTAL:</strong> <span class="detail-highlight">${formatCurrency(item.total)}</span></p>
-                            `;
-
-                            // BOTÃO DE IMPRESSÃO ADICIONADO AQUI
-                            actionsHtml = `
-                                <div class="modal-print-actions">
-                                    <button class="btn-secondary btn-modal-print" data-type="orcamento" data-id="${item.id}">📄 Imprimir Orçamento</button>
-                                </div>
-                            `;
-                        }
-                        break;
-                
-                    case 'produto':
+                        detailsHtml = `
+                            <p><strong>Cliente:</strong> ${toTitleCase(item.cliente.nome)}</p>
+                            <p><strong>Data de Criação:</strong> ${new Date(item.dataCriacao).toLocaleDateString('pt-BR')}</p>
+                            <p><strong>Válido até:</strong> ${new Date(item.validade).toLocaleDateString('pt-BR')}</p>
+                            <p><strong>Status:</strong> <span class="detail-highlight">${toTitleCase(item.status)}</span></p>
+                            <hr>
+                            <h4>Itens do Orçamento:</h4>
+                            <table class="doc-table">
+                                <thead><tr><th>Cód.</th><th>Produto</th><th>Qtd.</th><th>Preço</th></tr></thead>
+                                <tbody>${itemsTable}</tbody>
+                            </table>
+                            <hr>
+                            <p style="text-align:right; font-size: 1.5em;"><strong>TOTAL:</strong> <span class="detail-highlight">${formatCurrency(item.total)}</span></p>
+                        `;
+                    }
+                    break;
+                case 'produto':
                     item = dbProdutos.find(p => p.codigo === itemId);
                     if (item) {
                         const fornecedor = dbFornecedores.find(f => f.codigo === item.fornecedorCodigo);
@@ -660,14 +2075,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (target.classList.contains('btn-view')) {
                     showDetails(itemId, itemType);
                 }
-
+                
                 if (target.classList.contains('btn-edit')) { // Botão Editar / Converter
                     if (itemType === 'orcamento') {
                         const orcamento = dbOrcamentos.find(o => o.id === itemId);
                         if (orcamento) {
                             // REGRA DE SEGURANÇA: Bloqueia a conversão se não estiver Pendente/Expirado
                             if (orcamento.status === 'Aprovado' || orcamento.status === 'Cancelado') {
-                                showNotification(`Este orçamento já foi ${orcamento.status.toLowerCase()} e não pode ser convertido.`, 'error');
+                                alert(`Este orçamento já foi ${orcamento.status.toLowerCase()} e não pode ser convertido.`);
                                 return;
                             }
                             orcamento.status = 'Aprovado';
@@ -690,7 +2105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 renderFunctions.orcamentos();
                             }
                         } else {
-                            showNotification(`Não é possível cancelar um orçamento com status '${toTitleCase(orcamento.status)}'.`, 'error' );
+                            alert(`Não é possível cancelar um orçamento com status '${toTitleCase(orcamento.status)}'.`);
                         }
                     } else {
                         openConfirmModal(itemId, itemType);
@@ -708,13 +2123,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Se um dos botões de impressão DENTRO DO MODAL for clicado
         if (target.classList.contains('btn-modal-print')) {
             const printType = target.dataset.type;
-            if (printType === 'nf' || printType === 'garantia') {
-                if (lastSaleData) {
-                    showPreview(printType);
-                }
-            } else if (printType === 'orcamento') {
-                const orcamentoId = target.dataset.id;
-                showOrcamentoPreview(orcamentoId);
+            // Apenas checamos se a "memória" (lastSaleData) não está vazia
+            if (lastSaleData) {
+                showPreview(printType);
             }
         }
     });
@@ -1153,14 +2564,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (postSaleModal) postSaleModal.style.display = 'none';
         if (docPreviewModal) docPreviewModal.style.display = 'block';
     }
-    function showOrcamentoPreview(orcamentoId) {
-        const quoteData = dbOrcamentos.find(o => o.id === orcamentoId);
-        if (quoteData) {
-            docContentEl.innerHTML = generateOrcamentoHTML(quoteData);
-            if (detailsModal) detailsModal.style.display = 'none';
-            if (docPreviewModal) docPreviewModal.style.display = 'block';
-        }
-    }
 // ==========================================================
 // --- LÓGICA DE ABERTURA E FECHAMENTO DE CAIXA ---
     if (btnAbrirCaixa) {
@@ -1169,7 +2572,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const valorAbertura = parseFloat(valorInicialInput.value);
 
             if (isNaN(valorAbertura) || valorAbertura < 0) {
-                showNotification('Por favor, insira um valor de abertura válido.', 'error');
+                alert('Por favor, insira um valor de abertura válido.');
                 return;
             }
 
@@ -1196,7 +2599,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const valorFechamento = parseFloat(valorFinalInput.value);
 
             if (isNaN(valorFechamento) || valorFechamento < 0) {
-                showNotification('Por favor, insira um valor de fechamento válido.', 'error');
+                alert('Por favor, insira um valor de fechamento válido.');
                 return;
             }
 
@@ -1241,7 +2644,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const motivo = document.getElementById('sangria-motivo').value;
 
             if (isNaN(valor) || valor <= 0) {
-                showNotification('Por favor, insira um valor válido para a sangria.', 'error');
+                alert('Por favor, insira um valor válido para a sangria.');
                 return;
             }
 
@@ -1256,7 +2659,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             saveData(STORAGE_KEYS.caixaMovimentacoes, dbMovimentacoes);
-            showNotification(`Sangria de ${formatCurrency(valor)} registrada com sucesso!`, 'success');
+            alert(`Sangria de ${formatCurrency(valor)} registrada com sucesso!`);
             document.getElementById('sangria-valor').value = '';
             document.getElementById('sangria-motivo').value = '';
         });
@@ -1268,7 +2671,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const motivo = document.getElementById('suprimento-motivo').value;
 
             if (isNaN(valor) || valor <= 0) {
-                showNotification('Por favor, insira um valor válido para o suprimento.', 'error');
+                alert('Por favor, insira um valor válido para o suprimento.');
                 return;
             }
 
@@ -1282,7 +2685,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             saveData(STORAGE_KEYS.caixaMovimentacoes, dbMovimentacoes);
-            showNotification(`Suprimento de ${formatCurrency(valor)} registrado com sucesso!`, 'success');
+            alert(`Suprimento de ${formatCurrency(valor)} registrado com sucesso!`);
             document.getElementById('suprimento-valor').value = '';
             document.getElementById('suprimento-motivo').value = '';
         });
@@ -1718,12 +3121,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const produtoQuery = orcProdutoInput.value.toUpperCase();
             const quantidade = parseInt(orcQuantidadeInput.value);
             if (!produtoQuery || isNaN(quantidade) || quantidade <= 0) {
-                showNotification('Por favor, preencha o produto e uma quantidade válida.', 'error');
+                alert('Por favor, preencha o produto e uma quantidade válida.');
                 return;
             }
             const produtoEncontrado = dbProdutos.find(p => p.codigo.toUpperCase() === produtoQuery || p.nome.toUpperCase().includes(produtoQuery));
             if (!produtoEncontrado) {
-                showNotification('Produto não encontrado.', 'error');
+                alert('Produto não encontrado.');
                 return;
             }
             orcamentoAtualItens.push({
@@ -1760,11 +3163,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const validadeDias = parseInt(orcValidadeInput.value);
 
             if (orcamentoAtualItens.length === 0) {
-                showNotification('Adicione pelo menos um item ao orçamento.', 'error');
+                alert('Adicione pelo menos um item ao orçamento.');
                 return;
             }
             if (!nomeCliente) {
-                showNotification('Por favor, informe o nome do cliente.', 'error');
+                alert('Por favor, informe o nome do cliente.');
                 return;
             }
 
@@ -1788,7 +3191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dbOrcamentos.push(novoOrcamento);
             saveData(STORAGE_KEYS.orcamentos, dbOrcamentos);
 
-            showNotification(`Orçamento ${novoOrcamento.id} salvo com sucesso!`, 'success');
+            alert(`Orçamento ${novoOrcamento.id} salvo com sucesso!`);
             limparFormOrcamento();
             renderFunctions.orcamentos(); // Atualiza a tabela na outra tela
         });

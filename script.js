@@ -31,11 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
  		clients: 'amanditaGames_clients',
  		sellers: 'amanditaGames_sellers',
         coupons: 'amanditaGames_coupons', // <-- ADICIONADO
- 		sales: 'amanditaGames_sales'
+ 		sales: 'amanditaGames_sales',
+        orcamentos: 'amanditaGames_orcamentos'
  	};
 
     // BANCOS DE DADOS
     // Carrega os produtos salvos pelo admin
+    const dbOrcamentosArray = loadData(STORAGE_KEYS.orcamentos) || [];
     const dbProdutosArray = loadData(STORAGE_KEYS.products) || [];
     const mockDatabase = dbProdutosArray.reduce((obj, item) => {
         obj[item.codigo.toUpperCase()] = {
@@ -74,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
  		};
  		return obj;
  	}, {});
+    
 
     // ELEMENTOS DO DOM (PDV)
     const clienteInput = document.getElementById('cliente-input');
@@ -264,6 +267,39 @@ function showPreview(type) {
         docPreviewModal.style.display = 'none';
         postSaleModal.style.display = 'block';
     });
+    function checkForQuoteConversion() {
+        const quoteId = localStorage.getItem('quoteToConvert');
+        if (quoteId) {
+            const quote = dbOrcamentosArray.find(o => o.id === quoteId);
+            if (quote) {
+                // Limpa o carrinho atual
+                cart = [];
+                // Adiciona os itens do orçamento ao carrinho
+                quote.itens.forEach(item => {
+                    cart.push({
+                        codigo: item.codigo,
+                        nome: item.nome,
+                        preco: item.preco,
+                        quantidade: item.quantidade,
+                        isDiscount: false,
+                    });
+                });
+
+                // Preenche o cliente, tratando o caso de ser avulso
+                if (quote.cliente && quote.cliente.codigo) {
+                    clienteInput.value = quote.cliente.codigo;
+                } else if (quote.cliente && quote.cliente.nome) {
+                    clienteInput.value = ''; // Limpa o campo de código
+                    // Define o cliente avulso diretamente
+                    currentClient = { nome: quote.cliente.nome };
+                }
+            }
+            // Limpa a memória para não carregar de novo na próxima vez
+            localStorage.removeItem('quoteToConvert');
+        }
+    }
+    // Executa a verificação assim que a página carrega
+    checkForQuoteConversion();
     
     // --- INICIALIZAÇÃO ---
     updateUI();

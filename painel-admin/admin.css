@@ -139,7 +139,16 @@ h2 {
     text-transform: uppercase; color: #888; padding-bottom: 5px; border-bottom: 1px solid var(--border-color);
 }
 .form-group.large-field { grid-column: 1 / -1; }
-.lookup-status { display: block; margin-top: 6px; font-size: 0.85em; font-style: italic; color: var(--success-color); }
+
+.lookup-status {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.8em; /* Leve ajuste para o uppercase */
+    font-style: normal; /* Remove o itálico */
+    font-weight: 600; /* Deixa o texto um pouco mais forte */
+    text-transform: uppercase; /* Transforma em caixa alta */
+    color: var(--success-color);
+}
 .lookup-status.error { color: var(--error-color); }
 input[type="date"] { color-scheme: dark; }
 .uppercase-input { text-transform: uppercase; }
@@ -167,10 +176,17 @@ input[type="date"] { color-scheme: dark; }
 .search-input:focus { outline: none; border-color: #FF5F1F; }
 
 /* Tabelas */
-.table-container { background-color: var(--panel-color); border-radius: 8px; padding: 10px; margin-top: 0; }
+.table-container {
+    background-color: var(--panel-color);
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 0;
+    max-height: 80vh; /* Limita a altura da tabela a 60% da altura da tela */
+    overflow-y: auto; /* Adiciona a rolagem vertical se necessário */
+}
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
-td.code-column { font-weight: bold; color: #FF5F1F; text-align: center; }
+td.code-column { font-weight: bold; color: #FF5F1F; text-align: left; }
 thead { background-color: #2a2a2a; }
 .actions button { margin-right: 5px; background: none; border: 1px solid; color: var(--text-color); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.9em; transition: all 0.2s; }
 .btn-view { color: #17a2b8; border-color: #17a2b8; }
@@ -243,6 +259,7 @@ thead { background-color: #2a2a2a; }
     border-bottom: 2px solid var(--border-color);
     margin-bottom: 30px;
     padding-bottom: 15px;
+     align-items: center;
 }
 .sub-nav-link {
     color: var(--text-color);
@@ -319,42 +336,40 @@ thead { background-color: #2a2a2a; }
     color: white;
     border-color: #555;
 }
-/* --- ESTILOS PARA BOTÕES DE NAVEGAÇÃO FIXOS --- */
-/* --- ESTILOS FINAIS PARA BOTÕES DE NAVEGAÇÃO POSICIONADOS --- */
-
-/* Estilo COMUM para ambos os botões */
+/* Estilo COMUM para ambos os botões (COM MAIS DESTAQUE) */
 .scroll-btn {
-    position: fixed; /* Fica fixo na tela */
-    right: 30px;     /* Alinhado à direita */
+    position: fixed;
+    right: 30px;
     z-index: 999;
-    
-    width: 45px;
-    height: 45px;
+
+    width: 30px;
+    height: 30px;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background-color: #2a2a2a;
-    color: #aaa;
-    font-size: 18px;
+    border: none; /* Removemos a borda sutil */
+    background: var(--primary-gradient); /* Usamos o gradiente principal */
+    color: white; /* Cor do ícone branca para contraste */
+    font-size: 15px; /* Ícone um pouco maior */
+    font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Sombra para destacar */
+
     opacity: 0;
     visibility: hidden;
-    transform: scale(0.8);
+    transform: translateY(10px); /* Animação de subida */
 }
 
-/* Classe para torná-los visíveis (continua igual) */
+/* Classe para torná-los visíveis */
 .scroll-btn.visible {
-    opacity: 0.8;
+    opacity: 0.9; /* Opacidade quase total */
     visibility: visible;
-    transform: scale(1);
+    transform: translateY(0);
 }
 
 .scroll-btn:hover {
-    background: var(--primary-gradient);
-    color: white;
-    opacity: 1;
-    transform: scale(1.1);
+    opacity: 1; /* Opacidade total no hover */
+    transform: scale(1.1); /* Efeito de zoom */
+    box-shadow: 0 6px 15px rgba(255, 95, 31, 0.5); /* Sombra mais forte da cor do botão */
 }
 
 /* POSIÇÃO INDIVIDUAL DE CADA BOTÃO */
@@ -686,3 +701,160 @@ thead { background-color: #2a2a2a; }
     .diferenca-caixa strong.falta {
         color: var(--error-color);
     }
+/* ========================================================== */
+/* ESTILOS PARA O NOVO SUBMENU COM DROPDOWNS                */
+/* ========================================================== */
+
+/* Alinha os itens principais do submenu (Análise, Operações, etc.) */
+.sub-nav .sub-nav-item {
+    position: relative; /* Essencial para o posicionamento do dropdown */
+}
+
+/* Estiliza o link principal que abre o dropdown */
+.sub-nav-master {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.sub-nav-master:hover {
+    background-color: #333;
+}
+
+/* Estiliza a setinha do dropdown */
+.sub-nav-master .arrow {
+    font-size: 0.7em;
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Gira a setinha quando o menu está aberto */
+.sub-nav-item.open .sub-nav-master .arrow {
+    transform: rotate(180deg);
+}
+
+/* Quando o item principal está ativo, muda a cor */
+.sub-nav-item.active .sub-nav-master {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+/* Container do menu dropdown (o que abre e fecha) */
+.dropdown-menu {
+    display: none; /* Começa escondido */
+    position: absolute;
+    top: 110%; /* Aparece um pouco abaixo do botão principal */
+    left: 0;
+    z-index: 1000;
+    background-color: var(--panel-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    min-width: 220px; /* Largura mínima do dropdown */
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    overflow: hidden; /* Garante que os cantos arredondados funcionem nos links */
+}
+
+/* Mostra o menu quando a classe .open é adicionada via JS */
+.sub-nav-item.open .dropdown-menu {
+    display: block;
+}
+
+/* Estiliza os links dentro do dropdown */
+.dropdown-menu .sub-nav-link {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown-menu .sub-nav-link:last-child {
+    border-bottom: none; /* Remove a borda do último item */
+}
+/* ========================================================== */
+/* AJUSTE VISUAL PARA FILTROS (ALINHAMENTO E ESPAÇAMENTO REFINADO) */
+/* ========================================================== */
+
+/* 1. Container geral dos filtros: alinha itens pelo centro e mantém espaçamento */
+.filters-container {
+    padding: 10px 20px; /* Padding levemente ajustado */
+    gap: 25px; /* MAIOR ESPAÇO entre o grupo de data e o de botões */
+    align-items: center; /* ALINHA OS ITENS PELO CENTRO VERTICALMENTE */
+    flex-wrap: nowrap; /* Impede quebra de linha */
+    justify-content: flex-start;
+}
+
+/* 2. Grupo de Data: Garante que label e inputs fiquem em colunas, mas o grupo alinha */
+.filters-container .form-group {
+    display: flex;
+    flex-direction: column; /* Label acima do input */
+    gap: 5px; /* Espaço entre label e o input/botoes */
+    white-space: nowrap;
+}
+
+.filters-container .form-group label {
+    font-size: 0.8em; /* Rótulo um pouco maior para melhor leitura */
+    margin-bottom: 0;
+}
+
+/* 3. Inputs de Data: Altura e padding refinados */
+.filters-container .date-range {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaço entre inputs e 'até' */
+}
+
+.filters-container .date-range input {
+    width: 130px; /* Largura um pouco maior para facilitar seleção */
+    height: 34px; /* ALTURA FIXA para alinhar com os botões */
+    padding: 6px 10px; /* Padding para centralizar o texto */
+    font-size: 0.9em; /* Fonte um pouco maior */
+    box-sizing: border-box;
+}
+
+.filters-container .date-range span {
+    font-size: 0.8em; /* Tamanho do 'até' */
+    white-space: nowrap;
+}
+
+/* 4. Botões de Filtro Rápido: Altura e padding alinhados com os inputs de data */
+.filters-container .quick-filters {
+    display: flex;
+    gap: 15px; /* Espaço entre os botões */
+    flex-wrap: nowrap;
+}
+
+.filters-container .quick-filters .btn-secondary {
+    height: 34px; /* ALTURA FIXA idêntica aos inputs de data */
+    padding: 6px 10px; /* Padding para centralizar o texto */
+    font-size: 0.85em; /* Fonte ajustada */
+    line-height: 1;
+    white-space: nowrap;
+}
+/* ========================================================== */
+/* ESTILOS PARA AS ABAS DA TELA DE ORÇAMENTOS (CORREÇÃO)    */
+/* ========================================================== */
+.orcamento-view {
+    display: none; /* Garante que ambas as abas comecem escondidas */
+}
+
+.orcamento-view.active {
+    display: block; /* Mostra APENAS a aba que estiver com a classe 'active' */
+}
+/* Estilos para as tags de status na lista de orçamentos */
+.status-tag {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+}
+.status-pendente { background-color: #ffc107; color: #333; }
+.status-convertido { background-color: var(--success-color); }
+.status-expirado { background-color: #6c757d; }
+.status-cancelado { background-color: var(--error-color); }

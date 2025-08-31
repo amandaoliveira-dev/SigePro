@@ -18,9 +18,8 @@
             </header>
             <ul class="nav-list">
                 <li class="nav-item"><a href="#" class="nav-link active" data-target="pdv">🏪 Frente de Caixa</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-target="vendas">📈 Vendas</a></li>
                 <li class="nav-item"><a href="#" class="nav-link" data-target="cadastros">📝 Cadastros</a></li>
-                <li class="nav-item"><a href="#" class="nav-link" data-target="relatorios">📊 Relatórios</a></li>
-                <li class="nav-item"><a href="#" class="nav-link" data-target="historico">📜 Histórico de Vendas</a></li>
             </ul>
             <a href="../index.html" class="goto-pos">Ir para Frente de Caixa ➔</a>
         </nav>
@@ -33,68 +32,60 @@
                     <a href="../index.html" class="sub-nav-link">🛒 Tela de Venda</a>
                     <a href="#" class="sub-nav-link" data-target="sangria-content">💸 Sangrias e Suprimentos</a>
                 </nav>
-
                 <div id="caixa-content" class="sub-panel">
-
-                    <div id="caixa-fechado-view">
-                        <h2>Abertura de Caixa</h2>
-                        <div class="form-container caixa-form">
-                            <div class="form-group">
-                                <label for="valor-inicial">Valor Inicial em Caixa (R$)</label>
-                                <input type="number" id="valor-inicial" placeholder="50.00" step="0.01" required>
-                                <small>Este é o valor que você tem na gaveta para troco.</small>
-                            </div>
-                            <button id="btn-abrir-caixa" class="btn-primary">Abrir Caixa</button>
-                        </div>
-                    </div>
-
-                    <div id="caixa-aberto-view" style="display: none;">
-                        <h2>Caixa em Operação</h2>
-                        <div class="info-box">
-                            <p><strong>Aberto em:</strong> <span id="info-data-abertura">--/--/---- --:--</span></p>
-                            <p><strong>Valor de Abertura:</strong> <span id="info-valor-abertura">R$ 0,00</span></p>
-                        </div>
-
-                        <div class="section-divider">Fechamento de Caixa</div>
-
-                        <div class="fechamento-grid-container">
+                    <div class="caixa-container">
+                        <div id="caixa-fechado-view">
+                            <h2>Abertura de Caixa</h2>
                             <div class="form-container caixa-form">
                                 <div class="form-group">
-                                    <label for="valor-final">Valor Final Contado em Caixa (R$)</label>
-                                    <input type="number" id="valor-final" placeholder="1250.75" step="0.01" required>
-                                    <small>Digite o valor total que você contou na gaveta agora.</small>
+                                    <label for="valor-inicial">Valor Inicial em Caixa (R$)</label>
+                                    <input type="number" id="valor-inicial" placeholder="50.00" step="0.01" required="">
+                                    <small>Este é o valor que você tem na gaveta para troco.</small>
+                                </div>
+                                <button id="btn-abrir-caixa" class="btn-primary">Abrir Caixa</button>
+                            </div>
+                        </div>
+                        <div id="caixa-aberto-view" style="display: none;">
+                            <div class="caixa-container">
+                                <h2>Caixa em Operação</h2>
+                                <div class="info-box">
+                                    <p><strong>Aberto em:</strong> <span id="info-data-abertura">--/--/---- --:--</span></p>
+                                    <p><strong>Valor de Abertura:</strong> <span id="info-valor-abertura">R$ 0,00</span></p>
+                                </div>
+                                <div class="section-divider">Fechamento de Caixa</div>
+                                <div class="fechamento-grid-container">
+                                    <div class="form-container caixa-form">
+                                        <div class="form-group">
+                                            <label for="valor-final">Valor Final Contado em Caixa (R$)</label>
+                                            <input type="number" id="valor-final" placeholder="1250.75" step="0.01" required="">
+                                            <small>Digite o valor total que você contou na gaveta agora.</small>
+                                        </div>
+                                    </div>
+                                    <div class="fechamento-resumo">
+                                        <p>
+                                            <span>Valor Calculado pelo Sistema:</span>
+                                            <strong id="valor-calculado-sistema">R$ 0,00</strong>
+                                        </p>
+                                        <p class="diferenca-caixa">
+                                            <span>Diferença (Sobra/Falta):</span>
+                                            <strong id="diferenca-caixa">R$ 0,00</strong>
+                                        </p>
+                                    </div>
+                                    <button id="btn-fechar-caixa" class="btn-danger">Confirmar Fechamento de Caixa</button>
                                 </div>
                             </div>
-
-                            <div class="fechamento-resumo">
-                                <p>
-                                    <span>Valor Calculado pelo Sistema:</span>
-                                    <strong id="valor-calculado-sistema">R$ 0,00</strong>
-                                </p>
-                                <p class="diferenca-caixa">
-                                    <span>Diferença (Sobra/Falta):</span>
-                                    <strong id="diferenca-caixa">R$ 0,00</strong>
-                                </p>
-                            </div>
-
-                            <button id="btn-fechar-caixa" class="btn-danger">Confirmar Fechamento de Caixa</button>
                         </div>
                     </div>
-
                 </div>
-
                 <div id="sangria-content" class="sub-panel">
                     <h2>Sangrias e Suprimentos</h2>
-
                     <div id="movimentacoes-bloqueado-view" style="display: none;">
                         <div class="info-box-bloqueado">
                             <p>Abra um caixa para registrar movimentações.</p>
                         </div>
                     </div>
-
                     <div id="movimentacoes-view">
                         <div class="movimentacoes-container">
-
                             <div class="form-container movimentacao-form">
                                 <h3>Registrar Sangria (Retirada)</h3>
                                 <div class="form-group">
@@ -107,7 +98,6 @@
                                 </div>
                                 <button id="btn-registrar-sangria" class="btn-danger">Registrar Sangria</button>
                             </div>
-
                             <div class="form-container movimentacao-form">
                                 <h3>Registrar Suprimento (Adição)</h3>
                                 <div class="form-group">
@@ -118,10 +108,301 @@
                                     <label for="suprimento-motivo">Motivo (Opcional)</label>
                                     <input type="text" id="suprimento-motivo" placeholder="Ex: Troco adicional">
                                 </div>
-                                <button id="btn-registrar-suprimento" class="btn-success" >Registrar Suprimento</button>
+                                <button id="btn-registrar-suprimento" class="btn-success">Registrar Suprimento</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="vendas" class="content-panel">
+                <nav class="sub-nav">
+                    <div class="sub-nav-item has-dropdown">
+                        <a href="#" class="sub-nav-master">📊 Análise de Dados <span class="arrow">▼</span></a>
+                        <div class="dropdown-menu">
+                            <a href="#" class="sub-nav-link" data-target="dashboard-vendas-content">Dashboard de Vendas</a>
+                            <a href="#" class="sub-nav-link" data-target="relatorios-dia-content">Relatórios do Dia</a>
+                            <a href="#" class="sub-nav-link" data-target="historico-content">Histórico de Vendas</a>
+                        </div>
+                    </div>
+                    <div class="sub-nav-item has-dropdown">
+                        <a href="#" class="sub-nav-master">🧰 Operações <span class="arrow">▼</span></a>
+                        <div class="dropdown-menu">
+                            <a href="#" class="sub-nav-link" data-target="orcamentos-content">Orçamentos</a>
+                            <a href="#" class="sub-nav-link" data-target="devolucoes-content">Devoluções e Trocas</a>
+                        </div>
+                    </div>
+                    <div class="sub-nav-item">
+                        <a href="#" class="sub-nav-link" data-target="cupons-promocoes-content">🎟️ Cupons e Promoções</a>
+                    </div>
+                </nav>
+
+                <div id="dashboard-vendas-content" class="sub-panel">
+                    <h2>Dashboard de Vendas</h2>
+                    <div class="dashboard-container">
+                        <div class="filters-container" id="dashboard-filters">
+                            <div class="form-group">
+                                <label>Filtrar por Período</label>
+                                <div class="date-range">
+                                    <input type="date" id="db-date-start">
+                                    <span>até</span>
+                                    <input type="date" id="db-date-end">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Filtros Rápidos</label>
+                                <div class="quick-filters">
+                                    <button class="btn-secondary" data-period="7">Últimos 7 dias</button>
+                                    <button class="btn-secondary" data-period="30">Últimos 30 dias</button>
+                                    <button class="btn-secondary" data-period="90">Últimos 90 dias</button>
+                                    <button class="btn-secondary" data-period="180">Últimos 6 meses</button>
+                                    <button class="btn-secondary" data-period="month">Este Mês</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-cards-container" id="dashboard-kpi-cards">
+                            <div class="summary-card">
+                                <h3>Faturamento Bruto</h3>
+                                <p id="db-faturamento">R$ 0,00</p>
+                            </div>
+                            <div class="summary-card">
+                                <h3>Lucro Estimado</h3>
+                                <p id="db-lucro">R$ 0,00</p>
+                            </div>
+                            <div class="summary-card">
+                                <h3>Nº de Vendas</h3>
+                                <p id="db-n-vendas">0</p>
+                            </div>
+                            <div class="summary-card">
+                                <h3>Ticket Médio</h3>
+                                <p id="db-ticket-medio">R$ 0,00</p>
+                            </div>
+                        </div>
+
+                        <div class="reports-grid" id="dashboard-charts">
+                            <div class="report-widget">
+                                <h3>Faturamento no Período</h3>
+                                <canvas id="faturamentoChart"></canvas>
+                            </div>
+                            <div class="report-widget">
+                                <h3>Vendas por Categoria</h3>
+                                <canvas id="categoriasChart"></canvas>
+                            </div>
+                            <div class="report-widget">
+                                <h3>Top 5 Produtos Mais Rentáveis</h3>
+                                <canvas id="produtosChart"></canvas>
+                            </div>
+                            <div class="report-widget">
+                                <h3>Faturamento por Dia da Semana</h3>
+                                <canvas id="diasDaSemanaChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div id="relatorios-dia-content" class="sub-panel">
+                    <h2>Relatórios do Dia</h2>
+                    <div class="summary-cards-container">
+                        <div class="summary-card"><h3>Faturamento do Dia</h3><p id="report-faturamento-dia">R$ 0,00</p></div>
+                        <div class="summary-card"><h3>Vendas Realizadas</h3><p id="report-vendas-dia">0</p></div>
+                        <div class="summary-card"><h3>Ticket Médio</h3><p id="report-ticket-medio">R$ 0,00</p></div>
+                        <div class="summary-card"><h3>Itens Vendidos</h3><p id="report-itens-vendidos">0</p></div>
+                    </div>
+                    <div class="reports-grid">
+                        <div class="report-widget"><h3>🔥 Produtos Mais Vendidos</h3><ul id="lista-produtos-vendidos"></ul></div>
+                        <div class="report-widget"><h3>💰 Vendas por Vendedor</h3><ul id="lista-vendas-vendedor"></ul></div>
+                        <div class="report-widget low-stock"><h3>⚠️ Alerta de Estoque Baixo</h3><ul id="lista-estoque-baixo"></ul></div>
+                        <div class="report-widget"><h3>🕒 Últimas Vendas</h3><ul id="lista-ultimas-vendas"></ul></div>
+                    </div>
+                </div>
+                <div id="orcamentos-content" class="sub-panel">
+                    <h2>Orçamentos</h2>
+                    <div class="orcamento-container">
+
+                        <nav class="sub-nav">
+                            <a href="#" class="sub-nav-link" data-target="orcamento-creation-view">📝 Novo Orçamento</a>
+                            <a href="#" class="sub-nav-link" data-target="orcamento-list-view">📋 Listar Orçamentos</a>
+                        </nav>
+
+                        <div id="orcamento-creation-view" class="orcamento-view">
+                            
+                            <div class="form-header">
+                                <h2>Criar Novo Orçamento</h2>
+                                <button type="button" id="orc-limpar-btn" class="btn-limpar">🗑️ Limpar</button>
+                            </div>
+                            <form id="form-orcamento" class="form-container">
+                                <div class="form-group">
+                                    <label for="orc-cliente-codigo">Cliente (Código) - Opcional</label>
+                                    <input type="text" id="orc-cliente-codigo" placeholder="Para clientes já cadastrados">
+                                </div>
+                                <div class="form-group">
+                                    <label for="orc-cliente-nome">Nome do Cliente (para o orçamento)</label>
+                                    <input type="text" id="orc-cliente-nome" placeholder="Digite o nome aqui">
+                                </div>
+                                <div class="form-group">
+                                    <label for="orc-validade-input">Validade do Orçamento (dias)</label>
+                                    <input type="number" id="orc-validade-input" value="7" min="1">
+                                </div>
+
+                                <div class="section-divider">Adicionar Produto/Serviço ao Orçamento</div>
+                                <div class="form-group">
+                                    <label for="orc-produto-input">Produto (Código ou Nome)</label>
+                                    <div class="input-with-button">
+                                        <input type="text" id="orc-produto-input" placeholder="Ex: P001 ou digite para buscar...">
+                                        <button type="button" id="btn-open-product-lookup" class="lookup-btn">🔍</button>
+                                    </div>
+                                    <small id="orc-produto-nome" class="lookup-status"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="orc-quantidade-input">Quantidade</label>
+                                    <input type="number" id="orc-quantidade-input" value="1" min="1">
+                                </div>
+                                <button type="button" id="orc-add-product-btn" class="btn-secondary" style="margin-top: 10px;">Adicionar Item</button>
+                            </form>
+
+                            <div class="table-header">
+                                <h3>Itens do Orçamento</h3>
+                            </div>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Produto</th>
+                                            <th>Preço Unit.</th>
+                                            <th>Qtd.</th>
+                                            <th>Total</th>
+                                            <th>Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orc-items-body">
+                                        </tbody>
+                                </table>
+                            </div>
+
+                            <div class="orcamento-summary-actions">
+                                <div class="summary-total">
+                                    <span>TOTAL DO ORÇAMENTO</span>
+                                    <span id="orc-total">R$ 0,00</span>
+                                </div>
+                                <button id="orc-salvar-btn" class="btn-primary">Salvar Orçamento</button>
                             </div>
 
                         </div>
+
+                        <div id="orcamento-list-view" class="orcamento-view">
+                            <div class="table-header">
+                                <h3>Orçamentos Salvos</h3>
+                                <div class="search-container">
+                                    <input type="text" id="search-orcamentos" class="search-input" placeholder="Buscar por cliente ou nº...">
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Nº Orçam.</th>
+                                            <th>Data</th>
+                                            <th>Cliente</th>
+                                            <th>Validade</th>
+                                            <th>Valor Total</th>
+                                            <th>Status</th>
+                                            <th class="actions-column">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabela-orcamentos"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <style>
+                        .orcamento-summary-actions {
+                            background-color: var(--panel-color);
+                            padding: 20px 25px;
+                            border-radius: 8px;
+                            margin-top: 20px;
+                            text-align: right;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        .orcamento-summary-actions .summary-total {
+                            margin-bottom: 0;
+                            font-size: 1.5em;
+                            font-weight: bold;
+                        }
+                        .orcamento-summary-actions .btn-primary {
+                            width: auto;
+                            padding: 15px 30px;
+                            margin-top: 0; /* Reseta a margem do botão primário */
+                        }
+                        .input-with-button { display: flex; }
+                        .input-with-button input { flex-grow: 1; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+                        .lookup-btn {
+                            padding: 0 12px;
+                            border: 1px solid var(--border-color);
+                            background-color: #333;
+                            color: var(--text-color);
+                            border-top-right-radius: 5px;
+                            border-bottom-right-radius: 5px;
+                            cursor: pointer;
+                            font-size: 1.2em;
+                        }
+                        .lookup-btn:hover { background-color: #444; }
+                        .modal-content.large { max-width: 800px; }
+                        .modal-search { margin-bottom: 15px; }
+                        .modal-table { max-height: 400px; overflow-y: auto; }
+                    </style>
+                </div>
+                <div id="historico-content" class="sub-panel">
+                    <h2>Histórico de Vendas</h2>
+                    <div class="filters-container">
+                        <div class="form-group">
+                            <label>Filtrar por Período</label>
+                            <div class="date-range">
+                                <input type="date" id="filter-date-start">
+                                <span>até</span>
+                                <input type="date" id="filter-date-end">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="search-historico">Buscar por Cliente / Nº Recibo</label>
+                            <input type="text" id="search-historico" class="search-input">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Nº Recibo</th><th>Data / Hora</th><th>Cliente</th><th>Vendedor</th><th>Itens</th><th>Valor Total</th><th>Ações</th></tr></thead>
+                            <tbody id="tabela-historico"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="devolucoes-content" class="sub-panel">
+                    <h2>Devoluções e Trocas</h2>
+                    <p>Funcionalidade a ser implementada.</p>
+                </div>
+                <div id="cupons-promocoes-content" class="sub-panel">
+                    <div class="form-header">
+                        <h2>Cadastro de Cupons de Desconto</h2>
+                        <button type="button" class="btn-limpar" data-form-target="#form-cupom">🗑️ Limpar</button>
+                    </div>
+                    <form id="form-cupom" class="form-container">
+                        <div class="form-group"><label for="cupom-codigo">Código (ex: PROMO10)</label><input type="text" id="cupom-codigo" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="cupom-tipo">Tipo de Desconto</label><select id="cupom-tipo"><option value="fixed">Valor Fixo (R$)</option><option value="percent">Porcentagem (%)</option></select></div>
+                        <div class="form-group"><label for="cupom-valor">Valor</label><input type="number" id="cupom-valor" placeholder="10.00" step="0.01" required=""></div>
+                        <div class="form-group"><label for="cupom-usos">Quantidade de Usos</label><input type="number" id="cupom-usos" value="1" min="1" required=""></div>
+                        <button type="submit" id="btn-salvar-cupom" class="btn-primary">Salvar Cupom</button>
+                    </form>
+                    <div class="table-header">
+                        <h3>Cupons Cadastrados</h3>
+                        <div class="search-container"><input type="text" id="search-cupons" class="search-input" placeholder="Buscar por código..."></div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Código</th><th>Tipo</th><th>Valor</th><th>Usos</th><th>Ações</th></tr></thead>
+                            <tbody id="tabela-cupons"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -133,25 +414,23 @@
                     <a href="#" class="sub-nav-link" data-target="clientes-content">👥 Clientes</a>
                     <a href="#" class="sub-nav-link" data-target="vendedores-content">👨‍💼 Vendedores</a>
                     <a href="#" class="sub-nav-link" data-target="fornecedores-content">🚚 Fornecedores</a>
-                    <a href="#" class="sub-nav-link" data-target="cupons-content">🎟️ Cupons</a>
                 </nav>
-
                 <div id="produtos-content" class="sub-panel">
                     <div class="form-header">
                         <h2>Cadastro de Produtos</h2>
                         <button type="button" class="btn-limpar" data-form-target="#form-produto">🗑️Limpar</button>
                     </div>
                     <form id="form-produto" class="form-container">
-                        <div class="form-group large-field"><label for="prod-nome">Nome do Produto</label><input type="text" id="prod-nome" class="uppercase-input" required></div>
+                        <div class="form-group large-field"><label for="prod-nome">Nome do Produto</label><input type="text" id="prod-nome" class="uppercase-input" required=""></div>
                         <div class="form-group"><label for="prod-barcode">Código de Barras (EAN)</label><input type="text" id="prod-barcode" placeholder="Escaneie ou digite o código de barras"></div>
-                        <div class="form-group"><label for="prod-categoria">Categoria</label><select id="prod-categoria" required><option value="">Selecione...</option></select></div>
-                        <div class="form-group"><label for="prod-condicao">Condição do Produto</label><select id="prod-condicao" required><option value="Novo">Novo</option><option value="Usado">Usado</option><option value="Seminovo">Seminovo</option></select></div>
+                        <div class="form-group"><label for="prod-categoria">Categoria</label><select id="prod-categoria" required=""><option value="">Selecione...</option></select></div>
+                        <div class="form-group"><label for="prod-condicao">Condição do Produto</label><select id="prod-condicao" required=""><option value="Novo">Novo</option><option value="Usado">Usado</option><option value="Seminovo">Seminovo</option></select></div>
                         <div class="section-divider">Garantia e Nº de Série (Opcional)</div>
                         <div class="form-group"><label for="prod-garantia">Período de Garantia</label><select id="prod-garantia"><option value="3 Meses">3 Meses</option><option value="1 Ano">1 Ano</option></select></div>
                         <div class="form-group"><label for="prod-serial">Número de Série</label><input type="text" id="prod-serial" placeholder="Para consoles e acessórios"></div>
                         <div class="section-divider">Valores e Fornecedor</div>
-                        <div class="form-group"><label for="prod-preco-custo">Preço de Custo (R$)</label><input type="number" id="prod-preco-custo" placeholder="99.90" step="0.01" required></div>
-                        <div class="form-group"><label for="prod-preco">Preço de Venda (R$)</label><input type="number" id="prod-preco" placeholder="199.90" step="0.01" required></div>
+                        <div class="form-group"><label for="prod-preco-custo">Preço de Custo (R$)</label><input type="number" id="prod-preco-custo" placeholder="99.90" step="0.01" required=""></div>
+                        <div class="form-group"><label for="prod-preco">Preço de Venda (R$)</label><input type="number" id="prod-preco" placeholder="199.90" step="0.01" required=""></div>
                         <div class="form-group"><label for="prod-fornecedor-codigo">Código do Fornecedor</label><input type="text" id="prod-fornecedor-codigo" placeholder="Ex: F001"><small id="prod-fornecedor-nome" class="lookup-status"></small></div>
                         <div class="section-divider">Controle de Estoque (Opcional)</div>
                         <div class="form-group"><label for="prod-estoque">Estoque Atual</label><input type="number" id="prod-estoque" value="0" min="0"></div>
@@ -177,14 +456,13 @@
                         </table>
                     </div>
                 </div>
-
                 <div id="categorias-content" class="sub-panel">
                     <div class="form-header">
-                            <h2>Cadastro de Categorias</h2>
-                            <button type="button" class="btn-limpar" data-form-target="#form-categoria">🗑️ Limpar</button>
+                        <h2>Cadastro de Categorias</h2>
+                        <button type="button" class="btn-limpar" data-form-target="#form-categoria">🗑️ Limpar</button>
                     </div>
                     <form id="form-categoria" class="form-container">
-                        <div class="form-group"><label for="cat-nome">Nome da Categoria</label><input type="text" id="cat-nome" class="uppercase-input" required></div>
+                        <div class="form-group"><label for="cat-nome">Nome da Categoria</label><input type="text" id="cat-nome" class="uppercase-input" required=""></div>
                         <div class="form-group large-field"><label for="cat-descricao">Descrição</label><textarea id="cat-descricao" rows="3" placeholder="Ex: Jogos novos para Playstation 5, mídia física..."></textarea></div>
                         <button type="submit" id="btn-salvar-categoria" class="btn-primary">Salvar Categoria</button>
                     </form>
@@ -199,25 +477,24 @@
                         </table>
                     </div>
                 </div>
-                
                 <div id="clientes-content" class="sub-panel">
                     <div class="form-header">
                         <h2>Cadastro de Clientes</h2>
                         <button type="button" class="btn-limpar" data-form-target="#form-cliente">🗑️ Limpar</button>
                     </div>
                     <form id="form-cliente" class="form-container">
-                        <div class="form-group"><label for="cli-nome">Nome Completo</label><input type="text" id="cli-nome" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="cli-cpf">CPF</label><input type="text" id="cli-cpf" inputmode="numeric" required></div>
-                        <div class="form-group"><label for="cli-email">E-mail</label><input type="email" id="cli-email" required></div>
-                        <div class="form-group"><label for="cli-telefone">Telefone</label><input type="tel" id="cli-telefone" required></div>
+                        <div class="form-group"><label for="cli-nome">Nome Completo</label><input type="text" id="cli-nome" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="cli-cpf">CPF</label><input type="text" id="cli-cpf" inputmode="numeric" required=""></div>
+                        <div class="form-group"><label for="cli-email">E-mail</label><input type="email" id="cli-email" required=""></div>
+                        <div class="form-group"><label for="cli-telefone">Telefone</label><input type="tel" id="cli-telefone" required=""></div>
                         <div class="section-divider">Endereço</div>
-                        <div class="form-group"><label for="cli-cep">CEP</label><input type="text" id="cli-cep" inputmode="numeric" required></div>
-                        <div class="form-group large-field"><label for="cli-rua">Rua / Logradouro</label><input type="text" id="cli-rua" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="cli-numero">Número</label><input type="text" id="cli-numero" required></div>
-                        <div class="form-group"><label for="cli-bairro">Bairro</label><input type="text" id="cli-bairro" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="cli-cidade">Cidade</label><input type="text" id="cli-cidade" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="cli-uf">Estado (UF)</label><input type="text" id="cli-uf" class="uppercase-input" required></div>
-                        <button type="submit" id="btn-salvar-cliente" class="btn-primary">Salvar Cliente</button>                      
+                        <div class="form-group"><label for="cli-cep">CEP</label><input type="text" id="cli-cep" inputmode="numeric" required=""></div>
+                        <div class="form-group large-field"><label for="cli-rua">Rua / Logradouro</label><input type="text" id="cli-rua" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="cli-numero">Número</label><input type="text" id="cli-numero" required=""></div>
+                        <div class="form-group"><label for="cli-bairro">Bairro</label><input type="text" id="cli-bairro" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="cli-cidade">Cidade</label><input type="text" id="cli-cidade" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="cli-uf">Estado (UF)</label><input type="text" id="cli-uf" class="uppercase-input" required=""></div>
+                        <button type="submit" id="btn-salvar-cliente" class="btn-primary">Salvar Cliente</button>
                     </form>
                     <div class="form-actions-bottom">
                         <button type="button" class="btn-limpar" data-form-target="#form-cliente">🗑️ Limpar</button>
@@ -233,24 +510,23 @@
                         </table>
                     </div>
                 </div>
-                
                 <div id="vendedores-content" class="sub-panel">
                     <div class="form-header">
                         <h2>Cadastro de Vendedores</h2>
                         <button type="button" class="btn-limpar" data-form-target="#form-vendedor">🗑️ Limpar</button>
                     </div>
                     <form id="form-vendedor" class="form-container">
-                        <div class="form-group"><label for="vend-nome">Nome do Vendedor</label><input type="text" id="vend-nome" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="vend-cpf">CPF</label><input type="text" id="vend-cpf" inputmode="numeric" required></div>
-                        <div class="form-group"><label for="vend-telefone">Telefone</label><input type="tel" id="vend-telefone" required></div>
-                        <div class="form-group"><label for="vend-email">E-mail</label><input type="email" id="vend-email" required></div>
+                        <div class="form-group"><label for="vend-nome">Nome do Vendedor</label><input type="text" id="vend-nome" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="vend-cpf">CPF</label><input type="text" id="vend-cpf" inputmode="numeric" required=""></div>
+                        <div class="form-group"><label for="vend-telefone">Telefone</label><input type="tel" id="vend-telefone" required=""></div>
+                        <div class="form-group"><label for="vend-email">E-mail</label><input type="email" id="vend-email" required=""></div>
                         <div class="section-divider">Endereço</div>
-                        <div class="form-group"><label for="vend-cep">CEP</label><input type="text" id="vend-cep" inputmode="numeric" required></div>
-                        <div class="form-group large-field"><label for="vend-rua">Rua / Logradouro</label><input type="text" id="vend-rua" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="vend-numero">Número</label><input type="text" id="vend-numero" required></div>
-                        <div class="form-group"><label for="vend-bairro">Bairro</label><input type="text" id="vend-bairro" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="vend-cidade">Cidade</label><input type="text" id="vend-cidade" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="vend-uf">Estado (UF)</label><input type="text" id="vend-uf" class="uppercase-input" required></div>
+                        <div class="form-group"><label for="vend-cep">CEP</label><input type="text" id="vend-cep" inputmode="numeric" required=""></div>
+                        <div class="form-group large-field"><label for="vend-rua">Rua / Logradouro</label><input type="text" id="vend-rua" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="vend-numero">Número</label><input type="text" id="vend-numero" required=""></div>
+                        <div class="form-group"><label for="vend-bairro">Bairro</label><input type="text" id="vend-bairro" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="vend-cidade">Cidade</label><input type="text" id="vend-cidade" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="vend-uf">Estado (UF)</label><input type="text" id="vend-uf" class="uppercase-input" required=""></div>
                         <button type="submit" id="btn-salvar-vendedor" class="btn-primary">Salvar Vendedor</button>
                     </form>
                     <div class="form-actions-bottom">
@@ -267,24 +543,23 @@
                         </table>
                     </div>
                 </div>
-                
                 <div id="fornecedores-content" class="sub-panel">
                     <div class="form-header">
                         <h2>Cadastro de Fornecedores</h2>
                         <button type="button" class="btn-limpar" data-form-target="#form-fornecedor">🗑️ Limpar</button>
                     </div>
                     <form id="form-fornecedor" class="form-container">
-                        <div class="form-group"><label for="forn-nome">Nome da Empresa</label><input type="text" id="forn-nome" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="forn-cnpj">CNPJ</label><input type="text" id="forn-cnpj" inputmode="numeric" required></div>
-                        <div class="form-group"><label for="forn-contato">Nome do Contato</label><input type="text" id="forn-contato" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="forn-telefone">Telefone</label><input type="tel" id="forn-telefone" required></div>
+                        <div class="form-group"><label for="forn-nome">Nome da Empresa</label><input type="text" id="forn-nome" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="forn-cnpj">CNPJ</label><input type="text" id="forn-cnpj" inputmode="numeric" required=""></div>
+                        <div class="form-group"><label for="forn-contato">Nome do Contato</label><input type="text" id="forn-contato" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="forn-telefone">Telefone</label><input type="tel" id="forn-telefone" required=""></div>
                         <div class="section-divider">Endereço</div>
-                        <div class="form-group"><label for="forn-cep">CEP</label><input type="text" id="forn-cep" inputmode="numeric" required></div>
-                        <div class="form-group large-field"><label for="forn-rua">Rua / Logradouro</label><input type="text" id="forn-rua" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="forn-numero">Número</label><input type="text" id="forn-numero" required></div>
-                        <div class="form-group"><label for="forn-bairro">Bairro</label><input type="text" id="forn-bairro" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="forn-cidade">Cidade</label><input type="text" id="forn-cidade" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="forn-uf">Estado (UF)</label><input type="text" id="forn-uf" class="uppercase-input" required></div>
+                        <div class="form-group"><label for="forn-cep">CEP</label><input type="text" id="forn-cep" inputmode="numeric" required=""></div>
+                        <div class="form-group large-field"><label for="forn-rua">Rua / Logradouro</label><input type="text" id="forn-rua" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="forn-numero">Número</label><input type="text" id="forn-numero" required=""></div>
+                        <div class="form-group"><label for="forn-bairro">Bairro</label><input type="text" id="forn-bairro" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="forn-cidade">Cidade</label><input type="text" id="forn-cidade" class="uppercase-input" required=""></div>
+                        <div class="form-group"><label for="forn-uf">Estado (UF)</label><input type="text" id="forn-uf" class="uppercase-input" required=""></div>
                         <button type="submit" id="btn-salvar-fornecedor" class="btn-primary">Salvar Fornecedor</button>
                     </form>
                     <div class="form-actions-bottom">
@@ -301,72 +576,43 @@
                         </table>
                     </div>
                 </div>
-
-                <div id="cupons-content" class="sub-panel">
-                    <div class="form-header">
-                        <h2>Cadastro de Cupons de Desconto</h2>
-                        <button type="button" class="btn-limpar" data-form-target="#form-cupom">🗑️ Limpar</button>
-                    </div>
-                    <form id="form-cupom" class="form-container">
-                        <div class="form-group"><label for="cupom-codigo">Código (ex: PROMO10)</label><input type="text" id="cupom-codigo" class="uppercase-input" required></div>
-                        <div class="form-group"><label for="cupom-tipo">Tipo de Desconto</label><select id="cupom-tipo"><option value="fixed">Valor Fixo (R$)</option><option value="percent">Porcentagem (%)</option></select></div>
-                        <div class="form-group"><label for="cupom-valor">Valor</label><input type="number" id="cupom-valor" placeholder="10.00" step="0.01" required></div>
-                        <div class="form-group"><label for="cupom-usos">Quantidade de Usos</label><input type="number" id="cupom-usos" value="1" min="1" required></div>
-                        <button type="submit" id="btn-salvar-cupom" class="btn-primary">Salvar Cupom</button>
-                    </form>
-                    <div class="table-header">
-                            <h3>Cupons Cadastrados</h3>
-                            <div class="search-container"><input type="text" id="search-cupons" class="search-input" placeholder="Buscar por código..."></div>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead><tr><th>Código</th><th>Tipo</th><th>Valor</th><th>Usos</th><th>Ações</th></tr></thead>
-                            <tbody id="tabela-cupons"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="relatorios" class="content-panel">
-                <h2>Relatórios do Dia</h2>
-                <div class="summary-cards-container">
-                    <div class="summary-card"><h3>Faturamento do Dia</h3><p id="report-faturamento-dia">R$ 0,00</p></div>
-                    <div class="summary-card"><h3>Vendas Realizadas</h3><p id="report-vendas-dia">0</p></div>
-                    <div class="summary-card"><h3>Ticket Médio</h3><p id="report-ticket-medio">R$ 0,00</p></div>
-                    <div class="summary-card"><h3>Itens Vendidos</h3><p id="report-itens-vendidos">0</p></div>
-                </div>
-                <div class="reports-grid">
-                    <div class="report-widget"><h3>🔥 Produtos Mais Vendidos</h3><ul id="lista-produtos-vendidos"></ul></div>
-                    <div class="report-widget"><h3>💰 Vendas por Vendedor</h3><ul id="lista-vendas-vendedor"></ul></div>
-                    <div class="report-widget low-stock"><h3>⚠️ Alerta de Estoque Baixo</h3><ul id="lista-estoque-baixo"></ul></div>
-                    <div class="report-widget"><h3>🕒 Últimas Vendas</h3><ul id="lista-ultimas-vendas"></ul></div>
-                </div>
-            </div>
-            
-            <div id="historico" class="content-panel">
-                <h2>Histórico de Vendas</h2>
-                <div class="filters-container">
-                    <div class="form-group">
-                        <label>Filtrar por Período</label>
-                        <div class="date-range">
-                            <input type="date" id="filter-date-start">
-                            <span>até</span>
-                            <input type="date" id="filter-date-end">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="search-historico">Buscar por Cliente / Nº Recibo</label>
-                        <input type="text" id="search-historico" class="search-input">
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>Nº Recibo</th><th>Data / Hora</th><th>Cliente</th><th>Vendedor</th><th>Itens</th><th>Valor Total</th><th>Ações</th></tr></thead>
-                        <tbody id="tabela-historico"></tbody>
-                    </table>
-                </div>
             </div>
         </main>
+    </div>
+
+    <div id="product-lookup-modal" class="modal">
+        <div class="modal-content large">
+            <button class="close-button" aria-label="Fechar">&times;</button>
+            <h2>Buscar Produto Cadastrado</h2>
+            <div class="search-container modal-search">
+                <input type="text" id="product-lookup-search" class="search-input" placeholder="Digite para filtrar por nome ou código...">
+            </div>
+            <div class="table-container modal-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Produto</th>
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-lookup-list">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="notification-modal" class="modal">
+        <div class="modal-content small">
+            <button class="close-button" aria-label="Fechar">&times;</button>
+            <h2 id="notification-modal-title">Aviso</h2>
+            <p id="notification-modal-text"></p>
+            <div class="modal-actions">
+                <button id="notification-modal-ok" class="btn-primary">OK</button>
+            </div>
+        </div>
     </div>
 
     <div id="details-modal" class="modal">
@@ -414,6 +660,7 @@
     
     <script src="../utils.js"></script>
     <script src="admin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
               
 </body>
 </html>

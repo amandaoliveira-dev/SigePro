@@ -75,3 +75,51 @@
   .printable-area { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; border: none; }
   .modal-actions { display: none !important; }
 }
+
+/* ESTILIZAÇÃO PADRÃO NOTIFICAÇÕES ALERTAS/CONFIRMAÇÃO*/
+/* Estilo para Modais Menores */
+.modal-content.small {
+    max-width: 450px;
+}
+
+/* Estilos para o Modal de Notificação */
+#notification-modal .modal-content {
+    text-align: center;
+}
+#notification-modal-title {
+    border: none;
+    margin-bottom: 10px;
+}
+#notification-modal-text {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+#notification-modal .modal-actions {
+    justify-content: center;
+}
+#notification-modal-ok {
+    min-width: 120px;
+    flex-grow: 0;
+}
+/* Cores do título por tipo de notificação */
+#notification-modal.modal-success #notification-modal-title { color: var(--success-color); }
+#notification-modal.modal-error #notification-modal-title { color: var(--error-color); }
+#notification-modal.modal-warning #notification-modal-title { color: var(--warning-color); }
+/* ========================================================== */
+/* ESTILOS GLOBAIS PARA BARRA DE ROLAGEM DE TABELAS */
+/* ========================================================== */
+.table-container::-webkit-scrollbar {
+    width: 10px;
+}
+.table-container::-webkit-scrollbar-track {
+    background: #2a2a2a;
+    border-radius: 5px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 5px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

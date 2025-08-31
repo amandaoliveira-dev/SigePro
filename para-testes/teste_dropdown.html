@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Dropdown</title>
+    <style>
+        /* Estilos básicos para o teste parecer com seu projeto */
+        :root {
+            --bg-color: #121212;
+            --panel-color: #1E1E1E;
+            --text-color: #E0E0E0;
+            --border-color: #444;
+            --primary-gradient: linear-gradient(90deg, #FF007A, #FF5F1F);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 40px;
+        }
+        .view-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin: 0;
+        }
+        #view-selector {
+            padding: 10px;
+            background-color: #333;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        #view-selector:focus {
+            outline: none;
+            border-color: #FF5F1F;
+        }
+        .sub-panel {
+            display: none; /* Todos os painéis começam escondidos */
+            padding: 20px;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+        }
+        .sub-panel.active {
+            display: block; /* Apenas o painel ativo é mostrado */
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="view-header">
+        <h2>Vendas:</h2>
+        <select id="view-selector">
+            <option value="dashboard-content">Dashboard de Vendas</option>
+            <option value="relatorios-content">Relatórios do Dia</option>
+            <option value="historico-content">Histórico de Vendas</option>
+            <option value="orcamentos-content">Orçamentos</option>
+            <option value="devolucoes-content">Devoluções e Trocas</option>
+            <option value="cupons-content">Cupons e Promoções</option>
+        </select>
+    </div>
+
+    <div id="dashboard-content" class="sub-panel active">
+        <h3>Conteúdo do Dashboard de Vendas</h3>
+        <p>Aqui ficariam os KPIs e gráficos...</p>
+    </div>
+    <div id="relatorios-content" class="sub-panel">
+        <h3>Conteúdo dos Relatórios do Dia</h3>
+        <p>Aqui ficaria a visão rápida do dia...</p>
+    </div>
+    <div id="historico-content" class="sub-panel">
+        <h3>Conteúdo do Histórico de Vendas</h3>
+        <p>Aqui ficaria a tabela com todas as vendas...</p>
+    </div>
+    <div id="orcamentos-content" class="sub-panel">
+        <h3>Conteúdo dos Orçamentos</h3>
+    </div>
+    <div id="devolucoes-content" class="sub-panel">
+        <h3>Conteúdo de Devoluções e Trocas</h3>
+    </div>
+    <div id="cupons-content" class="sub-panel">
+        <h3>Conteúdo de Cupons e Promoções</h3>
+    </div>
+
+    <script>
+        // Lógica JavaScript para fazer o dropdown funcionar
+        const selector = document.getElementById('view-selector');
+        const panels = document.querySelectorAll('.sub-panel');
+
+        selector.addEventListener('change', () => {
+            const targetId = selector.value;
+
+            // Esconde todos os painéis
+            panels.forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Mostra apenas o painel selecionado
+            const activePanel = document.getElementById(targetId);
+            if (activePanel) {
+                activePanel.classList.add('active');
+            }
+        });
+    </script>
+
+</body>
+</html>
